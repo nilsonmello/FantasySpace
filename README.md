@@ -58,7 +58,6 @@ Assets/
 | **ScriptableObjects** | Dados configuráveis do jogo. |
 | **Scripts** | Toda a lógica do projeto organizada por responsabilidade. |
 | **Settings** | Configurações do Unity. |
-| **StreamingAssets** | Arquivos acessados diretamente em tempo de execução. |
 | **TextMesh Pro** | Recursos do TextMesh Pro. |
 
 ---
