@@ -19,7 +19,6 @@ Assets/
 ├── Animations/            # Animações e Animation Controllers
 ├── Art/                   # Recursos visuais
 │   ├── Backgrounds/       # Cenários e fundos
-│   ├── Effects/           # Partículas e efeitos visuais
 │   ├── Sprites/           # Sprites organizados por categoria
 │   ├── Tilesets/          # Tiles e Tilemaps
 │   └── UI/                # Elementos visuais da interface
@@ -33,16 +32,12 @@ Assets/
 ├── Scenes/                # Cenas do projeto
 ├── ScriptableObjects/     # Configurações e bancos de dados
 ├── Scripts/
-│   ├── AI/                # Inteligência artificial
-│   ├── Core/              # Sistemas principais
-│   ├── Gameplay/          # Mecânicas do jogo
-│   ├── Input/             # Sistema de entrada
-│   ├── Managers/          # Game Managers
-│   ├── UI/                # Interface
-│   ├── Utilities/         # Classes auxiliares
-│   └── Weapons/           # Sistema de armas (caso exista)
+│   ├── Enemy/             # IA, combate e comportamento dos inimigos
+│   ├── Input/             # Sistema de entrada do jogador
+│   ├── Interactions/      # Interações com NPCs, objetos e ambiente
+│   ├── Managers/          # Gerenciadores do jogo
+│   └── Player/            # Controle, combate e movimentação do jogador
 ├── Settings/              # Configurações do projeto
-├── StreamingAssets/       # Arquivos acessados diretamente
 └── TextMesh Pro/          # Assets do TextMesh Pro
 ```
 
@@ -63,7 +58,6 @@ Assets/
 | **ScriptableObjects** | Dados configuráveis do jogo. |
 | **Scripts** | Toda a lógica do projeto organizada por responsabilidade. |
 | **Settings** | Configurações do Unity. |
-| **StreamingAssets** | Arquivos acessados diretamente em tempo de execução. |
 | **TextMesh Pro** | Recursos do TextMesh Pro. |
 
 ---
