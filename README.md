@@ -116,9 +116,3 @@ Baseado em:
 https://www.conventionalcommits.org/pt-br/v1.0.0/
 
 ---
-
----
-
-# 📄 Licença
-
-Defina aqui a licença utilizada pelo projeto (MIT, GPL, Apache 2.0, etc.).
