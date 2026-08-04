@@ -32,13 +32,11 @@ Assets/
 ├── Scenes/                # Cenas do projeto
 ├── ScriptableObjects/     # Configurações e bancos de dados
 ├── Scripts/
-│   ├── Player/                # Inteligência artificial
-│   ├── Core/              # Sistemas principais
-│   ├── Gameplay/          # Mecânicas do jogo
-│   ├── Input/             # Sistema de entrada
-│   ├── Managers/          # Game Managers
-│   ├── Enemy/                # Interface
-│   ├── Utilities/         # Classes auxiliares
+│   ├── Enemy/             # IA, combate e comportamento dos inimigos
+│   ├── Input/             # Sistema de entrada do jogador
+│   ├── Interactions/      # Interações com NPCs, objetos e ambiente
+│   ├── Managers/          # Gerenciadores do jogo
+│   └── Player/            # Controle, combate e movimentação do jogador
 ├── Settings/              # Configurações do projeto
 └── TextMesh Pro/          # Assets do TextMesh Pro
 ```
