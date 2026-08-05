@@ -1,0 +1,97 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class DungeonGrid
+{
+    public enum CellType { Empty, Room, Corridor, Buffer }
+
+    public float CellSize { get; }
+
+    private readonly Dictionary<Vector2Int, CellType> _cells = new Dictionary<Vector2Int, CellType>();
+
+    public DungeonGrid(float cellSize)
+    {
+        CellSize = cellSize;
+    }
+
+    public IEnumerable<KeyValuePair<Vector2Int, CellType>> AllCells => _cells;
+
+    public Vector2Int WorldToCell(Vector2 worldPos)
+    {
+        return new Vector2Int(
+            Mathf.RoundToInt(worldPos.x / CellSize),
+            Mathf.RoundToInt(worldPos.y / CellSize));
+    }
+
+    public Vector2 CellToWorld(Vector2Int cell)
+    {
+        return new Vector2(cell.x * CellSize, cell.y * CellSize);
+    }
+
+    public CellType GetCell(Vector2Int cell)
+    {
+        return _cells.TryGetValue(cell, out var type) ? type : CellType.Empty;
+    }
+
+    public void SetCell(Vector2Int cell, CellType type)
+    {
+        _cells[cell] = type;
+    }
+
+    public void MarkRoomBounds(Bounds worldBounds)
+    {
+        Vector2Int min = WorldToCell(worldBounds.min);
+        Vector2Int max = WorldToCell(worldBounds.max);
+
+        for (int x = min.x; x <= max.x; x++)
+        {
+            for (int y = min.y; y <= max.y; y++)
+            {
+                SetCell(new Vector2Int(x, y), CellType.Room);
+            }
+        }
+    }
+
+    public void MarkRoomBuffer(Bounds worldBounds, int bufferCells)
+    {
+        if (bufferCells <= 0) return;
+
+        Vector2Int min = WorldToCell(worldBounds.min);
+        Vector2Int max = WorldToCell(worldBounds.max);
+
+        for (int x = min.x - bufferCells; x <= max.x + bufferCells; x++)
+        {
+            for (int y = min.y - bufferCells; y <= max.y + bufferCells; y++)
+            {
+                var cell = new Vector2Int(x, y);
+                if (GetCell(cell) == CellType.Room) continue;
+                if (GetCell(cell) == CellType.Buffer) continue;
+
+                SetCell(cell, CellType.Buffer);
+            }
+        }
+    }
+
+    public void MarkEntrance(Vector2Int cell)
+    {
+        SetCell(cell, CellType.Empty);
+    }
+
+    public void MarkEntrance(Vector2Int cell, Vector2Int exitDirection, int clearanceCells)
+    {
+        SetCell(cell, CellType.Empty);
+
+        Vector2Int cursor = cell;
+        for (int i = 0; i < clearanceCells; i++)
+        {
+            cursor += exitDirection;
+            SetCell(cursor, CellType.Empty);
+        }
+    }
+
+    public bool IsWalkable(Vector2Int cell)
+    {
+        CellType type = GetCell(cell);
+        return type == CellType.Empty || type == CellType.Corridor;
+    }
+}

@@ -1,0 +1,59 @@
+using UnityEngine;
+
+[RequireComponent(typeof(BoxCollider2D))]
+public class RoomInstance : MonoBehaviour
+{
+    public enum Direction { North, South, East, West }
+
+    [Header("Entrada da sala")]
+    [SerializeField] private Transform entrancePoint;
+
+    [Tooltip("Para onde a porta tá virada.")]
+    [SerializeField] private Direction entranceDirection;
+
+    private BoxCollider2D _bounds;
+
+    public RoomData SourceData { get; private set; }
+
+    public Vector2 EntrancePosition => entrancePoint != null
+        ? (Vector2)entrancePoint.position
+        : (Vector2)transform.position;
+
+    public Direction EntranceDirection => entranceDirection;
+
+    public Bounds WorldBounds
+    {
+        get
+        {
+            if (_bounds == null) _bounds = GetComponent<BoxCollider2D>();
+            return _bounds.bounds;
+        }
+    }
+
+    public Vector2 EntranceOutwardDir
+    {
+        get
+        {
+            switch (entranceDirection)
+            {
+                case Direction.North: return Vector2.up;
+                case Direction.South: return Vector2.down;
+                case Direction.East: return Vector2.right;
+                default: return Vector2.left;
+            }
+        }
+    }
+
+    public void Initialize(RoomData sourceData)
+    {
+        SourceData = sourceData;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (entrancePoint == null) return;
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(entrancePoint.position, 0.3f);
+        Gizmos.DrawLine(entrancePoint.position, entrancePoint.position + (Vector3)EntranceOutwardDir * 1f);
+    }
+}
