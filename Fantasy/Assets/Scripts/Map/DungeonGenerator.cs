@@ -14,6 +14,18 @@ public class DungeonGenerator : MonoBehaviour
         public float distance;
     }
 
+    [System.Serializable]
+    public class CorridorPropSpawnData
+    {
+        public GameObject prefab;
+
+        [Range(0f, 1f)] public float chancePerCell = 0.1f;
+
+        [Min(0)] public int maxCount = 5;
+
+        [Min(0)] public int minSpacingCells = 0;
+    }
+
     [Header("Salas disponíveis")]
     [SerializeField] private List<RoomData> availableRooms;
 
@@ -37,6 +49,9 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private GameObject corridorTilePrefab;
     [SerializeField] private Transform corridorContainer;
 
+    [Header("Objetos em corredores")]
+    [SerializeField] private List<CorridorPropSpawnData> corridorProps = new List<CorridorPropSpawnData>();
+
     [Header("Paredes (Tilemap)")]
     [SerializeField] private Tilemap wallTilemap;
     [SerializeField] private TileBase wallTile;
@@ -57,9 +72,12 @@ public class DungeonGenerator : MonoBehaviour
     private readonly List<RoomInstance> _placedRooms = new List<RoomInstance>();
     private readonly List<CorridorEdge> _mstEdges = new List<CorridorEdge>();
     private readonly List<GameObject> _spawnedCorridorVisuals = new List<GameObject>();
+    private readonly List<GameObject> _spawnedCorridorProps = new List<GameObject>();
 
     public IReadOnlyList<RoomInstance> PlacedRooms => _placedRooms;
     public IReadOnlyList<CorridorEdge> ConnectionGraph => _mstEdges;
+
+    public event System.Action OnGenerationComplete;
 
     private void Start()
     {
@@ -98,6 +116,7 @@ public class DungeonGenerator : MonoBehaviour
             if (TryGenerateOnce(attempt))
             {
                 _isGenerating = false;
+                OnGenerationComplete?.Invoke();
                 yield break;
             }
 
@@ -118,6 +137,7 @@ public class DungeonGenerator : MonoBehaviour
             if (TryGenerateOnce(attempt))
             {
                 _isGenerating = false;
+                OnGenerationComplete?.Invoke();
                 return;
             }
 
@@ -147,6 +167,7 @@ public class DungeonGenerator : MonoBehaviour
 
         ThinCorridorBlobs();
         SpawnCorridorVisuals();
+        SpawnCorridorProps(rng);
         FillWalls();
         return true;
     }
@@ -159,12 +180,16 @@ public class DungeonGenerator : MonoBehaviour
         foreach (var visual in _spawnedCorridorVisuals)
             if (visual != null) DestroyImmediate(visual);
 
+        foreach (var prop in _spawnedCorridorProps)
+            if (prop != null) DestroyImmediate(prop);
+
         if (wallTilemap != null) wallTilemap.ClearAllTiles();
 
         _placedRooms.Clear();
         _mstEdges.Clear();
         _corridorPaths.Clear();
         _spawnedCorridorVisuals.Clear();
+        _spawnedCorridorProps.Clear();
         Grid = null;
     }
 
@@ -218,7 +243,7 @@ public class DungeonGenerator : MonoBehaviour
 
             if (path == null)
             {
-                Debug.LogWarning($"Sem caminho entre '{edge.roomA.name}' e '{edge.roomB.name}'");
+                Debug.LogWarning($"sem caminho entre '{edge.roomA.name}' e '{edge.roomB.name}'");
                 return false;
             }
 
@@ -311,6 +336,69 @@ public class DungeonGenerator : MonoBehaviour
             Vector3 worldPos = GetAlignedWorldPos(kvp.Key);
             GameObject visual = Instantiate(corridorTilePrefab, worldPos, Quaternion.identity, parent);
             _spawnedCorridorVisuals.Add(visual);
+        }
+    }
+
+    private void SpawnCorridorProps(System.Random rng)
+    {
+        if (Grid == null || corridorProps == null || corridorProps.Count == 0) return;
+
+        var corridorCells = new List<Vector2Int>();
+        foreach (var kvp in Grid.AllCells)
+            if (kvp.Value == DungeonGrid.CellType.Corridor)
+                corridorCells.Add(kvp.Key);
+
+        Shuffle(corridorCells, rng);
+
+        var counts = new Dictionary<CorridorPropSpawnData, int>();
+        var placedCells = new Dictionary<CorridorPropSpawnData, List<Vector2Int>>();
+        foreach (var prop in corridorProps)
+        {
+            counts[prop] = 0;
+            placedCells[prop] = new List<Vector2Int>();
+        }
+
+        Transform parent = corridorContainer != null ? corridorContainer : transform;
+
+        foreach (var cell in corridorCells)
+        {
+            var candidateProps = new List<CorridorPropSpawnData>(corridorProps);
+            Shuffle(candidateProps, rng);
+
+            foreach (var prop in candidateProps)
+            {
+                if (prop.prefab == null) continue;
+                if (counts[prop] >= prop.maxCount) continue;
+                if ((float)rng.NextDouble() > prop.chancePerCell) continue;
+                if (prop.minSpacingCells > 0 && IsTooCloseToSameProp(cell, placedCells[prop], prop.minSpacingCells)) continue;
+
+                Vector3 worldPos = GetAlignedWorldPos(cell);
+                GameObject instance = Instantiate(prop.prefab, worldPos, Quaternion.identity, parent);
+                _spawnedCorridorProps.Add(instance);
+
+                counts[prop]++;
+                placedCells[prop].Add(cell);
+                break;
+            }
+        }
+    }
+
+    private static bool IsTooCloseToSameProp(Vector2Int cell, List<Vector2Int> existingCells, int minSpacing)
+    {
+        foreach (var other in existingCells)
+        {
+            int manhattanDist = Mathf.Abs(cell.x - other.x) + Mathf.Abs(cell.y - other.y);
+            if (manhattanDist < minSpacing) return true;
+        }
+        return false;
+    }
+
+    private static void Shuffle<T>(IList<T> list, System.Random rng)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = rng.Next(i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
         }
     }
 
