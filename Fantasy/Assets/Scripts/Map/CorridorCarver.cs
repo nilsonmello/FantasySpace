@@ -18,7 +18,11 @@ public static class CorridorCarver
         public float F => G + H;
     }
 
-    public static List<Vector2Int> FindPath(DungeonGrid grid, Vector2Int start, Vector2Int end)
+    public static List<Vector2Int> FindPath(
+        DungeonGrid grid,
+        Vector2Int start,
+        Vector2Int end,
+        float hugPenaltyWeight = 4f)
     {
         var open = new List<Node>();
         var closed = new HashSet<Vector2Int>();
@@ -53,7 +57,10 @@ public static class CorridorCarver
 
                 bool isTurn = current.DirFromParent != Vector2Int.zero && current.DirFromParent != dir;
                 float turnPenalty = isTurn ? 0.5f : 0f;
-                float tentativeG = current.G + 1f + turnPenalty;
+                float hugPenalty = hugPenaltyWeight > 0f
+                    ? HugPenalty(grid, current.Position, neighborPos, hugPenaltyWeight)
+                    : 0f;
+                float tentativeG = current.G + 1f + turnPenalty + hugPenalty;
 
                 if (!allNodes.TryGetValue(neighborPos, out var neighborNode))
                 {
@@ -74,6 +81,23 @@ public static class CorridorCarver
         }
 
         return null;
+    }
+
+    private static float HugPenalty(DungeonGrid grid, Vector2Int current, Vector2Int candidate, float weight)
+    {
+        if (grid.GetCell(candidate) == DungeonGrid.CellType.Corridor)
+            return 0f;
+
+        float penalty = 0f;
+        foreach (var dir in Directions)
+        {
+            Vector2Int neighbor = candidate + dir;
+            if (neighbor == current) continue;
+
+            if (grid.GetCell(neighbor) == DungeonGrid.CellType.Corridor)
+                penalty += weight;
+        }
+        return penalty;
     }
 
     private static float Heuristic(Vector2Int a, Vector2Int b)

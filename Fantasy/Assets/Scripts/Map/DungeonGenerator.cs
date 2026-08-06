@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class DungeonGenerator : MonoBehaviour
 {
@@ -23,16 +25,22 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private int seed = 0;
     [SerializeField] private bool useRandomSeed = true;
 
-    [Header("Loops extras (opcional)")]
+    [Header("Loops extras")]
     [SerializeField] private int extraLoopEdges = 0;
 
-    [Header("Corredores (grid)")]
+    [Header("Corredores")]
     [SerializeField] private float cellSize = 1f;
     [SerializeField] private float minCorridorRoomDistance = 1f;
+    [SerializeField] private float corridorHugPenalty = 4f;
 
-    [Header("Visual dos corredores (prefabs)")]
+    [Header("corredores (prefabs)")]
     [SerializeField] private GameObject corridorTilePrefab;
     [SerializeField] private Transform corridorContainer;
+
+    [Header("Paredes (Tilemap)")]
+    [SerializeField] private Tilemap wallTilemap;
+    [SerializeField] private TileBase wallTile;
+    [SerializeField] private int wallPadding = 2;
 
     private readonly List<List<Vector2Int>> _corridorPaths = new List<List<Vector2Int>>();
     public IReadOnlyList<List<Vector2Int>> CorridorPaths => _corridorPaths;
@@ -41,6 +49,10 @@ public class DungeonGenerator : MonoBehaviour
     [Header("Runtime")]
     [SerializeField] private bool generateOnStart = false;
     [SerializeField] private bool regenerateOnEnterKey = true;
+    [SerializeField] private int maxGenerationAttempts = 30;
+
+    private bool _isGenerating;
+    public bool IsGenerating => _isGenerating;
 
     private readonly List<RoomInstance> _placedRooms = new List<RoomInstance>();
     private readonly List<CorridorEdge> _mstEdges = new List<CorridorEdge>();
@@ -64,11 +76,65 @@ public class DungeonGenerator : MonoBehaviour
 
     public void Generate()
     {
+        if (_isGenerating) return;
+
+        if (Application.isPlaying)
+        {
+
+            StartCoroutine(GenerateRoutine());
+        }
+        else
+        {
+            GenerateSync();
+        }
+    }
+
+    private IEnumerator GenerateRoutine()
+    {
+        _isGenerating = true;
+
+        for (int attempt = 1; attempt <= maxGenerationAttempts; attempt++)
+        {
+            if (TryGenerateOnce(attempt))
+            {
+                _isGenerating = false;
+                yield break;
+            }
+
+            Debug.LogWarning($"tentativa {attempt}/{maxGenerationAttempts} falhou, reiniciando");
+            yield return null;
+        }
+
+        Debug.LogError($"cansei na {maxGenerationAttempts} tentativa, Ajuste as variáveis de geração");
+        _isGenerating = false;
+    }
+
+    private void GenerateSync()
+    {
+        _isGenerating = true;
+
+        for (int attempt = 1; attempt <= maxGenerationAttempts; attempt++)
+        {
+            if (TryGenerateOnce(attempt))
+            {
+                _isGenerating = false;
+                return;
+            }
+
+            Debug.LogWarning($"tentativa {attempt}/{maxGenerationAttempts} falhou também, reiniciando");
+        }
+
+        Debug.LogError($"cansei na {maxGenerationAttempts} tentativa, Ajuste as variáveis de geração");
+        _isGenerating = false;
+    }
+
+    private bool TryGenerateOnce(int attemptNumber)
+    {
         Clear();
 
         var rng = useRandomSeed
             ? new System.Random()
-            : new System.Random(seed);
+            : new System.Random(seed + attemptNumber - 1);
 
         PlaceRooms(rng);
         BuildGrid();
@@ -77,13 +143,12 @@ public class DungeonGenerator : MonoBehaviour
         bool carved = CarveCorridors();
 
         if (!carved || !ValidateConnectivity())
-        {
-            Debug.LogWarning("Algo falhou, recriando");
-            Generate();
-            return;
-        }
+            return false;
 
+        ThinCorridorBlobs();
         SpawnCorridorVisuals();
+        FillWalls();
+        return true;
     }
 
     private void Clear()
@@ -93,6 +158,8 @@ public class DungeonGenerator : MonoBehaviour
 
         foreach (var visual in _spawnedCorridorVisuals)
             if (visual != null) DestroyImmediate(visual);
+
+        if (wallTilemap != null) wallTilemap.ClearAllTiles();
 
         _placedRooms.Clear();
         _mstEdges.Clear();
@@ -147,11 +214,11 @@ public class DungeonGenerator : MonoBehaviour
             Vector2Int startCell = Grid.WorldToCell(edge.roomA.EntrancePosition);
             Vector2Int endCell = Grid.WorldToCell(edge.roomB.EntrancePosition);
 
-            List<Vector2Int> path = CorridorCarver.FindPath(Grid, startCell, endCell);
+            List<Vector2Int> path = CorridorCarver.FindPath(Grid, startCell, endCell, corridorHugPenalty);
 
             if (path == null)
             {
-                Debug.LogWarning($"sem caminho entre '{edge.roomA.name}' e '{edge.roomB.name}'");
+                Debug.LogWarning($"Sem caminho entre '{edge.roomA.name}' e '{edge.roomB.name}'");
                 return false;
             }
 
@@ -167,6 +234,70 @@ public class DungeonGenerator : MonoBehaviour
         return true;
     }
 
+    private void ThinCorridorBlobs()
+    {
+        if (Grid == null) return;
+
+        var corridorCells = new HashSet<Vector2Int>();
+        foreach (var kvp in Grid.AllCells)
+            if (kvp.Value == DungeonGrid.CellType.Corridor)
+                corridorCells.Add(kvp.Key);
+
+        foreach (var cell in corridorCells.ToList())
+        {
+            if (!corridorCells.Contains(cell)) continue;
+
+            var quad = new[]
+            {
+                cell,
+                cell + Vector2Int.right,
+                cell + Vector2Int.up,
+                cell + new Vector2Int(1, 1)
+            };
+
+            if (!quad.All(c => corridorCells.Contains(c))) continue;
+
+            Vector2Int? toRemove = PickSafeRemoval(quad, corridorCells);
+            if (toRemove == null) continue;
+
+            Grid.SetCell(toRemove.Value, DungeonGrid.CellType.Empty);
+            corridorCells.Remove(toRemove.Value);
+        }
+    }
+
+    private static Vector2Int? PickSafeRemoval(Vector2Int[] quad, HashSet<Vector2Int> corridorCells)
+    {
+        foreach (var corner in quad)
+        {
+            bool hasExternalConnection = false;
+
+            foreach (var dir in new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right })
+            {
+                Vector2Int neighbor = corner + dir;
+                if (quad.Contains(neighbor)) continue;
+
+                if (corridorCells.Contains(neighbor))
+                {
+                    hasExternalConnection = true;
+                    break;
+                }
+            }
+
+            if (!hasExternalConnection) return corner;
+        }
+
+        return null;
+    }
+
+    private Vector3 GetAlignedWorldPos(Vector2Int cell)
+    {
+        Vector3 rawWorldPos = Grid.CellToWorld(cell);
+        if (wallTilemap == null) return rawWorldPos;
+
+        Vector3Int tileCell = wallTilemap.WorldToCell(rawWorldPos);
+        return wallTilemap.GetCellCenterWorld(tileCell);
+    }
+
     private void SpawnCorridorVisuals()
     {
         if (corridorTilePrefab == null || Grid == null) return;
@@ -177,10 +308,62 @@ public class DungeonGenerator : MonoBehaviour
         {
             if (kvp.Value != DungeonGrid.CellType.Corridor) continue;
 
-            Vector2 worldPos = Grid.CellToWorld(kvp.Key);
+            Vector3 worldPos = GetAlignedWorldPos(kvp.Key);
             GameObject visual = Instantiate(corridorTilePrefab, worldPos, Quaternion.identity, parent);
             _spawnedCorridorVisuals.Add(visual);
         }
+    }
+
+    private void FillWalls()
+    {
+        if (wallTilemap == null || wallTile == null || Grid == null) return;
+
+        if (!TryGetContentCellBounds(out int minX, out int maxX, out int minY, out int maxY))
+            return;
+
+        int width = maxX - minX + 1;
+        int height = maxY - minY + 1;
+        int side = Mathf.Max(width, height) + wallPadding * 2;
+
+        int centerX = Mathf.RoundToInt((minX + maxX) / 2f);
+        int centerY = Mathf.RoundToInt((minY + maxY) / 2f);
+        int half = side / 2;
+
+        int squareMinX = centerX - half;
+        int squareMinY = centerY - half;
+
+        for (int x = 0; x < side; x++)
+        {
+            for (int y = 0; y < side; y++)
+            {
+                var cell = new Vector2Int(squareMinX + x, squareMinY + y);
+
+                DungeonGrid.CellType type = Grid.GetCell(cell);
+                if (type == DungeonGrid.CellType.Room || type == DungeonGrid.CellType.Corridor) continue;
+
+                Vector3 worldPos = Grid.CellToWorld(cell);
+                Vector3Int tileCell = wallTilemap.WorldToCell(worldPos);
+                wallTilemap.SetTile(tileCell, wallTile);
+            }
+        }
+    }
+
+    private bool TryGetContentCellBounds(out int minX, out int maxX, out int minY, out int maxY)
+    {
+        minX = minY = int.MaxValue;
+        maxX = maxY = int.MinValue;
+
+        bool any = false;
+        foreach (var kvp in Grid.AllCells)
+        {
+            any = true;
+            if (kvp.Key.x < minX) minX = kvp.Key.x;
+            if (kvp.Key.x > maxX) maxX = kvp.Key.x;
+            if (kvp.Key.y < minY) minY = kvp.Key.y;
+            if (kvp.Key.y > maxY) maxY = kvp.Key.y;
+        }
+
+        return any;
     }
 
     private void PlaceRooms(System.Random rng)
@@ -192,7 +375,7 @@ public class DungeonGenerator : MonoBehaviour
 
             bool placed = TryPlaceRoom(data, rng);
             if (!placed)
-                Debug.LogWarning($"Não consegui colocar '{data.roomName}' depois de {maxAttemptsPerRoom} tentativas");
+                Debug.LogWarning($"não deu pra colocar '{data.roomName}' mesmo com {maxAttemptsPerRoom} tentativas");
         }
     }
 
@@ -201,13 +384,14 @@ public class DungeonGenerator : MonoBehaviour
         for (int attempt = 0; attempt < maxAttemptsPerRoom; attempt++)
         {
             Vector2 candidatePos = RandomPointInCircle(rng, placementRadius);
+            candidatePos = SnapToGrid(candidatePos);
 
             GameObject go = Instantiate(data.prefab, candidatePos, Quaternion.identity, transform);
             RoomInstance instance = go.GetComponent<RoomInstance>();
 
             if (instance == null)
             {
-                Debug.LogError($"prefab '{data.prefab.name}' não tem RoomInstance.");
+                Debug.LogError($"prefab '{data.prefab.name}' não tem RoomInstance");
                 DestroyImmediate(go);
                 return false;
             }
@@ -260,6 +444,13 @@ public class DungeonGenerator : MonoBehaviour
         float angle = (float)(rng.NextDouble() * Mathf.PI * 2);
         float r = radius * Mathf.Sqrt((float)rng.NextDouble());
         return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * r;
+    }
+
+    private Vector2 SnapToGrid(Vector2 worldPos)
+    {
+        return new Vector2(
+            Mathf.Round(worldPos.x / cellSize) * cellSize,
+            Mathf.Round(worldPos.y / cellSize) * cellSize);
     }
 
     private void BuildConnectionGraph()

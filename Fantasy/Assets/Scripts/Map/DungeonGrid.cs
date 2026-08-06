@@ -40,12 +40,18 @@ public class DungeonGrid
 
     public void MarkRoomBounds(Bounds worldBounds)
     {
-        Vector2Int min = WorldToCell(worldBounds.min);
-        Vector2Int max = WorldToCell(worldBounds.max);
+        Vector2Int centerCell = WorldToCell(worldBounds.center);
+        int widthCells = Mathf.Max(1, Mathf.RoundToInt(worldBounds.size.x / CellSize));
+        int heightCells = Mathf.Max(1, Mathf.RoundToInt(worldBounds.size.y / CellSize));
 
-        for (int x = min.x; x <= max.x; x++)
+        int minX = centerCell.x - widthCells / 2;
+        int maxX = minX + widthCells - 1;
+        int minY = centerCell.y - heightCells / 2;
+        int maxY = minY + heightCells - 1;
+
+        for (int x = minX; x <= maxX; x++)
         {
-            for (int y = min.y; y <= max.y; y++)
+            for (int y = minY; y <= maxY; y++)
             {
                 SetCell(new Vector2Int(x, y), CellType.Room);
             }
