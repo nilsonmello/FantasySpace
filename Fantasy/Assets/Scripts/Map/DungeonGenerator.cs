@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.Rendering.Universal; // ShadowCaster2D / CompositeShadowCaster2D
+// Se seu URP for anterior à versão 14 (Unity < 2022.2/6), troque por:
+// using UnityEngine.Experimental.Rendering.Universal;
 
 public class DungeonGenerator : MonoBehaviour
 {
@@ -57,6 +60,16 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private TileBase wallTile;
     [SerializeField] private int wallPadding = 2;
 
+    [Header("Sombras das paredes (Light 2D)")]
+    [Tooltip("Gera um ShadowCaster2D por tile de parede, em vez de depender da silhueta do tilemap. " +
+             "Evita o problema dos 'buracos' internos (salas) não bloquearem/deixarem passar luz corretamente.")]
+    [SerializeField] private bool generateWallShadowCasters = true;
+
+    [Tooltip("Transform que vai agrupar os shadow casters gerados. " +
+             "Recomendado colocar um CompositeShadowCaster2D nesse objeto para evitar auto-sombreamento " +
+             "nas bordas entre tiles de parede vizinhos.")]
+    [SerializeField] private Transform wallShadowContainer;
+
     private readonly List<List<Vector2Int>> _corridorPaths = new List<List<Vector2Int>>();
     public IReadOnlyList<List<Vector2Int>> CorridorPaths => _corridorPaths;
     public DungeonGrid Grid { get; private set; }
@@ -73,6 +86,7 @@ public class DungeonGenerator : MonoBehaviour
     private readonly List<CorridorEdge> _mstEdges = new List<CorridorEdge>();
     private readonly List<GameObject> _spawnedCorridorVisuals = new List<GameObject>();
     private readonly List<GameObject> _spawnedCorridorProps = new List<GameObject>();
+    private readonly List<GameObject> _spawnedWallShadowCasters = new List<GameObject>();
 
     public IReadOnlyList<RoomInstance> PlacedRooms => _placedRooms;
     public IReadOnlyList<CorridorEdge> ConnectionGraph => _mstEdges;
@@ -169,6 +183,7 @@ public class DungeonGenerator : MonoBehaviour
         SpawnCorridorVisuals();
         SpawnCorridorProps(rng);
         FillWalls();
+        GenerateWallShadowCasters();
         return true;
     }
 
@@ -183,6 +198,9 @@ public class DungeonGenerator : MonoBehaviour
         foreach (var prop in _spawnedCorridorProps)
             if (prop != null) DestroyImmediate(prop);
 
+        foreach (var shadowCaster in _spawnedWallShadowCasters)
+            if (shadowCaster != null) DestroyImmediate(shadowCaster);
+
         if (wallTilemap != null) wallTilemap.ClearAllTiles();
 
         _placedRooms.Clear();
@@ -190,6 +208,7 @@ public class DungeonGenerator : MonoBehaviour
         _corridorPaths.Clear();
         _spawnedCorridorVisuals.Clear();
         _spawnedCorridorProps.Clear();
+        _spawnedWallShadowCasters.Clear();
         Grid = null;
     }
 
@@ -436,6 +455,114 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
+    private void GenerateWallShadowCasters()
+    {
+        if (!generateWallShadowCasters || wallTilemap == null || Grid == null) return;
+
+        if (!TryGetContentCellBounds(out int minX, out int maxX, out int minY, out int maxY))
+            return;
+
+        int width = maxX - minX + 1;
+        int height = maxY - minY + 1;
+        int side = Mathf.Max(width, height) + wallPadding * 2;
+
+        int centerX = Mathf.RoundToInt((minX + maxX) / 2f);
+        int centerY = Mathf.RoundToInt((minY + maxY) / 2f);
+        int half = side / 2;
+
+        int squareMinX = centerX - half;
+        int squareMinY = centerY - half;
+
+        var isWall = new bool[side, side];
+        for (int x = 0; x < side; x++)
+        {
+            for (int y = 0; y < side; y++)
+            {
+                var cell = new Vector2Int(squareMinX + x, squareMinY + y);
+                DungeonGrid.CellType type = Grid.GetCell(cell);
+                isWall[x, y] = type != DungeonGrid.CellType.Room && type != DungeonGrid.CellType.Corridor;
+            }
+        }
+
+        var visited = new bool[side, side];
+        Transform parent = wallShadowContainer != null ? wallShadowContainer : transform;
+
+        for (int x = 0; x < side; x++)
+        {
+            for (int y = 0; y < side; y++)
+            {
+                if (!isWall[x, y] || visited[x, y]) continue;
+
+                int w = 1;
+                while (x + w < side && isWall[x + w, y] && !visited[x + w, y]) w++;
+
+                int h = 1;
+                bool canExpand = true;
+                while (y + h < side && canExpand)
+                {
+                    for (int dx = 0; dx < w; dx++)
+                    {
+                        if (!isWall[x + dx, y + h] || visited[x + dx, y + h])
+                        {
+                            canExpand = false;
+                            break;
+                        }
+                    }
+                    if (canExpand) h++;
+                }
+
+                for (int dx = 0; dx < w; dx++)
+                    for (int dy = 0; dy < h; dy++)
+                        visited[x + dx, y + dy] = true;
+
+                var minCell = new Vector2Int(squareMinX + x, squareMinY + y);
+                var maxCell = new Vector2Int(squareMinX + x + w - 1, squareMinY + y + h - 1);
+
+                Vector3 minWorld = GetAlignedWorldPos(minCell);
+                Vector3 maxWorld = GetAlignedWorldPos(maxCell);
+
+                _spawnedWallShadowCasters.Add(CreateRectShadowCaster(minWorld, maxWorld, parent));
+            }
+        }
+    }
+
+    private GameObject CreateRectShadowCaster(Vector3 minCellWorld, Vector3 maxCellWorld, Transform parent)
+    {
+        Vector3 tileWorldSize = wallTilemap != null
+            ? Vector3.Scale(wallTilemap.cellSize, wallTilemap.transform.lossyScale)
+            : new Vector3(cellSize, cellSize, 0f);
+
+        float hx = tileWorldSize.x * 0.5f;
+        float hy = tileWorldSize.y * 0.5f;
+
+        Vector3 rectMin = minCellWorld - new Vector3(hx, hy, 0f);
+        Vector3 rectMax = maxCellWorld + new Vector3(hx, hy, 0f);
+
+        Vector3 center = (rectMin + rectMax) * 0.5f;
+        Vector3 halfSize = (rectMax - rectMin) * 0.5f;
+
+        var go = new GameObject("WallShadowCaster");
+        go.transform.SetParent(parent, false);
+        go.transform.position = center;
+
+        var path = new[]
+        {
+            new Vector3(-halfSize.x, -halfSize.y, 0f),
+            new Vector3( halfSize.x, -halfSize.y, 0f),
+            new Vector3( halfSize.x,  halfSize.y, 0f),
+            new Vector3(-halfSize.x,  halfSize.y, 0f),
+        };
+
+        var caster = go.AddComponent<ShadowCaster2D>();
+        caster.SetPath(path);
+        caster.SetPathHash(Random.Range(int.MinValue, int.MaxValue));
+        caster.useRendererSilhouette = false;
+        caster.castsShadows = true;
+        caster.selfShadows = false;
+
+        return go;
+    }
+
     private bool TryGetContentCellBounds(out int minX, out int maxX, out int minY, out int maxY)
     {
         minX = minY = int.MaxValue;
@@ -479,7 +606,6 @@ public class DungeonGenerator : MonoBehaviour
 
             if (instance == null)
             {
-                Debug.LogError($"prefab '{data.prefab.name}' não tem RoomInstance");
                 DestroyImmediate(go);
                 return false;
             }
