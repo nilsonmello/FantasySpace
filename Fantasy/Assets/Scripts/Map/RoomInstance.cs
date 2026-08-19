@@ -11,6 +11,10 @@ public class RoomInstance : MonoBehaviour
     [Tooltip("Para onde a porta tá virada.")]
     [SerializeField] private Direction entranceDirection;
 
+    [Header("Pontos de spawn/saída (opcional)")]
+    [SerializeField] private string spawnPointTag = "SpawnPoint";
+    [SerializeField] private string exitPointTag = "ExitPoint";
+
     private BoxCollider2D _bounds;
 
     public RoomData SourceData { get; private set; }
@@ -44,9 +48,24 @@ public class RoomInstance : MonoBehaviour
         }
     }
 
+    public Vector3 SpawnPosition => FindPointByTag(spawnPointTag, WorldBounds.center);
+    public Vector3 ExitPosition => FindPointByTag(exitPointTag, WorldBounds.center);
+
     public void Initialize(RoomData sourceData)
     {
         SourceData = sourceData;
+    }
+
+    private Vector3 FindPointByTag(string tag, Vector3 fallback)
+    {
+        foreach (Transform child in GetComponentsInChildren<Transform>())
+        {
+            if (child.CompareTag(tag))
+                return child.position;
+        }
+
+        Debug.LogWarning($"Sala '{name}' não tem objeto com tag '{tag}', usando fallback ({fallback})");
+        return fallback;
     }
 
     private void OnDrawGizmosSelected()

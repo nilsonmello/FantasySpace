@@ -67,6 +67,23 @@ public class DungeonGenerator : MonoBehaviour
 
     [SerializeField] private Transform wallShadowContainer;
 
+    [Header("Player")]
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private bool spawnPlayerOnGeneration = true;
+
+    [Header("Saída da Dungeon")]
+    [SerializeField] private GameObject exitMarkerPrefab;
+    [SerializeField] private bool spawnExitMarkerOnGeneration = true;
+
+    private GameObject _spawnedPlayer;
+    private GameObject _spawnedExitMarker;
+
+    private RoomInstance _startRoom;
+    private RoomInstance _exitRoom;
+
+    public RoomInstance StartRoom => _startRoom;
+    public RoomInstance ExitRoom => _exitRoom;
+
     private readonly List<List<Vector2Int>> _corridorPaths = new List<List<Vector2Int>>();
     public IReadOnlyList<List<Vector2Int>> CorridorPaths => _corridorPaths;
     public DungeonGrid Grid { get; private set; }
@@ -170,6 +187,7 @@ public class DungeonGenerator : MonoBehaviour
         PlaceRooms(rng);
         BuildGrid();
         BuildConnectionGraph();
+        DetermineStartAndExitRooms();
 
         bool carved = CarveCorridors();
 
@@ -183,6 +201,8 @@ public class DungeonGenerator : MonoBehaviour
         SpawnCorridorProps(rng);
         FillWalls();
         GenerateWallShadowCasters();
+        SpawnPlayer();
+        SpawnExitMarker();
         return true;
     }
 
@@ -200,6 +220,8 @@ public class DungeonGenerator : MonoBehaviour
         foreach (var shadowCaster in _spawnedWallShadowCasters)
             if (shadowCaster != null) DestroyImmediate(shadowCaster);
 
+        if (_spawnedExitMarker != null) DestroyImmediate(_spawnedExitMarker);
+
         if (wallTilemap != null) wallTilemap.ClearAllTiles();
 
         _placedRooms.Clear();
@@ -208,7 +230,92 @@ public class DungeonGenerator : MonoBehaviour
         _spawnedCorridorVisuals.Clear();
         _spawnedCorridorProps.Clear();
         _spawnedWallShadowCasters.Clear();
+        _startRoom = null;
+        _exitRoom = null;
         Grid = null;
+    }
+
+    private void DetermineStartAndExitRooms()
+    {
+        _startRoom = null;
+        _exitRoom = null;
+
+        if (_placedRooms.Count == 0) return;
+
+        _startRoom = _placedRooms
+            .OrderBy(r => ((Vector2)r.WorldBounds.center).sqrMagnitude)
+            .First();
+
+        _exitRoom = FindFarthestRoomByGraphDistance(_startRoom);
+    }
+
+    private RoomInstance FindFarthestRoomByGraphDistance(RoomInstance from)
+    {
+        var adjacency = new Dictionary<RoomInstance, List<(RoomInstance neighbor, float dist)>>();
+        foreach (var room in _placedRooms)
+            adjacency[room] = new List<(RoomInstance, float)>();
+
+        foreach (var edge in _mstEdges)
+        {
+            adjacency[edge.roomA].Add((edge.roomB, edge.distance));
+            adjacency[edge.roomB].Add((edge.roomA, edge.distance));
+        }
+
+        var distances = new Dictionary<RoomInstance, float>();
+        foreach (var room in _placedRooms) distances[room] = float.MaxValue;
+        distances[from] = 0f;
+
+        var visited = new HashSet<RoomInstance>();
+        var pending = new List<RoomInstance> { from };
+
+        while (pending.Count > 0)
+        {
+            pending.Sort((a, b) => distances[a].CompareTo(distances[b]));
+            RoomInstance current = pending[0];
+            pending.RemoveAt(0);
+
+            if (!visited.Add(current)) continue;
+
+            foreach (var (neighbor, edgeDist) in adjacency[current])
+            {
+                float newDist = distances[current] + edgeDist;
+                if (newDist < distances[neighbor])
+                {
+                    distances[neighbor] = newDist;
+                    pending.Add(neighbor);
+                }
+            }
+        }
+
+        return distances.OrderByDescending(kvp => kvp.Value).First().Key;
+    }
+
+    private void SpawnPlayer()
+    {
+        if (!spawnPlayerOnGeneration || playerPrefab == null || StartRoom == null) return;
+
+        Vector3 spawnPos = StartRoom.SpawnPosition;
+
+        if (_spawnedPlayer == null)
+        {
+            _spawnedPlayer = Instantiate(playerPrefab, spawnPos, Quaternion.identity);
+        }
+        else
+        {
+            _spawnedPlayer.transform.position = spawnPos;
+        }
+    }
+
+    private void SpawnExitMarker()
+    {
+        if (!spawnExitMarkerOnGeneration || exitMarkerPrefab == null || ExitRoom == null) return;
+
+        Vector3 exitPos = ExitRoom.ExitPosition;
+
+        if (_spawnedExitMarker != null)
+            DestroyImmediate(_spawnedExitMarker);
+
+        _spawnedExitMarker = Instantiate(exitMarkerPrefab, exitPos, Quaternion.identity, transform);
     }
 
     private void BuildGrid()
