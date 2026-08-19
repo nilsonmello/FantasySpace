@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.Rendering.Universal; // ShadowCaster2D / CompositeShadowCaster2D
-// Se seu URP for anterior à versão 14 (Unity < 2022.2/6), troque por:
-// using UnityEngine.Experimental.Rendering.Universal;
+using UnityEngine.Rendering.Universal;
 
 public class DungeonGenerator : MonoBehaviour
 {
@@ -48,6 +46,10 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private float minCorridorRoomDistance = 1f;
     [SerializeField] private float corridorHugPenalty = 4f;
 
+    [SerializeField, Min(1)] private int corridorWidth = 1;
+
+    [SerializeField, Min(0)] private int minCorridorSpacing = 0;
+
     [Header("corredores (prefabs)")]
     [SerializeField] private GameObject corridorTilePrefab;
     [SerializeField] private Transform corridorContainer;
@@ -61,13 +63,8 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private int wallPadding = 2;
 
     [Header("Sombras das paredes (Light 2D)")]
-    [Tooltip("Gera um ShadowCaster2D por tile de parede, em vez de depender da silhueta do tilemap. " +
-             "Evita o problema dos 'buracos' internos (salas) não bloquearem/deixarem passar luz corretamente.")]
     [SerializeField] private bool generateWallShadowCasters = true;
 
-    [Tooltip("Transform que vai agrupar os shadow casters gerados. " +
-             "Recomendado colocar um CompositeShadowCaster2D nesse objeto para evitar auto-sombreamento " +
-             "nas bordas entre tiles de parede vizinhos.")]
     [SerializeField] private Transform wallShadowContainer;
 
     private readonly List<List<Vector2Int>> _corridorPaths = new List<List<Vector2Int>>();
@@ -179,7 +176,9 @@ public class DungeonGenerator : MonoBehaviour
         if (!carved || !ValidateConnectivity())
             return false;
 
-        ThinCorridorBlobs();
+        if (corridorWidth <= 1)
+            ThinCorridorBlobs();
+
         SpawnCorridorVisuals();
         SpawnCorridorProps(rng);
         FillWalls();
@@ -230,7 +229,7 @@ public class DungeonGenerator : MonoBehaviour
         {
             Vector2Int entranceCell = Grid.WorldToCell(room.EntrancePosition);
             Vector2Int exitDir = ComputeExitDirection(room.WorldBounds, room.EntrancePosition);
-            Grid.MarkEntrance(entranceCell, exitDir, bufferCells);
+            Grid.MarkEntrance(entranceCell, exitDir, bufferCells, corridorWidth);
         }
     }
 
@@ -266,16 +265,54 @@ public class DungeonGenerator : MonoBehaviour
                 return false;
             }
 
-            foreach (var cell in path)
+            HashSet<Vector2Int> widened = WidenPath(path, corridorWidth);
+
+            foreach (var cell in widened)
             {
-                if (Grid.GetCell(cell) != DungeonGrid.CellType.Room)
-                    Grid.SetCell(cell, DungeonGrid.CellType.Corridor);
+                DungeonGrid.CellType existing = Grid.GetCell(cell);
+                if (existing == DungeonGrid.CellType.Room || existing == DungeonGrid.CellType.Buffer)
+                    continue;
+
+                Grid.SetCell(cell, DungeonGrid.CellType.Corridor);
             }
+
+            if (minCorridorSpacing > 0)
+                Grid.MarkCorridorBuffer(widened, minCorridorSpacing);
 
             _corridorPaths.Add(path);
         }
 
         return true;
+    }
+
+    private static HashSet<Vector2Int> WidenPath(List<Vector2Int> path, int width)
+    {
+        var result = new HashSet<Vector2Int>(path);
+        if (width <= 1 || path.Count == 0) return result;
+
+        int startOffset = -(width - 1) / 2;
+        int endOffset = width / 2;
+
+        for (int i = 0; i < path.Count; i++)
+        {
+            Vector2Int cell = path[i];
+
+            if (i > 0)
+                AddPerpendicularOffsets(result, cell, path[i] - path[i - 1], startOffset, endOffset);
+
+            if (i < path.Count - 1)
+                AddPerpendicularOffsets(result, cell, path[i + 1] - path[i], startOffset, endOffset);
+        }
+
+        return result;
+    }
+
+    private static void AddPerpendicularOffsets(HashSet<Vector2Int> result, Vector2Int cell, Vector2Int dir, int startOffset, int endOffset)
+    {
+        var perpendicular = new Vector2Int(-dir.y, dir.x);
+
+        for (int offset = startOffset; offset <= endOffset; offset++)
+            result.Add(cell + perpendicular * offset);
     }
 
     private void ThinCorridorBlobs()
@@ -333,7 +370,7 @@ public class DungeonGenerator : MonoBehaviour
         return null;
     }
 
-    private Vector3 GetAlignedWorldPos(Vector2Int cell)
+    public Vector3 GetAlignedWorldPos(Vector2Int cell)
     {
         Vector3 rawWorldPos = Grid.CellToWorld(cell);
         if (wallTilemap == null) return rawWorldPos;

@@ -78,6 +78,27 @@ public class DungeonGrid
         }
     }
 
+    public void MarkCorridorBuffer(IEnumerable<Vector2Int> corridorCells, int bufferCells)
+    {
+        if (bufferCells <= 0) return;
+
+        foreach (var origin in corridorCells)
+        {
+            for (int x = -bufferCells; x <= bufferCells; x++)
+            {
+                for (int y = -bufferCells; y <= bufferCells; y++)
+                {
+                    var cell = origin + new Vector2Int(x, y);
+                    CellType existing = GetCell(cell);
+                    if (existing == CellType.Room || existing == CellType.Corridor || existing == CellType.Buffer)
+                        continue;
+
+                    SetCell(cell, CellType.Buffer);
+                }
+            }
+        }
+    }
+
     public void MarkEntrance(Vector2Int cell)
     {
         SetCell(cell, CellType.Empty);
@@ -85,13 +106,39 @@ public class DungeonGrid
 
     public void MarkEntrance(Vector2Int cell, Vector2Int exitDirection, int clearanceCells)
     {
-        SetCell(cell, CellType.Empty);
+        MarkEntrance(cell, exitDirection, clearanceCells, 1);
+    }
+
+    public void MarkEntrance(Vector2Int cell, Vector2Int exitDirection, int clearanceCells, int width)
+    {
+        ClearDoorwayStrip(cell, exitDirection, width);
 
         Vector2Int cursor = cell;
         for (int i = 0; i < clearanceCells; i++)
         {
             cursor += exitDirection;
-            SetCell(cursor, CellType.Empty);
+            ClearDoorwayStrip(cursor, exitDirection, width);
+        }
+    }
+
+    private void ClearDoorwayStrip(Vector2Int center, Vector2Int exitDirection, int width)
+    {
+        if (width <= 1)
+        {
+            if (GetCell(center) != CellType.Room)
+                SetCell(center, CellType.Empty);
+            return;
+        }
+
+        var perpendicular = new Vector2Int(-exitDirection.y, exitDirection.x);
+        int startOffset = -(width - 1) / 2;
+        int endOffset = width / 2;
+
+        for (int offset = startOffset; offset <= endOffset; offset++)
+        {
+            Vector2Int c = center + perpendicular * offset;
+            if (GetCell(c) != CellType.Room)
+                SetCell(c, CellType.Empty);
         }
     }
 
