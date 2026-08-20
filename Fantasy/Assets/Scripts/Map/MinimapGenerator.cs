@@ -45,6 +45,17 @@ public class MinimapGenerator : MonoBehaviour
     private void Update()
     {
         if (_hasValidBounds) UpdatePlayerMarker();
+
+        FindPlayerTransform();
+    }
+
+    private void FindPlayerTransform()
+    {
+        if (playerTransform != null) return;
+
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player != null)
+            playerTransform = player.transform;
     }
 
     public void BuildMinimap()
