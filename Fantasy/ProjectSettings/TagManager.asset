@@ -15,7 +15,7 @@ TagManager:
   - UI
   - Wall
   - RoomPoint
-  - 
+  - Darkness
   - 
   - 
   - 
@@ -42,6 +42,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: TileAndShadows
+    uniqueID: 1432780793
     locked: 0
   m_RenderingLayers:
   - Default

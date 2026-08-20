@@ -84,6 +84,9 @@ public class DungeonGenerator : MonoBehaviour
     public RoomInstance StartRoom => _startRoom;
     public RoomInstance ExitRoom => _exitRoom;
 
+    public float PlacementRadius => placementRadius;
+    public int WallPadding => wallPadding;
+
     private readonly List<List<Vector2Int>> _corridorPaths = new List<List<Vector2Int>>();
     public IReadOnlyList<List<Vector2Int>> CorridorPaths => _corridorPaths;
     public DungeonGrid Grid { get; private set; }
@@ -569,19 +572,8 @@ public class DungeonGenerator : MonoBehaviour
     {
         if (wallTilemap == null || wallTile == null || Grid == null) return;
 
-        if (!TryGetContentCellBounds(out int minX, out int maxX, out int minY, out int maxY))
+        if (!GetWallSquareBounds(out int squareMinX, out int squareMinY, out int side))
             return;
-
-        int width = maxX - minX + 1;
-        int height = maxY - minY + 1;
-        int side = Mathf.Max(width, height) + wallPadding * 2;
-
-        int centerX = Mathf.RoundToInt((minX + maxX) / 2f);
-        int centerY = Mathf.RoundToInt((minY + maxY) / 2f);
-        int half = side / 2;
-
-        int squareMinX = centerX - half;
-        int squareMinY = centerY - half;
 
         for (int x = 0; x < side; x++)
         {
@@ -603,19 +595,8 @@ public class DungeonGenerator : MonoBehaviour
     {
         if (!generateWallShadowCasters || wallTilemap == null || Grid == null) return;
 
-        if (!TryGetContentCellBounds(out int minX, out int maxX, out int minY, out int maxY))
+        if (!GetWallSquareBounds(out int squareMinX, out int squareMinY, out int side))
             return;
-
-        int width = maxX - minX + 1;
-        int height = maxY - minY + 1;
-        int side = Mathf.Max(width, height) + wallPadding * 2;
-
-        int centerX = Mathf.RoundToInt((minX + maxX) / 2f);
-        int centerY = Mathf.RoundToInt((minY + maxY) / 2f);
-        int half = side / 2;
-
-        int squareMinX = centerX - half;
-        int squareMinY = centerY - half;
 
         var isWall = new bool[side, side];
         for (int x = 0; x < side; x++)
@@ -723,6 +704,30 @@ public class DungeonGenerator : MonoBehaviour
         }
 
         return any;
+    }
+
+    // Bounds do "quadrado" quadriculado usado tanto pro preenchimento de
+    // paredes quanto pros shadow casters (e agora tambem pela mascara
+    // organica). Centralizado aqui pra nao duplicar essa conta em varios
+    // lugares.
+    public bool GetWallSquareBounds(out int squareMinX, out int squareMinY, out int side)
+    {
+        squareMinX = squareMinY = side = 0;
+
+        if (!TryGetContentCellBounds(out int minX, out int maxX, out int minY, out int maxY))
+            return false;
+
+        int width = maxX - minX + 1;
+        int height = maxY - minY + 1;
+        side = Mathf.Max(width, height) + wallPadding * 2;
+
+        int centerX = Mathf.RoundToInt((minX + maxX) / 2f);
+        int centerY = Mathf.RoundToInt((minY + maxY) / 2f);
+        int half = side / 2;
+
+        squareMinX = centerX - half;
+        squareMinY = centerY - half;
+        return true;
     }
 
     private void PlaceRooms(System.Random rng)

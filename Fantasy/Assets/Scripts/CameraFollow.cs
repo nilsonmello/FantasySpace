@@ -13,9 +13,9 @@ public class CameraFollow : MonoBehaviour
 
     [Header("Detecção")]
     public LayerMask targetLayer;
+
     public float detectionRadius = 20f;
     public float exitBuffer = 2f;
-
     public Transform cameraTarget;
     private Transform followProxy;
     private Collider2D activeRoomCollider;
@@ -68,7 +68,9 @@ public class CameraFollow : MonoBehaviour
             return;
         }
 
-        float radius = activeRoomCollider != null ? detectionRadius + exitBuffer : detectionRadius;
+        float radius = activeRoomCollider != null
+            ? detectionRadius + exitBuffer
+            : detectionRadius;
 
         Collider2D hit = Physics2D.OverlapCircle(playerTarget.position, radius, targetLayer);
 
@@ -90,6 +92,10 @@ public class CameraFollow : MonoBehaviour
 
         if (cameraTarget == null || followProxy == null) return;
 
-        followProxy.position = Vector3.Lerp(followProxy.position, cameraTarget.position, 1f - Mathf.Exp(-followSpeed * Time.deltaTime));
+        followProxy.position = Vector3.Lerp(
+            followProxy.position,
+            cameraTarget.position,
+            1f - Mathf.Exp(-followSpeed * Time.deltaTime)
+        );
     }
 }
