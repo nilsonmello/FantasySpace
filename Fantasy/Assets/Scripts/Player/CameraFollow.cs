@@ -16,6 +16,10 @@ public class CameraFollow : MonoBehaviour
 
     public float detectionRadius = 20f;
     public float exitBuffer = 2f;
+
+    [Header("CamPoint")]
+    public string camPointTag = "CamPoint";
+
     public Transform cameraTarget;
     private Transform followProxy;
     private Collider2D activeRoomCollider;
@@ -76,14 +80,34 @@ public class CameraFollow : MonoBehaviour
 
         if (hit != null)
         {
-            roomPoint = hit.transform;
-            activeRoomCollider = hit;
+            Transform camPoint = FindCamPoint(hit.transform);
+
+            if (camPoint != null)
+            {
+                roomPoint = camPoint;
+                activeRoomCollider = hit;
+            }
+            else
+            {
+                roomPoint = null;
+                activeRoomCollider = null;
+            }
         }
         else
         {
             roomPoint = null;
             activeRoomCollider = null;
         }
+    }
+
+    private Transform FindCamPoint(Transform room)
+    {
+        foreach (Transform t in room.GetComponentsInChildren<Transform>(true))
+        {
+            if (t.CompareTag(camPointTag))
+                return t;
+        }
+        return null;
     }
 
     private void UpdateFollowProxy()

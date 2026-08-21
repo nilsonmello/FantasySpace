@@ -6,6 +6,8 @@ TagManager:
   tags:
   - SpawnPoint
   - ExitPoint
+  - RoomPoint
+  - CamPoint
   layers:
   - Default
   - TransparentFX

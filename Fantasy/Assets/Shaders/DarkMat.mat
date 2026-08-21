@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DarkMat
+  m_Shader: {fileID: 4800000, guid: 6297a4d3d3a7dd6469dd02bc405d3942, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MaskTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BlobDensity: 0.5
+    - _BlobDriftAmount: 0.25
+    - _BlobDriftSpeed: 0.15
+    - _BlobGridScale: 28
+    - _BlobRadiusMax: 0.7
+    - _BlobRadiusMin: 0.35
+    - _BubbleRadius: 0.652
+    - _BubbleRadiusMax: 1
+    - _BubbleRadiusMin: 1
+    - _BubbleScale: 41.68
+    - _DriftAmount: 0
+    - _DriftSpeed: 0.4
+    - _EdgeBand: 0.15
+    - _EdgeBandWidth: 0.5
+    - _EdgeNoiseAmount: 0.936
+    - _EdgeShadeWidth: 0.3
+    - _FleckFrequency: 0.55
+    - _FleckProbabilityFar: 0
+    - _FleckProbabilityNear: 1
+    - _FleckRadius: 0.207
+    - _FleckReach: 5
+    - _PixelsPerUnit: 32
+    - _PulseAmount: 1
+    - _PulseSpeed: 0
+    - _SpikeFrequency: 19.72
+    - _SpikeReach: 2.5
+    - _SpikeThresholdNear: 1
+    - _WallNoiseAmount: 1
+    - _WarpFrequency: 3
+    - _WarpStrength: -0.34
+    - _WaveSpeed: 0.21
+    - _WorldSize: 129
+    m_Colors:
+    - _EdgeShadeColor: {r: 0.14999998, g: 0.14999998, b: 0.14999998, a: 1}
+    - _WallColor: {r: 0.03, g: 0.03, b: 0.03, a: 1}
+    - _WallNoiseColor: {r: 0.06999998, g: 0.06999998, b: 0.06999998, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

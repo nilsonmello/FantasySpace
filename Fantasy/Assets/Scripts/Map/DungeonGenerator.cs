@@ -706,10 +706,6 @@ public class DungeonGenerator : MonoBehaviour
         return any;
     }
 
-    // Bounds do "quadrado" quadriculado usado tanto pro preenchimento de
-    // paredes quanto pros shadow casters (e agora tambem pela mascara
-    // organica). Centralizado aqui pra nao duplicar essa conta em varios
-    // lugares.
     public bool GetWallSquareBounds(out int squareMinX, out int squareMinY, out int side)
     {
         squareMinX = squareMinY = side = 0;
