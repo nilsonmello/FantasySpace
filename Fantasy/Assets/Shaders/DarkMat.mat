@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: DarkMat
-  m_Shader: {fileID: 4800000, guid: 6297a4d3d3a7dd6469dd02bc405d3942, type: 3}
+  m_Shader: {fileID: 4800000, guid: 7914ba5f5b5eb1c45a513ca40f9eebf3, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -50,17 +50,18 @@ Material:
     - _FleckProbabilityNear: 1
     - _FleckRadius: 0.207
     - _FleckReach: 5
+    - _LightInfluence: 1
     - _PixelsPerUnit: 32
     - _PulseAmount: 1
     - _PulseSpeed: 0
     - _SpikeFrequency: 19.72
-    - _SpikeReach: 2.5
+    - _SpikeReach: 368.6
     - _SpikeThresholdNear: 1
     - _WallNoiseAmount: 1
     - _WarpFrequency: 3
-    - _WarpStrength: -0.34
+    - _WarpStrength: -0.43
     - _WaveSpeed: 0.21
-    - _WorldSize: 129
+    - _WorldSize: 239
     m_Colors:
     - _EdgeShadeColor: {r: 0.14999998, g: 0.14999998, b: 0.14999998, a: 1}
     - _WallColor: {r: 0.03, g: 0.03, b: 0.03, a: 1}

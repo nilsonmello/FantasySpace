@@ -46,7 +46,7 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private float minCorridorRoomDistance = 1f;
     [SerializeField] private float corridorHugPenalty = 4f;
 
-    [SerializeField, Min(1)] private int corridorWidth = 1;
+    [SerializeField, Min(3)] private int corridorWidth = 3;
 
     [SerializeField, Min(0)] private int minCorridorSpacing = 0;
 
@@ -56,6 +56,7 @@ public class DungeonGenerator : MonoBehaviour
 
     [Header("Objetos em corredores")]
     [SerializeField] private List<CorridorPropSpawnData> corridorProps = new List<CorridorPropSpawnData>();
+    [SerializeField] private bool onlySpawnPropsNearWalls = true;
 
     [Header("Paredes (Tilemap)")]
     [SerializeField] private Tilemap wallTilemap;
@@ -380,7 +381,8 @@ public class DungeonGenerator : MonoBehaviour
             foreach (var cell in widened)
             {
                 DungeonGrid.CellType existing = Grid.GetCell(cell);
-                if (existing == DungeonGrid.CellType.Room || existing == DungeonGrid.CellType.Buffer)
+
+                if (existing == DungeonGrid.CellType.Room)
                     continue;
 
                 Grid.SetCell(cell, DungeonGrid.CellType.Corridor);
@@ -403,26 +405,18 @@ public class DungeonGenerator : MonoBehaviour
         int startOffset = -(width - 1) / 2;
         int endOffset = width / 2;
 
-        for (int i = 0; i < path.Count; i++)
+        foreach (var cell in path)
         {
-            Vector2Int cell = path[i];
-
-            if (i > 0)
-                AddPerpendicularOffsets(result, cell, path[i] - path[i - 1], startOffset, endOffset);
-
-            if (i < path.Count - 1)
-                AddPerpendicularOffsets(result, cell, path[i + 1] - path[i], startOffset, endOffset);
+            for (int dx = startOffset; dx <= endOffset; dx++)
+            {
+                for (int dy = startOffset; dy <= endOffset; dy++)
+                {
+                    result.Add(cell + new Vector2Int(dx, dy));
+                }
+            }
         }
 
         return result;
-    }
-
-    private static void AddPerpendicularOffsets(HashSet<Vector2Int> result, Vector2Int cell, Vector2Int dir, int startOffset, int endOffset)
-    {
-        var perpendicular = new Vector2Int(-dir.y, dir.x);
-
-        for (int offset = startOffset; offset <= endOffset; offset++)
-            result.Add(cell + perpendicular * offset);
     }
 
     private void ThinCorridorBlobs()
@@ -505,14 +499,31 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
+    private static bool IsAdjacentToWall(Vector2Int cell, DungeonGrid grid)
+    {
+        foreach (var dir in new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right })
+        {
+            DungeonGrid.CellType neighborType = grid.GetCell(cell + dir);
+            if (neighborType != DungeonGrid.CellType.Corridor && neighborType != DungeonGrid.CellType.Room)
+                return true;
+        }
+        return false;
+    }
+
     private void SpawnCorridorProps(System.Random rng)
     {
         if (Grid == null || corridorProps == null || corridorProps.Count == 0) return;
 
         var corridorCells = new List<Vector2Int>();
         foreach (var kvp in Grid.AllCells)
-            if (kvp.Value == DungeonGrid.CellType.Corridor)
-                corridorCells.Add(kvp.Key);
+        {
+            if (kvp.Value != DungeonGrid.CellType.Corridor) continue;
+
+            if (onlySpawnPropsNearWalls && !IsAdjacentToWall(kvp.Key, Grid))
+                continue;
+
+            corridorCells.Add(kvp.Key);
+        }
 
         Shuffle(corridorCells, rng);
 
