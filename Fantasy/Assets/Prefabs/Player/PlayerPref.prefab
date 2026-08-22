@@ -195,6 +195,7 @@ GameObject:
   - component: {fileID: 8779226826481546664}
   - component: {fileID: 7541667124998636627}
   - component: {fileID: 354719934233455548}
+  - component: {fileID: 8623255911915316980}
   m_Layer: 3
   m_Name: PlayerPref
   m_TagString: Player
@@ -364,3 +365,26 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &8623255911915316980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8228299723434981340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cae066180f58c004db4699d5dd9e0e07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionCone
+  viewRadius: 7
+  viewAngle: 75
+  visionOrigin: {fileID: 8814420252930331027}
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 512
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 64
+  useLineOfSight: 1
+  mainCamera: {fileID: 0}

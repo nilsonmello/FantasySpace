@@ -325,6 +325,7 @@ MonoBehaviour:
     chancePerCell: 0.429
     maxCount: 4
     minSpacingCells: 16
+  onlySpawnPropsNearWalls: 1
   wallTilemap: {fileID: 1213005552}
   wallTile: {fileID: 11400000, guid: 56459c623b35d354fae39ea67e5610c3, type: 2}
   wallPadding: 2
@@ -852,8 +853,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   detectionRadius: 3
-  exitBuffer: 2
+  exitBuffer: 1
   camPointTag: CamPoint
+  mouseInfluence: 0.5
+  maxMouseDistance: 5
   cameraTarget: {fileID: 0}
 --- !u!114 &998299362
 MonoBehaviour:
