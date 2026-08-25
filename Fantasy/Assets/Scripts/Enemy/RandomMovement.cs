@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class HeadStateMovement : MonoBehaviour
@@ -6,16 +7,26 @@ public class HeadStateMovement : MonoBehaviour
     {
         Wander,
         Chase,
-        Hide
+        Hide,
+        Patrol
     }
 
     [Header("Current State")]
     [SerializeField] private State currentState = State.Wander;
     public State CurrentState => currentState;
 
+    public event Action<State> OnStateChanged;
+
     [Header("References")]
     [SerializeField] private Transform player;
     [SerializeField] private BodyChainController bodyChain;
+
+    [Header("Vision / Detection")]
+    [SerializeField] private float visionRadius = 6f;
+    [SerializeField] private LayerMask obstacleMask;
+    [SerializeField] private bool drawVisionGizmo = true;
+    private Vector2 lastKnownPlayerPos;
+    private bool hasLastKnownPos;
 
     [Header("Wander")]
     [SerializeField] private float wanderSpeed = 3f;
@@ -24,14 +35,24 @@ public class HeadStateMovement : MonoBehaviour
     [Header("Chase")]
     [SerializeField] private float chaseSpeed = 5f;
     [SerializeField] private float chaseStopDistance = 0.3f;
-    [SerializeField] private bool chaseMouseTarget = false;
-    private Camera cachedCamera;
 
     [Header("Hide")]
     [SerializeField] private float hideCompressionRadius = 0.5f;
     [SerializeField] private float hideBreatheAmplitude = 0.05f;
     [SerializeField] private float hideBreatheSpeed = 2f;
     private Vector2 hideCenter;
+
+    [Header("Patrol")]
+    [SerializeField] private float patrolSpeed = 3.5f;
+    [SerializeField] private float patrolSearchRadius = 3f;
+    [SerializeField] private int patrolPointCount = 3;
+    [SerializeField] private float patrolPointArriveDistance = 0.2f;
+    [SerializeField] private float patrolWaitTime = 1f;
+    private Vector2 patrolCenter;
+    private Vector2 patrolTarget;
+    private int patrolPointsVisited;
+    private bool patrolWaiting;
+    private float patrolWaitTimer;
 
     [Header("Limits")]
     [SerializeField] private bool useBounds = false;
@@ -49,20 +70,24 @@ public class HeadStateMovement : MonoBehaviour
 
     private void Awake()
     {
-        noiseOffsetX = Random.Range(0f, 1000f);
-        noiseOffsetY = Random.Range(0f, 1000f);
-        cachedCamera = Camera.main;
+        noiseOffsetX = UnityEngine.Random.Range(0f, 1000f);
+        noiseOffsetY = UnityEngine.Random.Range(0f, 1000f);
         previousState = currentState;
         EnterState(currentState);
+        OnStateChanged?.Invoke(currentState);
     }
 
     private void Update()
     {
+        if (currentState != State.Hide)
+            UpdateDetection();
+
         if (currentState != previousState)
         {
             ExitState(previousState);
             EnterState(currentState);
             previousState = currentState;
+            OnStateChanged?.Invoke(currentState);
         }
 
         switch (currentState)
@@ -75,6 +100,9 @@ public class HeadStateMovement : MonoBehaviour
                 break;
             case State.Hide:
                 UpdateHide();
+                break;
+            case State.Patrol:
+                UpdatePatrol();
                 break;
         }
 
@@ -111,6 +139,13 @@ public class HeadStateMovement : MonoBehaviour
             if (bodyChain != null)
                 bodyChain.SetCompression(true, hideCenter, hideCompressionRadius);
         }
+        else if (state == State.Patrol)
+        {
+            patrolCenter = hasLastKnownPos ? lastKnownPlayerPos : (Vector2)transform.position;
+            patrolPointsVisited = 0;
+            patrolWaiting = false;
+            patrolTarget = PickNewPatrolPoint();
+        }
     }
 
     private void ExitState(State state)
@@ -120,6 +155,37 @@ public class HeadStateMovement : MonoBehaviour
             if (bodyChain != null)
                 bodyChain.SetCompression(false, Vector2.zero, 0f);
         }
+    }
+
+    private void UpdateDetection()
+    {
+        if (CanSeePlayer())
+        {
+            lastKnownPlayerPos = player.position;
+            hasLastKnownPos = true;
+
+            if (currentState != State.Chase)
+                SetState(State.Chase);
+        }
+    }
+
+    private bool CanSeePlayer()
+    {
+        if (player == null)
+            return false;
+
+        Vector2 origin = transform.position;
+        Vector2 toPlayer = (Vector2)player.position - origin;
+        float dist = toPlayer.magnitude;
+
+        if (dist > visionRadius)
+            return false;
+
+        if (dist < 0.0001f)
+            return true;
+
+        RaycastHit2D hit = Physics2D.Raycast(origin, toPlayer / dist, dist, obstacleMask);
+        return hit.collider == null;
     }
 
     private void UpdateWander()
@@ -135,13 +201,14 @@ public class HeadStateMovement : MonoBehaviour
 
     private void UpdateChase()
     {
-        if (!TryGetChaseTarget(out Vector2 targetPos))
+        bool visible = CanSeePlayer();
+        if (!hasLastKnownPos)
         {
             currentVelocity = Vector2.zero;
             return;
         }
 
-        Vector2 toTarget = targetPos - (Vector2)transform.position;
+        Vector2 toTarget = lastKnownPlayerPos - (Vector2)transform.position;
         float dist = toTarget.magnitude;
 
         if (dist > chaseStopDistance)
@@ -153,35 +220,55 @@ public class HeadStateMovement : MonoBehaviour
         else
         {
             currentVelocity = Vector2.zero;
+
+            if (!visible)
+                SetState(State.Patrol);
         }
     }
 
-    private bool TryGetChaseTarget(out Vector2 targetPos)
+    private void UpdatePatrol()
     {
-        if (chaseMouseTarget)
-        {
-            if (cachedCamera == null)
-                cachedCamera = Camera.main;
+        currentVelocity = Vector2.zero;
 
-            if (cachedCamera == null)
+        if (patrolWaiting)
+        {
+            patrolWaitTimer -= Time.deltaTime;
+            if (patrolWaitTimer <= 0f)
             {
-                targetPos = Vector2.zero;
-                return false;
+                patrolWaiting = false;
+                patrolPointsVisited++;
+
+                if (patrolPointsVisited >= patrolPointCount)
+                {
+                    SetState(State.Wander);
+                    return;
+                }
+
+                patrolTarget = PickNewPatrolPoint();
             }
-
-            Vector3 mouseWorld = cachedCamera.ScreenToWorldPoint(Input.mousePosition);
-            targetPos = new Vector2(mouseWorld.x, mouseWorld.y);
-            return true;
+            return;
         }
 
-        if (player == null)
+        Vector2 toTarget = patrolTarget - (Vector2)transform.position;
+        float dist = toTarget.magnitude;
+
+        if (dist > patrolPointArriveDistance)
         {
-            targetPos = Vector2.zero;
-            return false;
+            Vector2 dir = toTarget / dist;
+            currentVelocity = dir * patrolSpeed;
+            transform.position = (Vector2)transform.position + currentVelocity * Time.deltaTime;
         }
+        else
+        {
+            patrolWaiting = true;
+            patrolWaitTimer = patrolWaitTime;
+        }
+    }
 
-        targetPos = player.position;
-        return true;
+    private Vector2 PickNewPatrolPoint()
+    {
+        Vector2 offset = UnityEngine.Random.insideUnitCircle * patrolSearchRadius;
+        return patrolCenter + offset;
     }
 
     private void UpdateHide()
@@ -196,7 +283,7 @@ public class HeadStateMovement : MonoBehaviour
             bodyChain.UpdateCompressionCenter(pos);
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         if (useBounds)
         {
@@ -208,6 +295,24 @@ public class HeadStateMovement : MonoBehaviour
         {
             Gizmos.color = Color.cyan;
             Gizmos.DrawWireSphere(hideCenter, hideCompressionRadius);
+        }
+
+        if (drawVisionGizmo)
+        {
+            Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
+            Gizmos.DrawWireSphere(transform.position, visionRadius);
+        }
+
+        if (Application.isPlaying && hasLastKnownPos && (currentState == State.Chase || currentState == State.Patrol))
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(lastKnownPlayerPos, 0.2f);
+
+            if (currentState == State.Patrol)
+            {
+                Gizmos.color = new Color(1f, 1f, 0f, 0.4f);
+                Gizmos.DrawWireSphere(patrolCenter, patrolSearchRadius);
+            }
         }
     }
 }
