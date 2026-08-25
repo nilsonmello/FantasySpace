@@ -268,6 +268,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: BodyChainController
       objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: useBounds
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: boundsSize.x
+      value: 17.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: currentState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: chaseStopDistance
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1831239827608433856, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.43
@@ -307,6 +323,78 @@ PrefabInstance:
     - target: {fileID: 1831239827608433856, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5178533534925135884, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: targetMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5178533534925135884, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: bendAmountFar
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5178533534925135884, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: splayAngleDeg
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5178533534925135884, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: tiltFrequency
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5178533534925135884, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: bendAmountNear
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5178533534925135884, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: targetFollowSpeed
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 5178533534925135884, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: elbowFarFollowSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5178533534925135884, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: tiltPhasePerSegment
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5178533534925135884, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: elbowNearFollowSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291978517178554298, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: mirrorSide
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291978517178554298, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: targetMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291978517178554298, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: bendAmountFar
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291978517178554298, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: tiltFrequency
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291978517178554298, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: bendAmountNear
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291978517178554298, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: targetFollowSpeed
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291978517178554298, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: elbowFarFollowSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291978517178554298, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: tiltPhasePerSegment
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291978517178554298, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: elbowNearFollowSpeed
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

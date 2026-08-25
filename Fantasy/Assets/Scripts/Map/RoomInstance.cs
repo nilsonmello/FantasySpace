@@ -5,13 +5,13 @@ public class RoomInstance : MonoBehaviour
 {
     public enum Direction { North, South, East, West }
 
-    [Header("Entrada da sala")]
+    [Header("Corridor")]
     [SerializeField] private Transform entrancePoint;
 
-    [Tooltip("Para onde a porta tá virada.")]
+    [Tooltip("Entrance")]
     [SerializeField] private Direction entranceDirection;
 
-    [Header("Pontos de spawn/saída (opcional)")]
+    [Header("Spawn/Exit points")]
     [SerializeField] private string spawnPointTag = "SpawnPoint";
     [SerializeField] private string exitPointTag = "ExitPoint";
 
@@ -19,9 +19,7 @@ public class RoomInstance : MonoBehaviour
 
     public RoomData SourceData { get; private set; }
 
-    public Vector2 EntrancePosition => entrancePoint != null
-        ? (Vector2)entrancePoint.position
-        : (Vector2)transform.position;
+    public Vector2 EntrancePosition => entrancePoint != null ? (Vector2)entrancePoint.position : (Vector2)transform.position;
 
     public Direction EntranceDirection => entranceDirection;
 
@@ -63,8 +61,6 @@ public class RoomInstance : MonoBehaviour
             if (child.CompareTag(tag))
                 return child.position;
         }
-
-        Debug.LogWarning($"Sala '{name}' não tem objeto com tag '{tag}', usando fallback ({fallback})");
         return fallback;
     }
 

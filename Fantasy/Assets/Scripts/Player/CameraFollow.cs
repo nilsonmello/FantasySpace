@@ -3,15 +3,15 @@ using Unity.Cinemachine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [Header("Referências")]
+    [Header("References")]
     public CinemachineCamera mainCamera;
     public Transform playerTarget;
     public Transform roomPoint;
 
-    [Header("Movimento")]
+    [Header("Movement")]
     public float followSpeed = 5f;
 
-    [Header("Detecção")]
+    [Header("Detection")]
     public LayerMask targetLayer;
     public float detectionRadius = 20f;
     public float exitBuffer = 2f;

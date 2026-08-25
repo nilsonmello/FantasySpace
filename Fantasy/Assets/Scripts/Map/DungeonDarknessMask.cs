@@ -3,12 +3,10 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class DungeonDarknessMask : MonoBehaviour
 {
-    [Header("Referencias")]
     [SerializeField] private DungeonGenerator dungeonGenerator;
     [SerializeField] private Material blurMaterial;
     [SerializeField] private Material darknessMaterial;
 
-    [Header("Configuracao")]
     [SerializeField] private int texelsPerCell = 8;
 
     [Range(0, 8)]

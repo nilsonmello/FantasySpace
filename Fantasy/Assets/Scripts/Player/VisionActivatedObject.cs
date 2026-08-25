@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 public class VisionActivatedObject : MonoBehaviour, IVisionTarget
 {
-    [Header("Collider usado pela detecção")]
+    [Header("Collider")]
     [SerializeField] private Collider2D detectionCollider;
 
-    [Header("Componentes a desativar/reativar")]
+    [Header("Components to deactive")]
     [SerializeField] private Behaviour[] behavioursToToggle;
     [SerializeField] private Renderer[] renderersToToggle;
 

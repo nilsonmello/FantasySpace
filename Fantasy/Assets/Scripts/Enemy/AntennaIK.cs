@@ -2,46 +2,86 @@ using UnityEngine;
 
 public class AntennaIK : MonoBehaviour
 {
-    [Header("Socket (ancoragem)")]
+    public enum TargetMode
+    {
+        Idle,
+        Search,
+        Mouse
+    }
+
+    [Header("Socket")]
     [SerializeField] private Transform socket;
 
     [Header("Visual")]
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private float antennaWidth = 0.03f;
 
-    [Header("Segmentos")]
-    [SerializeField] private int segmentCount = 4;
+    [Header("Curve Resolution")]
+    [SerializeField] private int segmentCount = 7;
     [SerializeField] private float segmentLength = 0.15f;
-    [SerializeField] private int fabrikIterations = 8;
 
-    [Header("Pose de descanso")]
+    [Header("Rest Pose")]
     [SerializeField] private float splayAngleDeg = 30f;
     [SerializeField] private bool mirrorSide = false;
     [SerializeField] private float sideBiasDeg = 0f;
     [SerializeField, Range(0.1f, 1f)] private float restReachFactor = 0.75f;
-    [SerializeField] private float targetFollowSpeed = 8f;
+    [SerializeField] private float targetFollowSpeed = 4f;
 
-    [Header("Direção de referência")]
+    [Header("Direction")]
     [SerializeField] private bool followMovementDirection = true;
     [SerializeField] private float headingMinSpeed = 0.05f;
     [SerializeField] private float headingSmoothSpeed = 6f;
 
-    [Header("Busca (a ponta vagueia ao redor do repouso)")]
-    [SerializeField] private float searchRadius = 0.15f;
-    [SerializeField] private float searchSpeed = 0.8f;
+    [Header("Search")]
+    [SerializeField] private float searchRadius = 0.05f;
+    [SerializeField] private float searchSpeed = 0.35f;
 
-    [Header("Tilt / shake de busca (visual, não afeta o IK)")]
-    [SerializeField] private float tiltFrequency = 3f;
-    [SerializeField] private float tiltPhasePerSegment = 0.6f;
-    [SerializeField] private float tiltAmplitudeBase = 0.01f;
-    [SerializeField] private float tiltAmplitudeGrowth = 0.02f;
+    [Header("Tap")]
+    [SerializeField] private float tapRadius = 0.09f;
+    [SerializeField] private float tapIntervalMin = 0.12f;
+    [SerializeField] private float tapIntervalMax = 0.4f;
+    [SerializeField] private float tapFollowSpeed = 12f;
+    [SerializeField, Range(0.1f, 1f)] private float tapMaxReachFactor = 0.85f;
+
+    [Header("Curve")]
+    [SerializeField, Range(0.05f, 0.6f)] private float controlNearT = 0.33f;
+    [SerializeField, Range(0.4f, 0.95f)] private float controlFarT = 0.7f;
+
+    [SerializeField] private float bendAmountNear = 0.09f;
+    [SerializeField] private float bendAmountFar = -0.045f;
+
+    [SerializeField] private float elbowNearFollowSpeed = 3.5f;
+    [SerializeField] private float elbowFarFollowSpeed = 1.4f;
+
+    [SerializeField] private bool bendNoiseEnabled = true;
+    [SerializeField, Range(0f, 1f)] private float bendNoiseScale = 0.25f;
+    [SerializeField] private float bendNoiseSpeed = 0.2f;
+
+    [Header("Aim Mode")]
+    [SerializeField] private TargetMode targetMode = TargetMode.Idle;
+    [SerializeField] private Camera targetCamera;
+    [Range(0.1f, 1f)]
+    [SerializeField] private float mouseReachFactor = 0.95f;
+    [SerializeField] private bool addSearchNoiseInMouseMode = false;
+    [SerializeField, Range(0f, 1f)] private float mouseSearchNoiseScale = 0.3f;
+
+    [Header("Tilt and Texture")]
+    [SerializeField] private float tiltFrequency = 1.5f;
+    [SerializeField] private float tiltPhasePerSegment = 0.5f;
+    [SerializeField] private float tiltAmplitudeBase = 0.002f;
+    [SerializeField] private float tiltAmplitudeGrowth = 0.003f;
 
     private Vector2[] jointPositions;
     private Vector2 currentTarget;
+    private Vector2 elbowNearPos;
+    private Vector2 elbowFarPos;
     private Vector2 currentHeading = Vector2.up;
     private Vector2 lastSocketPos;
-    private float noiseSeedX, noiseSeedY;
+    private float noiseSeedX, noiseSeedY, noiseSeedBendNear, noiseSeedBendFar;
     private float totalReach;
+
+    private Vector2 tapAnchor;
+    private float nextTapTime;
 
     private void Awake()
     {
@@ -50,13 +90,22 @@ public class AntennaIK : MonoBehaviour
         lastSocketPos = socket.position;
         currentHeading = socket.up;
 
-        currentTarget = GetRestTarget();
-
-        for (int i = 0; i <= segmentCount; i++)
-            jointPositions[i] = (Vector2)socket.position + currentHeading * (segmentLength * i);
+        if (targetCamera == null)
+            targetCamera = Camera.main;
 
         noiseSeedX = Random.Range(0f, 1000f);
         noiseSeedY = Random.Range(0f, 1000f);
+        noiseSeedBendNear = Random.Range(0f, 1000f);
+        noiseSeedBendFar = Random.Range(0f, 1000f);
+
+        currentTarget = GetRestTarget();
+        elbowNearPos = GetDesiredControlPoint(currentTarget, controlNearT, bendAmountNear, noiseSeedBendNear);
+        elbowFarPos = GetDesiredControlPoint(currentTarget, controlFarT, bendAmountFar, noiseSeedBendFar);
+
+        tapAnchor = currentTarget;
+        nextTapTime = 0f;
+
+        SampleBezier();
 
         if (lineRenderer != null)
         {
@@ -86,17 +135,102 @@ public class AntennaIK : MonoBehaviour
             currentHeading = socket.up;
         }
 
+        Vector2 desiredTip;
+        float followSpeed;
+        float reachFactor;
+
+        switch (targetMode)
+        {
+            case TargetMode.Mouse:
+                desiredTip = GetMouseTarget();
+                followSpeed = targetFollowSpeed;
+                reachFactor = mouseReachFactor;
+                break;
+
+            case TargetMode.Search:
+                desiredTip = GetSearchTapTarget();
+                followSpeed = tapFollowSpeed;
+                reachFactor = tapMaxReachFactor;
+                break;
+
+            default:
+                desiredTip = GetIdleTarget();
+                followSpeed = targetFollowSpeed;
+                reachFactor = restReachFactor;
+                break;
+        }
+
+        currentTarget = Vector2.Lerp(currentTarget, desiredTip, 1f - Mathf.Exp(-followSpeed * Time.deltaTime));
+        currentTarget = ClampToReach(currentTarget, socket.position, totalReach * reachFactor);
+
+        Vector2 desiredNear = GetDesiredControlPoint(currentTarget, controlNearT, bendAmountNear, noiseSeedBendNear);
+        Vector2 desiredFar = GetDesiredControlPoint(currentTarget, controlFarT, bendAmountFar, noiseSeedBendFar);
+
+        elbowNearPos = Vector2.Lerp(elbowNearPos, desiredNear, 1f - Mathf.Exp(-elbowNearFollowSpeed * Time.deltaTime));
+        elbowFarPos = Vector2.Lerp(elbowFarPos, desiredFar, 1f - Mathf.Exp(-elbowFarFollowSpeed * Time.deltaTime));
+
+        SampleBezier();
+        RenderWithTilt();
+    }
+
+    private Vector2 GetIdleTarget()
+    {
         Vector2 restTarget = GetRestTarget();
 
         float nx = Mathf.PerlinNoise(noiseSeedX, Time.time * searchSpeed) * 2f - 1f;
         float ny = Mathf.PerlinNoise(noiseSeedY, Time.time * searchSpeed) * 2f - 1f;
         Vector2 searchOffset = new Vector2(nx, ny) * searchRadius;
 
-        Vector2 desiredTarget = restTarget + searchOffset;
-        currentTarget = Vector2.Lerp(currentTarget, desiredTarget, 1f - Mathf.Exp(-targetFollowSpeed * Time.deltaTime));
+        return restTarget + searchOffset;
+    }
 
-        SolveFABRIK(currentTarget);
-        RenderWithTilt();
+    private Vector2 GetSearchTapTarget()
+    {
+        if (Time.time >= nextTapTime)
+        {
+            float angle = Random.Range(0f, Mathf.PI * 2f);
+            float radius = Random.Range(0f, tapRadius);
+            Vector2 offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+
+            tapAnchor = currentTarget + offset;
+            nextTapTime = Time.time + Random.Range(tapIntervalMin, tapIntervalMax);
+        }
+
+        return tapAnchor;
+    }
+
+    private Vector2 GetMouseTarget()
+    {
+        Vector2 root = socket.position;
+        Vector2 mouseWorld = GetMouseWorldPosition();
+
+        float maxReach = totalReach * mouseReachFactor;
+        Vector2 toMouse = mouseWorld - root;
+        float dist = toMouse.magnitude;
+
+        Vector2 target = dist > maxReach
+            ? root + toMouse.normalized * maxReach
+            : mouseWorld;
+
+        if (addSearchNoiseInMouseMode)
+        {
+            float nx = Mathf.PerlinNoise(noiseSeedX, Time.time * searchSpeed) * 2f - 1f;
+            float ny = Mathf.PerlinNoise(noiseSeedY, Time.time * searchSpeed) * 2f - 1f;
+            target += new Vector2(nx, ny) * searchRadius * mouseSearchNoiseScale;
+        }
+
+        return target;
+    }
+
+    private Vector2 GetMouseWorldPosition()
+    {
+        if (targetCamera == null)
+            return GetRestTarget();
+
+        Vector3 screenPos = Input.mousePosition;
+        screenPos.z = Mathf.Abs(targetCamera.transform.position.z - socket.position.z);
+        Vector3 worldPos = targetCamera.ScreenToWorldPoint(screenPos);
+        return new Vector2(worldPos.x, worldPos.y);
     }
 
     private Vector2 GetRestTarget()
@@ -107,38 +241,56 @@ public class AntennaIK : MonoBehaviour
         return (Vector2)socket.position + dir * (totalReach * restReachFactor);
     }
 
-    private void SolveFABRIK(Vector2 target)
+    private Vector2 GetDesiredControlPoint(Vector2 tip, float chordT, float bend, float noiseSeed)
     {
         Vector2 root = socket.position;
-        float distToTarget = Vector2.Distance(root, target);
+        Vector2 chord = tip - root;
+        float chordLen = chord.magnitude;
+        Vector2 chordDir = chordLen > 0.0001f ? chord / chordLen : currentHeading;
+        Vector2 perp = new Vector2(-chordDir.y, chordDir.x);
 
-        if (distToTarget >= totalReach)
+        float side = mirrorSide ? -1f : 1f;
+        float signedBend = bend * side;
+
+        if (bendNoiseEnabled)
         {
-            Vector2 dir = (target - root).normalized;
-            jointPositions[0] = root;
-            for (int i = 1; i < jointPositions.Length; i++)
-                jointPositions[i] = jointPositions[i - 1] + dir * segmentLength;
-            return;
+            float n = Mathf.PerlinNoise(noiseSeed, Time.time * bendNoiseSpeed) * 2f - 1f;
+            signedBend += n * Mathf.Abs(bend) * bendNoiseScale;
         }
 
-        for (int iter = 0; iter < fabrikIterations; iter++)
+        Vector2 basePoint = root + chordDir * (chordLen * chordT);
+        return basePoint + perp * signedBend;
+    }
+
+    private static Vector2 ClampToReach(Vector2 point, Vector2 root, float maxReach)
+    {
+        Vector2 toPoint = point - root;
+        float dist = toPoint.magnitude;
+        if (dist <= maxReach || dist < 0.0001f)
+            return point;
+
+        return root + toPoint / dist * maxReach;
+    }
+
+    private void SampleBezier()
+    {
+        Vector2 p0 = socket.position;
+        Vector2 c1 = elbowNearPos;
+        Vector2 c2 = elbowFarPos;
+        Vector2 p3 = currentTarget;
+
+        int count = jointPositions.Length;
+        for (int i = 0; i < count; i++)
         {
-            jointPositions[jointPositions.Length - 1] = target;
-            for (int i = jointPositions.Length - 2; i >= 0; i--)
-            {
-                Vector2 dir = (jointPositions[i] - jointPositions[i + 1]).normalized;
-                jointPositions[i] = jointPositions[i + 1] + dir * segmentLength;
-            }
+            float t = i / (float)(count - 1);
+            float u = 1f - t;
 
-            jointPositions[0] = root;
-            for (int i = 1; i < jointPositions.Length; i++)
-            {
-                Vector2 dir = (jointPositions[i] - jointPositions[i - 1]).normalized;
-                jointPositions[i] = jointPositions[i - 1] + dir * segmentLength;
-            }
+            float w0 = u * u * u;
+            float w1 = 3f * u * u * t;
+            float w2 = 3f * u * t * t;
+            float w3 = t * t * t;
 
-            if (Vector2.Distance(jointPositions[jointPositions.Length - 1], target) < 0.001f)
-                break;
+            jointPositions[i] = w0 * p0 + w1 * c1 + w2 * c2 + w3 * p3;
         }
     }
 
@@ -152,12 +304,17 @@ public class AntennaIK : MonoBehaviour
 
             if (i > 0)
             {
-                Vector2 segDir = (jointPositions[i] - jointPositions[i - 1]).normalized;
-                Vector2 perp = new Vector2(-segDir.y, segDir.x);
+                Vector2 segDir = (jointPositions[i] - jointPositions[i - 1]);
+                float segLen = segDir.magnitude;
+                if (segLen > 0.0001f)
+                {
+                    segDir /= segLen;
+                    Vector2 perp = new Vector2(-segDir.y, segDir.x);
 
-                float phase = Time.time * tiltFrequency - i * tiltPhasePerSegment;
-                float amplitude = tiltAmplitudeBase + tiltAmplitudeGrowth * i;
-                renderedPos += perp * Mathf.Sin(phase) * amplitude;
+                    float phase = Time.time * tiltFrequency - i * tiltPhasePerSegment;
+                    float amplitude = tiltAmplitudeBase + tiltAmplitudeGrowth * i;
+                    renderedPos += perp * Mathf.Sin(phase) * amplitude;
+                }
             }
 
             lineRenderer.SetPosition(i, renderedPos);

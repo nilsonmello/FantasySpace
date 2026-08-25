@@ -2,29 +2,29 @@ using UnityEngine;
 
 public class LegIK2D : MonoBehaviour
 {
-    [Header("Hip (ancoragem)")]
+    [Header("Hip")]
     [SerializeField] private Transform hip;
 
     [Header("Visual")]
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private float legWidth = 0.06f;
 
-    [Header("Comprimentos")]
+    [Header("Length")]
     [SerializeField] private float upperLength = 0.5f;
     [SerializeField] private float lowerLength = 0.5f;
 
-    [Header("Cotovelo")]
+    [Header("Elbow")]
     [SerializeField] private float elbowSide = 1f;
     [SerializeField] private float kneeSmoothSpeed = 15f;
 
-    [Header("Passo")]
+    [Header("Rest Position")]
     [SerializeField] private Vector2 restOffset = new Vector2(0.5f, 0f);
     [SerializeField] private float stepTriggerDistance = 0.6f;
     [SerializeField] private float stepDuration = 0.15f;
     [SerializeField] private float stepOvershoot = 0.15f;
     [SerializeField] private LegIK2D waveParent;
 
-    [Header("Ritmo individual")]
+    [Header("Rithm")]
     [SerializeField] private float phaseOffset = 0f;
     [SerializeField, Range(0f, 0.5f)] private float cadenceJitter = 0.15f;
     [SerializeField] private int randomSeed = 0;

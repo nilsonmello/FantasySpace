@@ -2,20 +2,20 @@ using UnityEngine;
 
 public class BodyChainController : MonoBehaviour
 {
-    [Header("Cabeça")]
+    [Header("Head")]
     [SerializeField] private Transform head;
 
-    [Header("Segmentos")]
+    [Header("Segments")]
     [SerializeField] private Transform[] segments;
     [SerializeField] private float segmentSpacing = 0.4f;
     [SerializeField] private float followSpeed = 12f;
 
-    [Header("Compressão")]
+    [Header("Compression")]
     [SerializeField] private float compressionMoveSpeed = 3f;
     [SerializeField] private float compressionRotationSpeed = 8f;
     [SerializeField] private float compressionPackingScale = 1f;
 
-    [Header("Shake ambiente")]
+    [Header("Shake")]
     [SerializeField] private float shakeFrequency = 18f;
     [SerializeField] private float shakePhaseDelay = 0.6f;
     [SerializeField, Range(0f, 1f)] private float shakeJitterStrength = 0.65f;

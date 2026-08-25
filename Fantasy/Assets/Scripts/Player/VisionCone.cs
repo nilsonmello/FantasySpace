@@ -14,11 +14,10 @@ public class VisionCone : MonoBehaviour
     [SerializeField] private float viewRadius = 6f;
     [SerializeField, Range(0f, 360f)] private float viewAngle = 60f;
 
-    [Header("Origem do cone")]
-    [Tooltip("Se vazio, usa a posição deste transform.")]
+    [Header("Origin")]
     [SerializeField] private Transform visionOrigin;
 
-    [Header("Detecção")]
+    [Header("Detection")]
     [SerializeField] private LayerMask targetMask;
     [SerializeField] private LayerMask obstacleMask;
     [SerializeField] private bool useLineOfSight = true;

@@ -12,14 +12,14 @@ public class RoomData : ScriptableObject
         Secret
     }
 
-    [Header("Identificação")]
+    [Header("Identification")]
     public string roomName;
     public RoomType roomType = RoomType.Common;
 
     [Header("Prefab")]
     public GameObject prefab;
 
-    [Header("Geração")]
+    [Header("generation")]
     [Min(0f)]
     public float spawnWeight = 1f;
 

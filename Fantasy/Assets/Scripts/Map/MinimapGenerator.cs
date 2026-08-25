@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class MinimapGenerator : MonoBehaviour
 {
-    [Header("Fonte dos dados")]
+    [Header("Map")]
     [SerializeField] private DungeonGenerator dungeonGenerator;
 
     [Header("UI")]
@@ -16,7 +16,7 @@ public class MinimapGenerator : MonoBehaviour
 
     [SerializeField] private bool rotateMarkerWithPlayer = true;
 
-    [Header("Cores")]
+    [Header("Color")]
     [SerializeField] private Color32 backgroundColor = new Color32(0, 0, 0, 0);
     [SerializeField] private Color32 corridorColor = new Color32(120, 120, 120, 255);
     [SerializeField] private Color32 roomCommonColor = new Color32(200, 200, 200, 255);

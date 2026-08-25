@@ -4,14 +4,14 @@ using UnityEngine.Rendering.Universal;
 
 public class LightFlicker2D : MonoBehaviour
 {
-    [Header("Referência")]
+    [Header("Reference")]
     [SerializeField] private Light2D light2D;
 
-    [Header("Intervalo entre piscadas")]
+    [Header("Interval")]
     [SerializeField] private float minInterval = 0.1f;
     [SerializeField] private float maxInterval = 1.5f;
 
-    [Header("Duração da piscada")]
+    [Header("Duration")]
     [SerializeField] private float minOffTime = 0.03f;
     [SerializeField] private float maxOffTime = 0.15f;
 

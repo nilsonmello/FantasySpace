@@ -27,10 +27,10 @@ public class DungeonGenerator : MonoBehaviour
         [Min(0)] public int minSpacingCells = 0;
     }
 
-    [Header("Salas disponíveis")]
+    [Header("Rooms")]
     [SerializeField] private List<RoomData> availableRooms;
 
-    [Header("Configuração de geração")]
+    [Header("Config")]
     [SerializeField] private int roomCount = 10;
     [SerializeField] private float placementRadius = 40f;
     [SerializeField] private float minSpacing = 2f;
@@ -38,10 +38,10 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private int seed = 0;
     [SerializeField] private bool useRandomSeed = true;
 
-    [Header("Loops extras")]
+    [Header("Loops")]
     [SerializeField] private int extraLoopEdges = 0;
 
-    [Header("Corredores")]
+    [Header("Corridors")]
     [SerializeField] private float cellSize = 1f;
     [SerializeField] private float minCorridorRoomDistance = 1f;
     [SerializeField] private float corridorHugPenalty = 4f;
@@ -50,20 +50,20 @@ public class DungeonGenerator : MonoBehaviour
 
     [SerializeField, Min(0)] private int minCorridorSpacing = 0;
 
-    [Header("corredores (prefabs)")]
+    [Header("corridors (prefabs)")]
     [SerializeField] private GameObject corridorTilePrefab;
     [SerializeField] private Transform corridorContainer;
 
-    [Header("Objetos em corredores")]
+    [Header("Objects in corridors")]
     [SerializeField] private List<CorridorPropSpawnData> corridorProps = new List<CorridorPropSpawnData>();
     [SerializeField] private bool onlySpawnPropsNearWalls = true;
 
-    [Header("Paredes (Tilemap)")]
+    [Header("Walls (tile)")]
     [SerializeField] private Tilemap wallTilemap;
     [SerializeField] private TileBase wallTile;
     [SerializeField] private int wallPadding = 2;
 
-    [Header("Sombras das paredes (Light 2D)")]
+    [Header("Shadows (Light 2D)")]
     [SerializeField] private bool generateWallShadowCasters = true;
 
     [SerializeField] private Transform wallShadowContainer;
@@ -72,7 +72,7 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private bool spawnPlayerOnGeneration = true;
 
-    [Header("Saída da Dungeon")]
+    [Header("Exit")]
     [SerializeField] private GameObject exitMarkerPrefab;
     [SerializeField] private bool spawnExitMarkerOnGeneration = true;
 

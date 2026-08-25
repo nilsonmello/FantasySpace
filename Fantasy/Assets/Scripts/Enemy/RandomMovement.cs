@@ -9,11 +9,11 @@ public class HeadStateMovement : MonoBehaviour
         Hide
     }
 
-    [Header("Estado atual")]
+    [Header("Current State")]
     [SerializeField] private State currentState = State.Wander;
     public State CurrentState => currentState;
 
-    [Header("Referências")]
+    [Header("References")]
     [SerializeField] private Transform player;
     [SerializeField] private BodyChainController bodyChain;
 
@@ -33,12 +33,12 @@ public class HeadStateMovement : MonoBehaviour
     [SerializeField] private float hideBreatheSpeed = 2f;
     private Vector2 hideCenter;
 
-    [Header("Limites")]
+    [Header("Limits")]
     [SerializeField] private bool useBounds = false;
     [SerializeField] private Vector2 boundsCenter = Vector2.zero;
     [SerializeField] private Vector2 boundsSize = new Vector2(10f, 10f);
 
-    [Header("Rotação")]
+    [Header("Rotation")]
     [SerializeField] private bool rotateTowardsMovement = true;
     [SerializeField] private float rotationSpeed = 10f;
 
