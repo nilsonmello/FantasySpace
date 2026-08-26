@@ -32,7 +32,7 @@ public class AntennaIK : MonoBehaviour
 
     [Header("Visual")]
     [SerializeField] private LineRenderer lineRenderer;
-    [SerializeField] private float antennaWidth = 0.03f;
+    [SerializeField] private AnimationCurve widthCurve = AnimationCurve.Linear(0f, 0.05f, 1f, 0.015f);
 
     [Header("Curve Resolution")]
     [SerializeField] private int segmentCount = 7;
@@ -140,8 +140,8 @@ public class AntennaIK : MonoBehaviour
         if (lineRenderer != null)
         {
             lineRenderer.positionCount = jointPositions.Length;
-            lineRenderer.startWidth = antennaWidth;
-            lineRenderer.endWidth = antennaWidth;
+            lineRenderer.widthCurve = widthCurve;
+            lineRenderer.widthMultiplier = 1f;
             lineRenderer.useWorldSpace = true;
         }
     }

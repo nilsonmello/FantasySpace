@@ -10,6 +10,16 @@ public class BodyChainController : MonoBehaviour
     [SerializeField] private float segmentSpacing = 0.4f;
     [SerializeField] private float followSpeed = 12f;
 
+    [Header("Segment Scale Profile")]
+    [SerializeField] private float minSegmentScale = 0.6f;
+    [SerializeField] private float maxSegmentScale = 1f;
+    [SerializeField] private AnimationCurve scaleProfile = new AnimationCurve(
+        new Keyframe(0f, 0f),
+        new Keyframe(0.4f, 1f),
+        new Keyframe(0.6f, 1f),
+        new Keyframe(1f, 0f)
+    );
+
     [Header("Compression")]
     [SerializeField] private float compressionMoveSpeed = 3f;
     [SerializeField] private float compressionRotationSpeed = 8f;
@@ -48,6 +58,19 @@ public class BodyChainController : MonoBehaviour
             segmentPositions[i] = pos;
             segments[i].position = pos;
             segmentNoiseSeeds[i] = Random.Range(0f, 1000f);
+        }
+
+        ApplySegmentScales();
+    }
+
+    private void ApplySegmentScales()
+    {
+        int count = segments.Length;
+        for (int i = 0; i < count; i++)
+        {
+            float t = count <= 1 ? 0f : (float)i / (count - 1);
+            float scaleValue = Mathf.Lerp(minSegmentScale, maxSegmentScale, scaleProfile.Evaluate(t));
+            segments[i].localScale = Vector3.one * scaleValue;
         }
     }
 

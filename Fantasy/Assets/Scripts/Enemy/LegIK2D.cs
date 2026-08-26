@@ -7,7 +7,7 @@ public class LegIK2D : MonoBehaviour
 
     [Header("Visual")]
     [SerializeField] private LineRenderer lineRenderer;
-    [SerializeField] private float legWidth = 0.06f;
+    [SerializeField] private AnimationCurve widthCurve = AnimationCurve.Linear(0f, 0.08f, 1f, 0.03f);
 
     [Header("Length")]
     [SerializeField] private float upperLength = 0.5f;
@@ -64,8 +64,8 @@ public class LegIK2D : MonoBehaviour
         if (lineRenderer != null)
         {
             lineRenderer.positionCount = 3;
-            lineRenderer.startWidth = legWidth;
-            lineRenderer.endWidth = legWidth;
+            lineRenderer.widthCurve = widthCurve;
+            lineRenderer.widthMultiplier = 1f;
             lineRenderer.useWorldSpace = true;
         }
     }
