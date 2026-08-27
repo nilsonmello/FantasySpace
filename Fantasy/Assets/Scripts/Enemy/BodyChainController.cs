@@ -6,6 +6,7 @@ public class BodyChainController : MonoBehaviour
     [SerializeField] private Transform head;
 
     [Header("Segments")]
+    public Transform lastSegment;
     [SerializeField] private Transform[] segments;
     [SerializeField] private float segmentSpacing = 0.4f;
     [SerializeField] private float followSpeed = 12f;
@@ -49,6 +50,8 @@ public class BodyChainController : MonoBehaviour
 
     private void Awake()
     {
+        lastSegment = segments[^1];
+
         segmentPositions = new Vector2[segments.Length];
         segmentNoiseSeeds = new float[segments.Length];
         Vector2 pos = head.position;

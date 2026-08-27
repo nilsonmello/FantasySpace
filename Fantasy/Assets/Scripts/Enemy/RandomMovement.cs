@@ -68,6 +68,10 @@ public class HeadStateMovement : MonoBehaviour
     private Vector2 currentVelocity;
     private State previousState;
 
+
+    private Transform backPoint;
+
+
     private void Awake()
     {
         noiseOffsetX = UnityEngine.Random.Range(0f, 1000f);
@@ -75,10 +79,16 @@ public class HeadStateMovement : MonoBehaviour
         previousState = currentState;
         EnterState(currentState);
         OnStateChanged?.Invoke(currentState);
+
     }
 
     private void Update()
     {
+        if (backPoint == null)
+        {
+            backPoint = bodyChain.lastSegment;
+        }
+
         if (currentState != State.Hide)
             UpdateDetection();
 
@@ -159,7 +169,7 @@ public class HeadStateMovement : MonoBehaviour
 
     private void UpdateDetection()
     {
-        if (CanSeePlayer())
+        if (CanSeePlayer() || BackVision())
         {
             lastKnownPlayerPos = player.position;
             hasLastKnownPos = true;
@@ -185,6 +195,22 @@ public class HeadStateMovement : MonoBehaviour
             return true;
 
         RaycastHit2D hit = Physics2D.Raycast(origin, toPlayer / dist, dist, obstacleMask);
+        return hit.collider == null;
+    }
+
+    private bool BackVision()
+    {
+        Vector2 backOrigin = backPoint.position;
+        Vector2 toPlayer = (Vector2)player.position - backOrigin;
+        float dist = toPlayer.magnitude;
+
+        if (dist > visionRadius)
+            return false;
+
+        if (dist < 0.0001f)
+            return true;
+
+        RaycastHit2D hit = Physics2D.Raycast(backOrigin, toPlayer / dist, dist, obstacleMask);
         return hit.collider == null;
     }
 
@@ -301,6 +327,7 @@ public class HeadStateMovement : MonoBehaviour
         {
             Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
             Gizmos.DrawWireSphere(transform.position, visionRadius);
+            Gizmos.DrawWireSphere(backPoint.position, visionRadius);
         }
 
         if (Application.isPlaying && hasLastKnownPos && (currentState == State.Chase || currentState == State.Patrol))
