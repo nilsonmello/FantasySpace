@@ -327,6 +327,8 @@ public class HeadStateMovement : MonoBehaviour
         {
             Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
             Gizmos.DrawWireSphere(transform.position, visionRadius);
+
+            if (backPoint != null)
             Gizmos.DrawWireSphere(backPoint.position, visionRadius);
         }
 

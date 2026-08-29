@@ -7,7 +7,7 @@ public class InteractionBlock : MonoBehaviour
     private InputAction interact;
     void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Player") && interact.WasPressedThisFrame()) {
-        // Ativa um botão, abre uma porta, etc.
+        // Ativa um botï¿½o, abre uma porta, etc.
         Debug.Log("Interagiu");
         }
     }
