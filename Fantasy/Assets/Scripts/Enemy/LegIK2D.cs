@@ -43,13 +43,15 @@ public class LegIK2D : MonoBehaviour
     private float effectiveTriggerDistance;
     private float effectiveStepDuration;
 
+    private float autoElbowSide;
+
     private void Awake()
     {
         currentFootPos = (Vector2)hip.position + RotatedRestOffset();
         stepEndPos = currentFootPos;
         lastHipPos = hip.position;
 
-        float autoElbowSide = Mathf.Sign(restOffset.y == 0f ? 1f : restOffset.y) * elbowSide;
+        autoElbowSide = Mathf.Sign(restOffset.y == 0f ? 1f : restOffset.y) * elbowSide;
         Vector2 initialDir = (currentFootPos - (Vector2)hip.position).normalized;
         Vector2 initialPerp = new Vector2(-initialDir.y, initialDir.x) * autoElbowSide;
         currentKneePos = (Vector2)hip.position + initialDir * upperLength * 0.5f + initialPerp * 0.1f;
@@ -126,13 +128,7 @@ public class LegIK2D : MonoBehaviour
         Vector2 mid = hipPos + dir * a2;
         Vector2 perp = new Vector2(-dir.y, dir.x);
 
-        Vector2 candidateA = mid + perp * h;
-        Vector2 candidateB = mid - perp * h;
-
-        Vector2 targetKnee =
-            (candidateA - currentKneePos).sqrMagnitude <= (candidateB - currentKneePos).sqrMagnitude
-            ? candidateA
-            : candidateB;
+        Vector2 targetKnee = mid + perp * h * autoElbowSide;
 
         currentKneePos = Vector2.Lerp(currentKneePos, targetKnee, kneeSmoothSpeed * Time.deltaTime);
 
