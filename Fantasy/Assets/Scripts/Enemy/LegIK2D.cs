@@ -30,6 +30,8 @@ public class LegIK2D : MonoBehaviour
     [SerializeField] private int randomSeed = 0;
 
     public bool IsStepping { get; private set; }
+    public Vector2 KneeWorldPos => currentKneePos;
+    public Vector2 FootWorldPos => currentFootPos;
 
     private Vector2 currentFootPos;
     private Vector2 currentKneePos;
