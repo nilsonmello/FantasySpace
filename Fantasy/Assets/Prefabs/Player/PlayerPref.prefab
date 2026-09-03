@@ -192,10 +192,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8814420252930331027}
   - component: {fileID: 1763000673647168640}
-  - component: {fileID: 8779226826481546664}
   - component: {fileID: 7541667124998636627}
   - component: {fileID: 354719934233455548}
   - component: {fileID: 8623255911915316980}
+  - component: {fileID: 3884008987325982196}
   m_Layer: 3
   m_Name: PlayerPref
   m_TagString: Player
@@ -279,19 +279,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &8779226826481546664
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8228299723434981340}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53de5e095d60476438aa3e34feb00a52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerControll
-  movSpeed: 5
 --- !u!50 &7541667124998636627
 Rigidbody2D:
   serializedVersion: 5
@@ -388,3 +375,15 @@ MonoBehaviour:
     m_Bits: 64
   useLineOfSight: 1
   mainCamera: {fileID: 0}
+--- !u!114 &3884008987325982196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8228299723434981340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54a3424524ca98847aaefeadf5ae47a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player_1

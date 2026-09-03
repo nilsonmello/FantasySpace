@@ -1,64 +1,81 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.InputSystem;
-public class PlayerControll : Player
+
+public abstract class PlayerMovementBase : MonoBehaviour
 {
-    public override float movSpeed => 5f;
-    public override float runSpeed => 8f;
-    public override float crouchSpeed => 2.5f;
-    private InputSystem_Actions actions;
-    private InputAction crouch;
-    private InputAction run;
-    private InputAction move;
-    private float currentSpeed;
+    // Propriedades abstratas: toda classe filha DEVE definir esses valores
+    public float MovSpeed;
+    public float RunSpeed;
+    public float CrouchSpeed;
+    // Variáveis protegidas: visíveis apenas para esta classe e para as classes filhas
+    protected InputSystem_Actions actions;
+    protected InputAction crouchAction;
+    protected InputAction runAction;
+    protected InputAction moveAction;
+    protected float currentSpeed;
+    protected Rigidbody2D rb;
 
-
-    void Start()
+    protected virtual void Awake()
     {
-        Debug.Log("aaa");
+        // Inicializa e ativa o Input System
         actions = new InputSystem_Actions();
-        crouch = actions.Player.Crouch;
-        crouch.Enable();
-        run = actions.Player.Sprint;
-        run.Enable();
-        move = actions.Player.Move;
-        move.Enable();
+
+        crouchAction = actions.Player.Crouch;
+        crouchAction.Enable();
+
+        runAction = actions.Player.Sprint;
+        runAction.Enable();
+
+        moveAction = actions.Player.Move;
+        moveAction.Enable();
+    }
+
+    protected virtual void Start()
+    {
+        // Certifique-se de que a classe pai 'Player' possui a variável 'rb'
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         GetMoveInput();
     }
-    void FixedUpdate()
+
+    protected virtual void FixedUpdate()
     {
         Move();
     }
-    void GetMoveInput()
+
+    // Gerencia a troca de velocidades com base no input
+    protected void GetMoveInput()
     {
-        if (run.IsPressed())//Input.GetKey(KeyCode.LeftShift))
+        if (runAction.IsPressed())
         {
-            currentSpeed = runSpeed;
+            currentSpeed = RunSpeed;
         }
-        else if (crouch.IsPressed())
+        else if (crouchAction.IsPressed())
         {
-            currentSpeed = crouchSpeed;
+            currentSpeed = CrouchSpeed;
         }
         else
         {
-            currentSpeed = movSpeed;
+            currentSpeed = MovSpeed;
         }
     }
 
-    void Move()
+    // Aplica a velocidade ao Rigidbody2D
+    protected void Move()
     {
-        // 1. Descobre a velocidade atual com base nas teclas pressionadas
-       
-        Vector2 moveInput = move.ReadValue<Vector2>();    
-
-        // 3. Move o Rigidbody2D
-        rb.linearVelocity = moveInput * currentSpeed * 10 * Time.fixedDeltaTime;
+        Vector2 moveInput = moveAction.ReadValue<Vector2>();
+        rb.linearVelocity = moveInput * currentSpeed * 10f * Time.fixedDeltaTime;
     }
-    
+
+    protected void OnDisable()
+    {
+        // Desativa os inputs para evitar vazamento de memória quando o objeto sumir
+        if (actions != null)
+        {
+            actions.Disable();
+        }
+    }
 }
