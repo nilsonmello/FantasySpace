@@ -11,18 +11,5 @@ public abstract class Player : MonoBehaviour
 
     protected float speedX, speedY;
     protected Rigidbody2D rb;
-    void Start()
-    {
 
-    }
-    void Update()
-    {
-       
-    }
-
-    
-    void Move()
-    {
-    
-    }
 }
