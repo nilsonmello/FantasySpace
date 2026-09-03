@@ -1,28 +1,10 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class InteractionBlock : MonoBehaviour
+// objeto de teste: só precisa estar dentro do range e na layer certa pra ser detectado pelo PlayerInteractor
+public class SimpleInteractable : InteractionManager
 {
-    private InputSystem_Actions InputSystem;
-    private InputAction interact;
-    void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("Player") && interact.WasPressedThisFrame()) {
-        // Ativa um bot�o, abre uma porta, etc.
+    public override void interact()
+    {
         Debug.Log("Interagiu");
-        }
-    }
-    void Awake()
-    {
-        InputSystem = new InputSystem_Actions();
-    }
-    void OnEnable()
-    {
-        interact = InputSystem.Player.Interact;
-        interact.Enable();
-    }
-    void Disable()
-    {
-        interact.Disable();
     }
 }
-
