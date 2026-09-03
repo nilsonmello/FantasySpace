@@ -12,7 +12,7 @@ public class PlayerControll : Player
     private InputAction run;
     private InputAction move;
     private float currentSpeed;
-
+    
 
     void Start()
     {
