@@ -11,35 +11,26 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private LayerMask interactableLayer;
 
     // ação de interagir vinda do Input System (arraste a InputActionReference no Inspector)
-    [SerializeField] private InputActionReference interactAction;
+    private InputAction  interactAction;
+    private InputSystem_Actions actions;
 
     // guarda o interactable mais próximo nesse frame, dá pra usar isso pra mostrar UI tipo "aperte E" ou fazer highlight
     public InteractionManager CurrentTarget { get; private set; }
 
-    private bool interactPressedThisFrame;
+    
 
     private void OnEnable()
     {
-        if (interactAction != null)
-        {
-            interactAction.action.Enable();
-            interactAction.action.performed += OnInteractPerformed;
-        }
+        actions = new InputSystem_Actions();
+        interactAction = actions.Player.Interact;
+        interactAction.Enable();
     }
 
     private void OnDisable()
     {
-        if (interactAction != null)
-        {
-            interactAction.action.performed -= OnInteractPerformed;
-            interactAction.action.Disable();
-        }
+        interactAction.Disable();
     }
 
-    private void OnInteractPerformed(InputAction.CallbackContext ctx)
-    {
-        interactPressedThisFrame = true;
-    }
 
     private void Update()
     {
@@ -47,13 +38,11 @@ public class PlayerInteract : MonoBehaviour
         CurrentTarget = FindClosestInteractable();
 
         // só interage se tiver um alvo válido e o botão tiver sido apertado nesse frame
-        if (CurrentTarget != null && interactPressedThisFrame)
+        if (CurrentTarget != null && interactAction.WasPressedThisFrame())
         {
             CurrentTarget.interact();
         }
 
-        // reseta a flag no fim do frame pra não disparar interação repetida
-        interactPressedThisFrame = false;
     }
 
     private InteractionManager FindClosestInteractable()

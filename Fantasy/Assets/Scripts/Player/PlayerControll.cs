@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public abstract class PlayerMovementBase : MonoBehaviour
 {
+
     // Propriedades abstratas: toda classe filha DEVE definir esses valores
     public float MovSpeed;
     public float RunSpeed;
@@ -15,7 +16,17 @@ public abstract class PlayerMovementBase : MonoBehaviour
     protected float currentSpeed;
     protected Rigidbody2D rb;
 
-    protected virtual void Awake()
+    public override float movSpeed => 5f;
+    public override float runSpeed => 8f;
+    public override float crouchSpeed => 2.5f;
+    private InputSystem_Actions actions;
+    private InputAction crouch;
+    private InputAction run;
+    private InputAction move;
+    private float currentSpeed;
+    
+
+    void Start()
     {
         // Inicializa e ativa o Input System
         actions = new InputSystem_Actions();
