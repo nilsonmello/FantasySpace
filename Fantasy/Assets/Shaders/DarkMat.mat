@@ -69,7 +69,7 @@ Material:
     - _WarpFrequency: 2.11
     - _WarpStrength: -0.34
     - _WaveSpeed: 0.21
-    - _WorldSize: 247
+    - _WorldSize: 240
     m_Colors:
     - _EdgeShadeColor: {r: 0.14999998, g: 0.14999998, b: 0.14999998, a: 1}
     - _WallColor: {r: 0, g: 0, b: 0, a: 1}

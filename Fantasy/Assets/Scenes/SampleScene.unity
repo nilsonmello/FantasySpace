@@ -1505,6 +1505,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BodyChainController
       objectReference: {fileID: 0}
+    - target: {fileID: 891326990907311978, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 894699813863817386, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_Parameters.colorGradient.key0.b
       value: 0

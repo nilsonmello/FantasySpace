@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 354719934233455548}
   - component: {fileID: 8623255911915316980}
   - component: {fileID: 3884008987325982196}
+  - component: {fileID: -4040433910167881033}
   m_Layer: 3
   m_Name: PlayerPref
   m_TagString: Player
@@ -387,3 +388,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a3424524ca98847aaefeadf5ae47a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_1
+  MovSpeed: 20
+  RunSpeed: 35
+  CrouchSpeed: 12
+--- !u!114 &-4040433910167881033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8228299723434981340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38cfd9f77d8f5864a97755df13c6dae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteract
+  detectionRadius: 3
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 2560
