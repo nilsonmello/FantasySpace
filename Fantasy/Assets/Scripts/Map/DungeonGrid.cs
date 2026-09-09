@@ -9,6 +9,10 @@ public class DungeonGrid
 
     private readonly Dictionary<Vector2Int, CellType> _cells = new Dictionary<Vector2Int, CellType>();
 
+    private int _minX = int.MaxValue, _maxX = int.MinValue;
+    private int _minY = int.MaxValue, _maxY = int.MinValue;
+    private bool _hasBounds;
+
     public DungeonGrid(float cellSize)
     {
         CellSize = cellSize;
@@ -36,6 +40,29 @@ public class DungeonGrid
     public void SetCell(Vector2Int cell, CellType type)
     {
         _cells[cell] = type;
+
+        if (!_hasBounds)
+        {
+            _minX = _maxX = cell.x;
+            _minY = _maxY = cell.y;
+            _hasBounds = true;
+        }
+        else
+        {
+            if (cell.x < _minX) _minX = cell.x;
+            if (cell.x > _maxX) _maxX = cell.x;
+            if (cell.y < _minY) _minY = cell.y;
+            if (cell.y > _maxY) _maxY = cell.y;
+        }
+    }
+
+    public bool TryGetContentBounds(out int minX, out int maxX, out int minY, out int maxY)
+    {
+        minX = _minX;
+        maxX = _maxX;
+        minY = _minY;
+        maxY = _maxY;
+        return _hasBounds;
     }
 
     public void MarkRoomBounds(Bounds worldBounds)

@@ -62,6 +62,8 @@ public class HeadStateMovement : MonoBehaviour
     [Header("Rotation")]
     [SerializeField] private bool rotateTowardsMovement = true;
     [SerializeField] private float rotationSpeed = 10f;
+    [SerializeField] private bool limitHeadTurn = true;
+    [SerializeField, Range(0f, 180f)] private float maxHeadTurnAngle = 60f; // meio-ângulo: giro total = 2x isso
 
     private float noiseOffsetX;
     private float noiseOffsetY;
@@ -130,6 +132,19 @@ public class HeadStateMovement : MonoBehaviour
         if (rotateTowardsMovement && currentVelocity.sqrMagnitude > 0.01f)
         {
             float angle = Mathf.Atan2(currentVelocity.y, currentVelocity.x) * Mathf.Rad2Deg;
+
+            if (limitHeadTurn && bodyChain != null)
+            {
+                Vector2 neckDir = (Vector2)transform.position - bodyChain.FirstSegmentPos;
+                if (neckDir.sqrMagnitude > 0.0001f)
+                {
+                    float neckAngle = Mathf.Atan2(neckDir.y, neckDir.x) * Mathf.Rad2Deg;
+                    float delta = Mathf.DeltaAngle(neckAngle, angle);
+                    delta = Mathf.Clamp(delta, -maxHeadTurnAngle, maxHeadTurnAngle);
+                    angle = neckAngle + delta;
+                }
+            }
+
             Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }

@@ -48,6 +48,10 @@ public class BodyChainController : MonoBehaviour
     private float shakeIntensity = 1f;
     private float targetShakeIntensity = 1f;
 
+    public Vector2 FirstSegmentPos => segmentPositions != null && segmentPositions.Length > 0
+        ? segmentPositions[0]
+        : (Vector2)transform.position;
+
     private void Awake()
     {
         lastSegment = segments[^1];

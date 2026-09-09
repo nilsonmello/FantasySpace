@@ -111,18 +111,20 @@ public class DungeonDarknessMask : MonoBehaviour
 
         darknessMaterial.SetFloat("_WorldSize", worldSize);
 
-        float centerWorldX = (squareMinX + side * 0.5f) * cellSize;
-        float centerWorldY = (squareMinY + side * 0.5f) * cellSize;
-        transform.position = new Vector3(centerWorldX, centerWorldY, transform.position.z);
+        // Canto inferior-esquerdo do dungeon em coordenadas de mundo.
+        // O shader usa isso pra converter world-space -> espaço da máscara,
+        // independente do tamanho/posição do quad que desenha o efeito
+        // (agora esse quad segue a câmera, ver DarknessMaskCameraFollow).
+        var worldMin = new Vector2(squareMinX * cellSize, squareMinY * cellSize);
+        darknessMaterial.SetVector("_WorldMin", worldMin);
 
-        Sprite sprite = SpriteRenderer.sprite;
-        if (sprite == null)
-        {
-            return;
-        }
-
-        Vector2 nativeSize = sprite.bounds.size;
-        transform.localScale = new Vector3( worldSize / nativeSize.x, worldSize / nativeSize.y, 1f);
+        // Removido: antes este objeto era escalado/posicionado pra cobrir
+        // o dungeon inteiro (transform.position = centro do mundo,
+        // transform.localScale = worldSize / nativeSize). Agora quem
+        // controla posição/escala deste sprite é o DarknessMaskCameraFollow,
+        // que mantém o quad do tamanho da tela e o move com a câmera —
+        // isso permite frustum culling e limita o custo do fragment shader
+        // à área visível.
     }
 
     private void ReleaseRTs()

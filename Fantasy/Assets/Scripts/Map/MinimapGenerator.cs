@@ -16,6 +16,11 @@ public class MinimapGenerator : MonoBehaviour
 
     [SerializeField] private bool rotateMarkerWithPlayer = true;
 
+    [Header("Minimap Window")]
+    [SerializeField] private float minimapRadiusCells = 12f;
+    [SerializeField] private bool rotateMapWithPlayer = false;
+    [SerializeField] private bool clampWindowToBounds = false;
+
     [Header("Color")]
     [SerializeField] private Color32 backgroundColor = new Color32(0, 0, 0, 0);
     [SerializeField] private Color32 corridorColor = new Color32(120, 120, 120, 255);
@@ -44,7 +49,7 @@ public class MinimapGenerator : MonoBehaviour
 
     private void Update()
     {
-        if (_hasValidBounds) UpdatePlayerMarker();
+        if (_hasValidBounds) UpdateMinimapWindow();
 
         FindPlayerTransform();
     }
@@ -68,6 +73,10 @@ public class MinimapGenerator : MonoBehaviour
             _hasValidBounds = false;
             return;
         }
+
+        int padding = Mathf.Max(1, Mathf.CeilToInt(minimapRadiusCells));
+        _cellBoundsMin -= new Vector2Int(padding, padding);
+        _cellBoundsMax += new Vector2Int(padding, padding);
 
         int width = _cellBoundsMax.x - _cellBoundsMin.x + 1;
         int height = _cellBoundsMax.y - _cellBoundsMin.y + 1;
@@ -152,28 +161,42 @@ public class MinimapGenerator : MonoBehaviour
         }
     }
 
-    private void UpdatePlayerMarker()
+    private void UpdateMinimapWindow()
     {
-        if (playerTransform == null || playerMarker == null || dungeonGenerator.Grid == null) return;
+        if (playerTransform == null || mapImage == null || dungeonGenerator.Grid == null) return;
 
         Vector2Int playerCell = dungeonGenerator.Grid.WorldToCell(playerTransform.position);
 
-        int spanX = Mathf.Max(1, _cellBoundsMax.x - _cellBoundsMin.x);
-        int spanY = Mathf.Max(1, _cellBoundsMax.y - _cellBoundsMin.y);
+        int totalWidth = _cellBoundsMax.x - _cellBoundsMin.x + 1;
+        int totalHeight = _cellBoundsMax.y - _cellBoundsMin.y + 1;
 
-        float u = Mathf.Clamp01((playerCell.x - _cellBoundsMin.x) / (float)spanX);
-        float v = Mathf.Clamp01((playerCell.y - _cellBoundsMin.y) / (float)spanY);
+        float u = (playerCell.x - _cellBoundsMin.x) / (float)totalWidth;
+        float v = (playerCell.y - _cellBoundsMin.y) / (float)totalHeight;
 
-        Rect rect = mapImage.rectTransform.rect;
-        Vector2 localPos = new Vector2(
-            Mathf.Lerp(rect.xMin, rect.xMax, u),
-            Mathf.Lerp(rect.yMin, rect.yMax, v));
+        float uvWidth = Mathf.Clamp01((minimapRadiusCells * 2f) / totalWidth);
+        float uvHeight = Mathf.Clamp01((minimapRadiusCells * 2f) / totalHeight);
 
-        playerMarker.anchoredPosition = localPos;
+        float uMin = u - uvWidth * 0.5f;
+        float vMin = v - uvHeight * 0.5f;
 
-        if (rotateMarkerWithPlayer)
+        uMin = Mathf.Clamp(uMin, 0f, 1f - uvWidth);
+        vMin = Mathf.Clamp(vMin, 0f, 1f - uvHeight);
+
+        mapImage.uvRect = new Rect(uMin, vMin, uvWidth, uvHeight);
+
+        if (playerMarker == null) return;
+
+        playerMarker.anchoredPosition = Vector2.zero;
+
+        float angle = Mathf.Atan2(playerTransform.up.y, playerTransform.up.x) * Mathf.Rad2Deg - 90f;
+
+        if (rotateMapWithPlayer)
         {
-            float angle = Mathf.Atan2(playerTransform.up.y, playerTransform.up.x) * Mathf.Rad2Deg - 90f;
+            mapImage.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -angle);
+            playerMarker.localRotation = Quaternion.identity;
+        }
+        else if (rotateMarkerWithPlayer)
+        {
             playerMarker.localRotation = Quaternion.Euler(0f, 0f, angle);
         }
     }

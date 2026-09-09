@@ -8,6 +8,7 @@ Shader "Custom/OrganicDarknessMask"
 
         _MaskTex ("Darkness Mask (blurred)", 2D) = "black" {}
         _WorldSize ("World Size (setado pelo DungeonDarknessMask.cs)", Float) = 100
+        _WorldMin ("World Min - canto inferior esquerdo do dungeon (setado pelo DungeonDarknessMask.cs)", Vector) = (0, 0, 0, 0)
 
         _WarpFrequency ("Warp Frequency", Float) = 0.08
         _WarpStrength ("Warp Strength (em unidades de mundo)", Float) = 1.2
@@ -48,7 +49,13 @@ Shader "Custom/OrganicDarknessMask"
 
             struct Attributes { float4 positionOS : POSITION; float2 uv : TEXCOORD0; };
 
-            struct Varyings { float4 positionHCS : SV_POSITION; float2 uv : TEXCOORD0; float4 screenPos : TEXCOORD1; };
+            struct Varyings
+            {
+                float4 positionHCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float4 screenPos : TEXCOORD1;
+                float2 worldPos : TEXCOORD2;
+            };
 
             TEXTURE2D(_MaskTex);
             SAMPLER(sampler_MaskTex);
@@ -61,6 +68,7 @@ Shader "Custom/OrganicDarknessMask"
                 float4 _WallNoiseColor;
                 float _WallNoiseAmount;
                 float _WorldSize;
+                float2 _WorldMin;
 
                 float _WarpFrequency;
                 float _WarpStrength;
@@ -90,6 +98,7 @@ Shader "Custom/OrganicDarknessMask"
                 o.positionHCS = TransformObjectToHClip(v.positionOS.xyz);
                 o.uv = v.uv;
                 o.screenPos = ComputeScreenPos(o.positionHCS);
+                o.worldPos = TransformObjectToWorld(v.positionOS.xyz).xy;
                 return o;
             }
 
@@ -153,7 +162,11 @@ Shader "Custom/OrganicDarknessMask"
 
             float4 frag(Varyings i) : SV_Target
             {
-                float2 worldPos = i.uv * _WorldSize;
+                // antes: float2 worldPos = i.uv * _WorldSize;
+                // agora usamos a posição real de mundo do fragmento, deslocada
+                // pelo canto inferior-esquerdo do dungeon, pra independer do
+                // tamanho/posição do quad que está desenhando o shader.
+                float2 worldPos = i.worldPos - _WorldMin;
                 float2 p = floor(worldPos * _PixelsPerUnit) / _PixelsPerUnit; 
 
                 float pulse = 1.0 + (sin(_Time.y * _PulseSpeed) * 0.5 + 0.5) * _PulseAmount;

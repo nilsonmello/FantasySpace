@@ -5,10 +5,9 @@ public class LegSpriteSkin : MonoBehaviour
 {
     [Header("Position")]
     [SerializeField] private LegIK2D leg;
-    [SerializeField] private Transform hip;
 
     [Header("Skin")]
-    [SerializeField] private SpriteRenderer thighRenderer; 
+    [SerializeField] private SpriteRenderer thighRenderer;
     [SerializeField] private SpriteRenderer shinRenderer;
 
     [Header("Ajusts")]
@@ -54,9 +53,9 @@ public class LegSpriteSkin : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (leg == null || hip == null) return;
+        if (leg == null) return;
 
-        Vector2 hipPos = hip.position;
+        Vector2 hipPos = leg.HipWorldPos;
         Vector2 kneePos = leg.KneeWorldPos;
         Vector2 footPos = leg.FootWorldPos;
 

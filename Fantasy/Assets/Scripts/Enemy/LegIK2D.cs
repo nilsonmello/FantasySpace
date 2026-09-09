@@ -32,6 +32,7 @@ public class LegIK2D : MonoBehaviour
     public bool IsStepping { get; private set; }
     public Vector2 KneeWorldPos => currentKneePos;
     public Vector2 FootWorldPos => currentFootPos;
+    public Vector2 HipWorldPos => hip.position;
 
     private Vector2 currentFootPos;
     private Vector2 currentKneePos;

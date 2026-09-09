@@ -18,33 +18,90 @@ public static class CorridorCarver
         public float F => G + H;
     }
 
+    private struct HeapEntry
+    {
+        public Vector2Int Position;
+        public float G;
+        public float F;
+    }
+
+    private class MinHeap
+    {
+        private readonly List<HeapEntry> _items = new List<HeapEntry>();
+
+        public int Count => _items.Count;
+
+        public void Push(HeapEntry entry)
+        {
+            _items.Add(entry);
+            int i = _items.Count - 1;
+
+            while (i > 0)
+            {
+                int parent = (i - 1) / 2;
+                if (_items[parent].F <= _items[i].F) break;
+                (_items[parent], _items[i]) = (_items[i], _items[parent]);
+                i = parent;
+            }
+        }
+
+        public HeapEntry Pop()
+        {
+            HeapEntry root = _items[0];
+            int last = _items.Count - 1;
+            _items[0] = _items[last];
+            _items.RemoveAt(last);
+
+            int i = 0;
+            int count = _items.Count;
+
+            while (true)
+            {
+                int left = i * 2 + 1;
+                int right = i * 2 + 2;
+                int smallest = i;
+
+                if (left < count && _items[left].F < _items[smallest].F) smallest = left;
+                if (right < count && _items[right].F < _items[smallest].F) smallest = right;
+                if (smallest == i) break;
+
+                (_items[smallest], _items[i]) = (_items[i], _items[smallest]);
+                i = smallest;
+            }
+
+            return root;
+        }
+    }
+
     public static List<Vector2Int> FindPath(
         DungeonGrid grid,
         Vector2Int start,
         Vector2Int end,
         float hugPenaltyWeight = 4f)
     {
-        var open = new List<Node>();
+        var open = new MinHeap();
         var closed = new HashSet<Vector2Int>();
         var allNodes = new Dictionary<Vector2Int, Node>();
 
         var startNode = new Node { Position = start, G = 0f, H = Heuristic(start, end) };
-        open.Add(startNode);
         allNodes[start] = startNode;
+        open.Push(new HeapEntry { Position = start, G = 0f, F = startNode.F });
 
         const int maxIterations = 20000;
         int iterations = 0;
 
         while (open.Count > 0 && iterations++ < maxIterations)
         {
-            open.Sort((a, b) => a.F.CompareTo(b.F));
-            Node current = open[0];
-            open.RemoveAt(0);
+            HeapEntry entry = open.Pop();
+
+            if (closed.Contains(entry.Position)) continue;
+
+            Node current = allNodes[entry.Position];
+            if (entry.G > current.G) continue;
 
             if (current.Position == end)
             {
                 List<Vector2Int> rawPath = ReconstructPath(current);
-
                 return SimplifyStaircase(rawPath, grid);
             }
 
@@ -68,19 +125,18 @@ public static class CorridorCarver
 
                 if (!allNodes.TryGetValue(neighborPos, out var neighborNode))
                 {
-                    neighborNode = new Node { Position = neighborPos };
+                    neighborNode = new Node { Position = neighborPos, G = float.MaxValue };
                     allNodes[neighborPos] = neighborNode;
-                    open.Add(neighborNode);
                 }
-                else if (tentativeG >= neighborNode.G)
-                {
-                    continue;
-                }
+
+                if (tentativeG >= neighborNode.G) continue;
 
                 neighborNode.Parent = current;
                 neighborNode.DirFromParent = dir;
                 neighborNode.G = tentativeG;
                 neighborNode.H = Heuristic(neighborPos, end);
+
+                open.Push(new HeapEntry { Position = neighborPos, G = tentativeG, F = neighborNode.F });
             }
         }
 

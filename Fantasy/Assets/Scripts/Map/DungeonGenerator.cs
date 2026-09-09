@@ -180,51 +180,89 @@ public class DungeonGenerator : MonoBehaviour
         _isGenerating = false;
     }
 
+    [SerializeField] private bool logGenerationTiming = true;
+    private int _debugFailedRoomPlacements;
+
     private bool TryGenerateOnce(int attemptNumber)
     {
+        var sw = logGenerationTiming ? System.Diagnostics.Stopwatch.StartNew() : null;
+        long tClear = 0, tPlaceRooms = 0, tBuildGrid = 0, tConnGraph = 0, tCarve = 0, tRest = 0;
+        _debugFailedRoomPlacements = 0;
+
         Clear();
+        if (sw != null) { tClear = sw.ElapsedMilliseconds; sw.Restart(); }
 
         var rng = useRandomSeed
             ? new System.Random()
             : new System.Random(seed + attemptNumber - 1);
 
         PlaceRooms(rng);
+        if (sw != null) { tPlaceRooms = sw.ElapsedMilliseconds; sw.Restart(); }
+
         BuildGrid();
+        if (sw != null) { tBuildGrid = sw.ElapsedMilliseconds; sw.Restart(); }
+
         BuildConnectionGraph();
         DetermineStartAndExitRooms();
+        if (sw != null) { tConnGraph = sw.ElapsedMilliseconds; sw.Restart(); }
 
         bool carved = CarveCorridors();
+        if (sw != null) { tCarve = sw.ElapsedMilliseconds; sw.Restart(); }
 
         if (!carved || !ValidateConnectivity())
+        {
+            if (logGenerationTiming)
+            {
+                Debug.Log($"[Gen #{attemptNumber}] FALHOU no carve/conectividade — " +
+                          $"Clear={tClear}ms PlaceRooms={tPlaceRooms}ms(overlaps={_debugFailedRoomPlacements}) " +
+                          $"BuildGrid={tBuildGrid}ms ConnGraph={tConnGraph}ms Carve={tCarve}ms");
+            }
             return false;
+        }
 
         if (corridorWidth <= 1)
             ThinCorridorBlobs();
 
         SpawnCorridorVisuals();
         SpawnCorridorProps(rng);
-        FillWalls();
-        GenerateWallShadowCasters();
+
+        bool[,] wallGrid = null;
+        int wgMinX = 0, wgMinY = 0, wgSide = 0;
+        if (GetWallSquareBounds(out wgMinX, out wgMinY, out wgSide))
+            wallGrid = BuildWallGrid(wgMinX, wgMinY, wgSide);
+
+        FillWalls(wallGrid, wgMinX, wgMinY, wgSide);
+        GenerateWallShadowCasters(wallGrid, wgMinX, wgMinY, wgSide);
+
         SpawnPlayer();
         SpawnExitMarker();
+
+        if (logGenerationTiming)
+        {
+            if (sw != null) tRest = sw.ElapsedMilliseconds;
+            Debug.Log($"[Gen #{attemptNumber}] SUCESSO — " +
+                      $"Clear={tClear}ms PlaceRooms={tPlaceRooms}ms(overlaps={_debugFailedRoomPlacements}) " +
+                      $"BuildGrid={tBuildGrid}ms ConnGraph={tConnGraph}ms Carve={tCarve}ms Resto={tRest}ms");
+        }
+
         return true;
     }
 
     private void Clear()
     {
         foreach (var room in _placedRooms)
-            if (room != null) DestroyImmediate(room.gameObject);
+            DestroyGameObject(room != null ? room.gameObject : null);
 
         foreach (var visual in _spawnedCorridorVisuals)
-            if (visual != null) DestroyImmediate(visual);
+            DestroyGameObject(visual);
 
         foreach (var prop in _spawnedCorridorProps)
-            if (prop != null) DestroyImmediate(prop);
+            DestroyGameObject(prop);
 
         foreach (var shadowCaster in _spawnedWallShadowCasters)
-            if (shadowCaster != null) DestroyImmediate(shadowCaster);
+            DestroyGameObject(shadowCaster);
 
-        if (_spawnedExitMarker != null) DestroyImmediate(_spawnedExitMarker);
+        DestroyGameObject(_spawnedExitMarker);
 
         if (wallTilemap != null) wallTilemap.ClearAllTiles();
 
@@ -237,6 +275,16 @@ public class DungeonGenerator : MonoBehaviour
         _startRoom = null;
         _exitRoom = null;
         Grid = null;
+    }
+
+    private static void DestroyGameObject(Object obj)
+    {
+        if (obj == null) return;
+
+        if (Application.isPlaying)
+            Destroy(obj);
+        else
+            DestroyImmediate(obj);
     }
 
     private void DetermineStartAndExitRooms()
@@ -316,8 +364,7 @@ public class DungeonGenerator : MonoBehaviour
 
         Vector3 exitPos = ExitRoom.ExitPosition;
 
-        if (_spawnedExitMarker != null)
-            DestroyImmediate(_spawnedExitMarker);
+        DestroyGameObject(_spawnedExitMarker);
 
         _spawnedExitMarker = Instantiate(exitMarkerPrefab, exitPos, Quaternion.identity, transform);
     }
@@ -537,12 +584,13 @@ public class DungeonGenerator : MonoBehaviour
 
         Transform parent = corridorContainer != null ? corridorContainer : transform;
 
+        var candidateBuffer = corridorProps.ToArray();
+
         foreach (var cell in corridorCells)
         {
-            var candidateProps = new List<CorridorPropSpawnData>(corridorProps);
-            Shuffle(candidateProps, rng);
+            ShuffleArray(candidateBuffer, rng);
 
-            foreach (var prop in candidateProps)
+            foreach (var prop in candidateBuffer)
             {
                 if (prop.prefab == null) continue;
                 if (counts[prop] >= prop.maxCount) continue;
@@ -579,22 +627,43 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private void FillWalls()
+    private static void ShuffleArray<T>(T[] array, System.Random rng)
     {
-        if (wallTilemap == null || wallTile == null || Grid == null) return;
+        for (int i = array.Length - 1; i > 0; i--)
+        {
+            int j = rng.Next(i + 1);
+            (array[i], array[j]) = (array[j], array[i]);
+        }
+    }
 
-        if (!GetWallSquareBounds(out int squareMinX, out int squareMinY, out int side))
-            return;
+    private bool[,] BuildWallGrid(int squareMinX, int squareMinY, int side)
+    {
+        var wallGrid = new bool[side, side];
 
         for (int x = 0; x < side; x++)
         {
             for (int y = 0; y < side; y++)
             {
                 var cell = new Vector2Int(squareMinX + x, squareMinY + y);
-
                 DungeonGrid.CellType type = Grid.GetCell(cell);
-                if (type == DungeonGrid.CellType.Room || type == DungeonGrid.CellType.Corridor) continue;
+                wallGrid[x, y] = type != DungeonGrid.CellType.Room && type != DungeonGrid.CellType.Corridor;
+            }
+        }
 
+        return wallGrid;
+    }
+
+    private void FillWalls(bool[,] wallGrid, int squareMinX, int squareMinY, int side)
+    {
+        if (wallTilemap == null || wallTile == null || Grid == null || wallGrid == null) return;
+
+        for (int x = 0; x < side; x++)
+        {
+            for (int y = 0; y < side; y++)
+            {
+                if (!wallGrid[x, y]) continue;
+
+                var cell = new Vector2Int(squareMinX + x, squareMinY + y);
                 Vector3 worldPos = Grid.CellToWorld(cell);
                 Vector3Int tileCell = wallTilemap.WorldToCell(worldPos);
                 wallTilemap.SetTile(tileCell, wallTile);
@@ -602,23 +671,9 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private void GenerateWallShadowCasters()
+    private void GenerateWallShadowCasters(bool[,] isWall, int squareMinX, int squareMinY, int side)
     {
-        if (!generateWallShadowCasters || wallTilemap == null || Grid == null) return;
-
-        if (!GetWallSquareBounds(out int squareMinX, out int squareMinY, out int side))
-            return;
-
-        var isWall = new bool[side, side];
-        for (int x = 0; x < side; x++)
-        {
-            for (int y = 0; y < side; y++)
-            {
-                var cell = new Vector2Int(squareMinX + x, squareMinY + y);
-                DungeonGrid.CellType type = Grid.GetCell(cell);
-                isWall[x, y] = type != DungeonGrid.CellType.Room && type != DungeonGrid.CellType.Corridor;
-            }
-        }
+        if (!generateWallShadowCasters || wallTilemap == null || Grid == null || isWall == null) return;
 
         var visited = new bool[side, side];
         Transform parent = wallShadowContainer != null ? wallShadowContainer : transform;
@@ -701,20 +756,7 @@ public class DungeonGenerator : MonoBehaviour
 
     private bool TryGetContentCellBounds(out int minX, out int maxX, out int minY, out int maxY)
     {
-        minX = minY = int.MaxValue;
-        maxX = maxY = int.MinValue;
-
-        bool any = false;
-        foreach (var kvp in Grid.AllCells)
-        {
-            any = true;
-            if (kvp.Key.x < minX) minX = kvp.Key.x;
-            if (kvp.Key.x > maxX) maxX = kvp.Key.x;
-            if (kvp.Key.y < minY) minY = kvp.Key.y;
-            if (kvp.Key.y > maxY) maxY = kvp.Key.y;
-        }
-
-        return any;
+        return Grid.TryGetContentBounds(out minX, out maxX, out minY, out maxY);
     }
 
     public bool GetWallSquareBounds(out int squareMinX, out int squareMinY, out int side)
@@ -739,9 +781,12 @@ public class DungeonGenerator : MonoBehaviour
 
     private void PlaceRooms(System.Random rng)
     {
+        float totalWeight = availableRooms.Sum(r => r.spawnWeight);
+        if (totalWeight <= 0f) return;
+
         for (int i = 0; i < roomCount; i++)
         {
-            RoomData data = PickWeightedRoom(rng);
+            RoomData data = PickWeightedRoom(rng, totalWeight);
             if (data == null || data.prefab == null) continue;
 
             bool placed = TryPlaceRoom(data, rng);
@@ -762,13 +807,14 @@ public class DungeonGenerator : MonoBehaviour
 
             if (instance == null)
             {
-                DestroyImmediate(go);
+                DestroyGameObject(go);
                 return false;
             }
 
             if (OverlapsExisting(instance))
             {
-                DestroyImmediate(go);
+                DestroyGameObject(go);
+                _debugFailedRoomPlacements++;
                 continue;
             }
 
@@ -793,11 +839,8 @@ public class DungeonGenerator : MonoBehaviour
         return false;
     }
 
-    private RoomData PickWeightedRoom(System.Random rng)
+    private RoomData PickWeightedRoom(System.Random rng, float totalWeight)
     {
-        float totalWeight = availableRooms.Sum(r => r.spawnWeight);
-        if (totalWeight <= 0f) return null;
-
         float roll = (float)(rng.NextDouble() * totalWeight);
         float cumulative = 0f;
 
