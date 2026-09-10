@@ -59,6 +59,11 @@ public class HeadStateMovement : MonoBehaviour
     [SerializeField] private Vector2 boundsCenter = Vector2.zero;
     [SerializeField] private Vector2 boundsSize = new Vector2(10f, 10f);
 
+    [Header("Body Bend")]
+    [SerializeField] private bool limitBodyBend = true;
+    [SerializeField, Range(0f, 180f)] private float maxBendAngle = 45f; 
+    [SerializeField] private bool drawBendGizmo = true;
+
     private float noiseOffsetX;
     private float noiseOffsetY;
     private Vector2 currentVelocity;
@@ -121,6 +126,25 @@ public class HeadStateMovement : MonoBehaviour
             pos.y = Mathf.Clamp(pos.y, boundsCenter.y - boundsSize.y / 2f, boundsCenter.y + boundsSize.y / 2f);
             transform.position = pos;
         }
+    }
+
+    private Vector2 ClampDirectionToBend(Vector2 desiredDir)
+    {
+        if (!limitBodyBend || bodyChain == null || desiredDir.sqrMagnitude < 0.0001f)
+            return desiredDir;
+
+        Vector2 neckDir = (Vector2)transform.position - bodyChain.FirstSegmentPos;
+        if (neckDir.sqrMagnitude < 0.0001f)
+            return desiredDir;
+
+        float neckAngle = Mathf.Atan2(neckDir.y, neckDir.x) * Mathf.Rad2Deg;
+        float desiredAngle = Mathf.Atan2(desiredDir.y, desiredDir.x) * Mathf.Rad2Deg;
+
+        float delta = Mathf.DeltaAngle(neckAngle, desiredAngle);
+        delta = Mathf.Clamp(delta, -maxBendAngle, maxBendAngle);
+
+        float clampedAngle = (neckAngle + delta) * Mathf.Deg2Rad;
+        return new Vector2(Mathf.Cos(clampedAngle), Mathf.Sin(clampedAngle));
     }
 
     public void SetState(State newState)
@@ -202,16 +226,19 @@ public class HeadStateMovement : MonoBehaviour
         return hit.collider == null;
     }
 
-private void UpdateWander()
-{
-    float t = Time.time * changeDirectionSmoothness;
-    
-    float angle = Mathf.PerlinNoise(t, noiseOffsetX) * 360f * Mathf.Deg2Rad;
-    
-    Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-    currentVelocity = direction * wanderSpeed;
-    transform.position = (Vector2)transform.position + currentVelocity * Time.deltaTime;
-}
+    private void UpdateWander()
+    {
+        float t = Time.time * changeDirectionSmoothness;
+
+        float angle = Mathf.PerlinNoise(t, noiseOffsetX) * 360f * Mathf.Deg2Rad;
+
+        Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+        direction = ClampDirectionToBend(direction);
+
+        currentVelocity = direction * wanderSpeed;
+        transform.position = (Vector2)transform.position + currentVelocity * Time.deltaTime;
+    }
+
     private void UpdateChase()
     {
         bool visible = CanSeePlayer();
@@ -227,6 +254,8 @@ private void UpdateWander()
         if (dist > chaseStopDistance)
         {
             Vector2 dir = toTarget / dist;
+            dir = ClampDirectionToBend(dir);
+
             currentVelocity = dir * chaseSpeed;
             transform.position = (Vector2)transform.position + currentVelocity * Time.deltaTime;
         }
@@ -268,6 +297,8 @@ private void UpdateWander()
         if (dist > patrolPointArriveDistance)
         {
             Vector2 dir = toTarget / dist;
+            dir = ClampDirectionToBend(dir);
+
             currentVelocity = dir * patrolSpeed;
             transform.position = (Vector2)transform.position + currentVelocity * Time.deltaTime;
         }
@@ -330,5 +361,28 @@ private void UpdateWander()
                 Gizmos.DrawWireSphere(patrolCenter, patrolSearchRadius);
             }
         }
+
+        if (drawBendGizmo && limitBodyBend && Application.isPlaying && bodyChain != null)
+        {
+            Vector2 neckDir = (Vector2)transform.position - bodyChain.FirstSegmentPos;
+            if (neckDir.sqrMagnitude > 0.0001f)
+            {
+                float neckAngle = Mathf.Atan2(neckDir.y, neckDir.x) * Mathf.Rad2Deg;
+                float len = visionRadius * 0.5f;
+
+                Gizmos.color = Color.green;
+                Vector2 pos = transform.position;
+                Vector2 dirA = DirFromAngle(neckAngle + maxBendAngle);
+                Vector2 dirB = DirFromAngle(neckAngle - maxBendAngle);
+                Gizmos.DrawLine(pos, pos + dirA * len);
+                Gizmos.DrawLine(pos, pos + dirB * len);
+            }
+        }
+    }
+
+    private static Vector2 DirFromAngle(float degrees)
+    {
+        float rad = degrees * Mathf.Deg2Rad;
+        return new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
     }
 }
