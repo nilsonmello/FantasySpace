@@ -59,17 +59,10 @@ public class HeadStateMovement : MonoBehaviour
     [SerializeField] private Vector2 boundsCenter = Vector2.zero;
     [SerializeField] private Vector2 boundsSize = new Vector2(10f, 10f);
 
-    [Header("Rotation")]
-    [SerializeField] private bool rotateTowardsMovement = true;
-    [SerializeField] private float rotationSpeed = 10f;
-    [SerializeField] private bool limitHeadTurn = true;
-    [SerializeField, Range(0f, 180f)] private float maxHeadTurnAngle = 60f; // meio-ângulo: giro total = 2x isso
-
     private float noiseOffsetX;
     private float noiseOffsetY;
     private Vector2 currentVelocity;
     private State previousState;
-
 
     private Transform backPoint;
 
@@ -127,26 +120,6 @@ public class HeadStateMovement : MonoBehaviour
             pos.x = Mathf.Clamp(pos.x, boundsCenter.x - boundsSize.x / 2f, boundsCenter.x + boundsSize.x / 2f);
             pos.y = Mathf.Clamp(pos.y, boundsCenter.y - boundsSize.y / 2f, boundsCenter.y + boundsSize.y / 2f);
             transform.position = pos;
-        }
-
-        if (rotateTowardsMovement && currentVelocity.sqrMagnitude > 0.01f)
-        {
-            float angle = Mathf.Atan2(currentVelocity.y, currentVelocity.x) * Mathf.Rad2Deg;
-
-            if (limitHeadTurn && bodyChain != null)
-            {
-                Vector2 neckDir = (Vector2)transform.position - bodyChain.FirstSegmentPos;
-                if (neckDir.sqrMagnitude > 0.0001f)
-                {
-                    float neckAngle = Mathf.Atan2(neckDir.y, neckDir.x) * Mathf.Rad2Deg;
-                    float delta = Mathf.DeltaAngle(neckAngle, angle);
-                    delta = Mathf.Clamp(delta, -maxHeadTurnAngle, maxHeadTurnAngle);
-                    angle = neckAngle + delta;
-                }
-            }
-
-            Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
     }
 
@@ -229,17 +202,16 @@ public class HeadStateMovement : MonoBehaviour
         return hit.collider == null;
     }
 
-    private void UpdateWander()
-    {
-        float t = Time.time * changeDirectionSmoothness;
-        float dirX = Mathf.PerlinNoise(t, noiseOffsetX) * 2f - 1f;
-        float dirY = Mathf.PerlinNoise(t, noiseOffsetY) * 2f - 1f;
-
-        Vector2 direction = new Vector2(dirX, dirY);
-        currentVelocity = direction * wanderSpeed;
-        transform.position = (Vector2)transform.position + currentVelocity * Time.deltaTime;
-    }
-
+private void UpdateWander()
+{
+    float t = Time.time * changeDirectionSmoothness;
+    
+    float angle = Mathf.PerlinNoise(t, noiseOffsetX) * 360f * Mathf.Deg2Rad;
+    
+    Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+    currentVelocity = direction * wanderSpeed;
+    transform.position = (Vector2)transform.position + currentVelocity * Time.deltaTime;
+}
     private void UpdateChase()
     {
         bool visible = CanSeePlayer();
