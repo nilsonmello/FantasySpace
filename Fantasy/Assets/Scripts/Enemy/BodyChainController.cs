@@ -5,6 +5,12 @@ public class BodyChainController : MonoBehaviour
     [Header("Head")]
     [SerializeField] private Transform head;
 
+    [Header("Segment Generation")]
+    [SerializeField] private bool autoGenerateSegments = true;
+    [SerializeField] private Transform segmentPrefab;
+    [SerializeField] private int segmentCount = 10;
+    [SerializeField] private Transform segmentsParent;
+
     [Header("Segments")]
     public Transform firstSegment;
     public Transform lastSegment;
@@ -55,6 +61,9 @@ public class BodyChainController : MonoBehaviour
 
     private void Awake()
     {
+        if (autoGenerateSegments)
+            GenerateSegments();
+
         firstSegment = segments[0];
         lastSegment = segments[^1];
 
@@ -71,6 +80,25 @@ public class BodyChainController : MonoBehaviour
         }
 
         ApplySegmentScales();
+    }
+
+    private void GenerateSegments()
+    {
+        if (segmentPrefab == null)
+        {
+            Debug.LogWarning($"{name}: segmentPrefab não atribuído — geração automática ignorada, usando array manual.", this);
+            return;
+        }
+
+        Transform parent = segmentsParent != null ? segmentsParent : transform;
+        segments = new Transform[segmentCount];
+
+        for (int i = 0; i < segmentCount; i++)
+        {
+            Transform seg = Instantiate(segmentPrefab, head.position, Quaternion.identity, parent);
+            seg.name = $"Segment_{i:00}";
+            segments[i] = seg;
+        }
     }
 
     private void ApplySegmentScales()
