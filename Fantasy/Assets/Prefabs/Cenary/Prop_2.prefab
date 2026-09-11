@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5766004532086351835}
   - component: {fileID: 336239551481651881}
   - component: {fileID: 5720281911877915904}
-  - component: {fileID: -6110183221628720198}
+  - component: {fileID: 4678873772568374425}
   m_Layer: 9
   m_Name: Prop_2
   m_TagString: Untagged
@@ -156,7 +156,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &-6110183221628720198
+--- !u!114 &4678873772568374425
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -165,7 +165,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 4612516941878568734}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56adb16193dcf264b963bff32858ae8d, type: 3}
+  m_Script: {fileID: 11500000, guid: 13e873172c392e14f9f3c7fdb1e512be, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SimpleInteractable
+  m_EditorClassIdentifier: Assembly-CSharp::HideoutInteractable
   InteractionRange: 1.5
+  maxUses: -1
+  cooldownDuration: 0
+  hidingSpot: {fileID: 0}
+  onPlayerEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerExit:
+    m_PersistentCalls:
+      m_Calls: []
