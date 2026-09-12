@@ -86,7 +86,7 @@ public class BodyChainController : MonoBehaviour
     {
         if (segmentPrefab == null)
         {
-            Debug.LogWarning($"{name}: segmentPrefab não atribuído — geração automática ignorada, usando array manual.", this);
+            Debug.LogWarning($"{name}: missing prefab", this);
             return;
         }
 

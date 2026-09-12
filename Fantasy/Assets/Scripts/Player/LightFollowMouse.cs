@@ -27,16 +27,16 @@ public class LightFollowMouse : MonoBehaviour
         return mainCamera.ScreenToWorldPoint(mouseScreenPos);
     }
 
-    // void OnDrawGizmos()
-    // {
-    //     if (!Application.isPlaying) return;
+    void OnDrawGizmos()
+    {
+        if (!Application.isPlaying) return;
 
-    //     Vector3 mouseWorldPos = GetMouseWorldPosition();
+        Vector3 mouseWorldPos = GetMouseWorldPosition();
 
-    //     Gizmos.color = Color.red;
-    //     Gizmos.DrawLine(transform.position, mouseWorldPos);
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, mouseWorldPos);
 
-    //     Gizmos.color = Color.green;
-    //     Gizmos.DrawLine(transform.position, transform.position + transform.right * 2f);
-    // }
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position, transform.position + transform.right * 2f);
+    }
 }

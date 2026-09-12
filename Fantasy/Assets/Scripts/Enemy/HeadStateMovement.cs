@@ -35,6 +35,8 @@ public class HeadStateMovement : MonoBehaviour
     [Header("Chase")]
     [SerializeField] private float chaseSpeed = 5f;
     [SerializeField] private float chaseStopDistance = 0.3f;
+    [SerializeField] private float chaseGiveUpTime = 5f;
+    private float lastSeenPlayerTime;
 
     [Header("Hide")]
     [SerializeField] private float hideCompressionRadius = 0.5f;
@@ -48,11 +50,25 @@ public class HeadStateMovement : MonoBehaviour
     [SerializeField] private int patrolPointCount = 3;
     [SerializeField] private float patrolPointArriveDistance = 0.2f;
     [SerializeField] private float patrolWaitTime = 1f;
+    [SerializeField] private float patrolTargetTimeout = 3f;
     private Vector2 patrolCenter;
     private Vector2 patrolTarget;
     private int patrolPointsVisited;
     private bool patrolWaiting;
     private float patrolWaitTimer;
+    private float patrolTargetTimer;
+    private float effectivePatrolSearchRadius;
+
+    [Header("Sound / Investigation")]
+    [SerializeField] private SoundPerception soundPerception;
+    [SerializeField] private float minWanderTimeBetweenInvestigations = 4f;
+    private bool hasPendingInvestigation;
+    private Vector2 pendingInvestigationCenter;
+    private float pendingInvestigationRadius;
+    private int pendingInvestigationSourceId;
+    private int activeInvestigationSourceId;
+    private float nextInvestigationAllowedTime;
+    private bool currentPatrolIsFromSound;
 
     [Header("Limits")]
     [SerializeField] private bool useBounds = false;
@@ -91,6 +107,25 @@ public class HeadStateMovement : MonoBehaviour
 
         if (currentState != State.Hide)
             UpdateDetection();
+
+        if (currentState == State.Wander && Time.time >= nextInvestigationAllowedTime
+            && soundPerception != null && soundPerception.HasPendingSound)
+        {
+            if (soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
+                InvestigateSoundAt(soundPos, soundRadius, soundSourceId);
+        }
+        else if (currentState == State.Patrol && currentPatrolIsFromSound
+            && activeInvestigationSourceId != 0 && soundPerception != null)
+        {
+            if (soundPerception.TryPeekActiveTrackedPosition(activeInvestigationSourceId, out Vector2 updatedPos, out float updatedRadius))
+                RedirectInvestigation(updatedPos, updatedRadius, activeInvestigationSourceId);
+        }
+        else if (currentState == State.Patrol && !currentPatrolIsFromSound && soundPerception != null
+            && soundPerception.HasPendingSound)
+        {
+            if (soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
+                RedirectInvestigation(soundPos, soundRadius, soundSourceId);
+        }
 
         if (currentState != previousState)
         {
@@ -152,6 +187,27 @@ public class HeadStateMovement : MonoBehaviour
         currentState = newState;
     }
 
+    public void InvestigateSoundAt(Vector2 position, float searchRadius, int sourceId = 0)
+    {
+        hasPendingInvestigation = true;
+        pendingInvestigationCenter = position;
+        pendingInvestigationRadius = searchRadius;
+        pendingInvestigationSourceId = sourceId;
+        SetState(State.Patrol);
+    }
+
+    private void RedirectInvestigation(Vector2 newCenter, float newSearchRadius, int sourceId)
+    {
+        patrolCenter = newCenter;
+        effectivePatrolSearchRadius = newSearchRadius;
+        currentPatrolIsFromSound = true;
+        activeInvestigationSourceId = sourceId;
+        patrolPointsVisited = 0;
+        patrolWaiting = false;
+        patrolTarget = PickNewPatrolPoint();
+        patrolTargetTimer = 0f;
+    }
+
     private void EnterState(State state)
     {
         if (state == State.Hide)
@@ -163,10 +219,26 @@ public class HeadStateMovement : MonoBehaviour
         }
         else if (state == State.Patrol)
         {
-            patrolCenter = hasLastKnownPos ? lastKnownPlayerPos : (Vector2)transform.position;
+            if (hasPendingInvestigation)
+            {
+                patrolCenter = pendingInvestigationCenter;
+                effectivePatrolSearchRadius = pendingInvestigationRadius;
+                activeInvestigationSourceId = pendingInvestigationSourceId;
+                hasPendingInvestigation = false;
+                currentPatrolIsFromSound = true;
+            }
+            else
+            {
+                patrolCenter = hasLastKnownPos ? lastKnownPlayerPos : (Vector2)transform.position;
+                effectivePatrolSearchRadius = patrolSearchRadius;
+                activeInvestigationSourceId = 0;
+                currentPatrolIsFromSound = false;
+            }
+
             patrolPointsVisited = 0;
             patrolWaiting = false;
             patrolTarget = PickNewPatrolPoint();
+            patrolTargetTimer = 0f;
         }
     }
 
@@ -185,6 +257,7 @@ public class HeadStateMovement : MonoBehaviour
         {
             lastKnownPlayerPos = player.position;
             hasLastKnownPos = true;
+            lastSeenPlayerTime = Time.time;
 
             if (currentState != State.Chase)
                 SetState(State.Chase);
@@ -241,11 +314,30 @@ public class HeadStateMovement : MonoBehaviour
 
     private void UpdateChase()
     {
-        bool visible = CanSeePlayer();
+        bool visible = CanSeePlayer() || BackVision();
+
         if (!hasLastKnownPos)
         {
             currentVelocity = Vector2.zero;
             return;
+        }
+
+        if (!visible)
+        {
+            if (soundPerception != null &&
+                soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
+            {
+                currentVelocity = Vector2.zero;
+                InvestigateSoundAt(soundPos, soundRadius, soundSourceId);
+                return;
+            }
+
+            if (Time.time - lastSeenPlayerTime >= chaseGiveUpTime)
+            {
+                currentVelocity = Vector2.zero;
+                SetState(State.Patrol);
+                return;
+            }
         }
 
         Vector2 toTarget = lastKnownPlayerPos - (Vector2)transform.position;
@@ -282,11 +374,18 @@ public class HeadStateMovement : MonoBehaviour
 
                 if (patrolPointsVisited >= patrolPointCount)
                 {
+                    if (currentPatrolIsFromSound)
+                        nextInvestigationAllowedTime = Time.time + minWanderTimeBetweenInvestigations;
+                    else
+                        hasLastKnownPos = false;
+
+                    activeInvestigationSourceId = 0;
                     SetState(State.Wander);
                     return;
                 }
 
                 patrolTarget = PickNewPatrolPoint();
+                patrolTargetTimer = 0f;
             }
             return;
         }
@@ -294,7 +393,10 @@ public class HeadStateMovement : MonoBehaviour
         Vector2 toTarget = patrolTarget - (Vector2)transform.position;
         float dist = toTarget.magnitude;
 
-        if (dist > patrolPointArriveDistance)
+        patrolTargetTimer += Time.deltaTime;
+        bool timedOut = patrolTargetTimer >= patrolTargetTimeout;
+
+        if (dist > patrolPointArriveDistance && !timedOut)
         {
             Vector2 dir = toTarget / dist;
             dir = ClampDirectionToBend(dir);
@@ -311,7 +413,7 @@ public class HeadStateMovement : MonoBehaviour
 
     private Vector2 PickNewPatrolPoint()
     {
-        Vector2 offset = UnityEngine.Random.insideUnitCircle * patrolSearchRadius;
+        Vector2 offset = UnityEngine.Random.insideUnitCircle * effectivePatrolSearchRadius;
         return patrolCenter + offset;
     }
 
@@ -350,16 +452,20 @@ public class HeadStateMovement : MonoBehaviour
             Gizmos.DrawWireSphere(backPoint.position, visionRadius);
         }
 
-        if (Application.isPlaying && hasLastKnownPos && (currentState == State.Chase || currentState == State.Patrol))
+        if (Application.isPlaying && currentState == State.Patrol)
+        {
+            Gizmos.color = currentPatrolIsFromSound
+                ? new Color(1f, 0.2f, 0.9f, 0.4f)
+                : new Color(1f, 1f, 0f, 0.4f);
+            Gizmos.DrawWireSphere(patrolCenter, effectivePatrolSearchRadius);
+            Gizmos.DrawLine(transform.position, patrolCenter);
+        }
+
+        bool patrolIsPlayerRelated = currentState == State.Patrol && !currentPatrolIsFromSound;
+        if (Application.isPlaying && hasLastKnownPos && (currentState == State.Chase || patrolIsPlayerRelated))
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(lastKnownPlayerPos, 0.2f);
-
-            if (currentState == State.Patrol)
-            {
-                Gizmos.color = new Color(1f, 1f, 0f, 0.4f);
-                Gizmos.DrawWireSphere(patrolCenter, patrolSearchRadius);
-            }
         }
 
         if (drawBendGizmo && limitBodyBend && Application.isPlaying && bodyChain != null)

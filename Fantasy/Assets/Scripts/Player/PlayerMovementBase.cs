@@ -3,6 +3,13 @@ using UnityEngine.InputSystem;
 
 public abstract class PlayerMovementBase : MonoBehaviour
 {
+    public enum MovementState
+    {
+        Walk,
+        Run,
+        Crouch
+    }
+
     public float MovSpeed;
     public float RunSpeed;
     public float CrouchSpeed;
@@ -13,6 +20,10 @@ public abstract class PlayerMovementBase : MonoBehaviour
     protected InputAction moveAction;
     protected float currentSpeed;
     protected Rigidbody2D rb;
+
+    public MovementState CurrentMovementState { get; private set; } = MovementState.Walk;
+
+    public Vector2 CurrentVelocity => rb != null ? rb.linearVelocity : Vector2.zero;
 
     protected virtual void Start()
     {
@@ -45,14 +56,17 @@ public abstract class PlayerMovementBase : MonoBehaviour
         if (runAction.IsPressed())
         {
             currentSpeed = RunSpeed;
+            CurrentMovementState = MovementState.Run;
         }
         else if (crouchAction.IsPressed())
         {
             currentSpeed = CrouchSpeed;
+            CurrentMovementState = MovementState.Crouch;
         }
         else
         {
             currentSpeed = MovSpeed;
+            CurrentMovementState = MovementState.Walk;
         }
     }
 

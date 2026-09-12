@@ -197,6 +197,7 @@ GameObject:
   - component: {fileID: 8623255911915316980}
   - component: {fileID: 3884008987325982196}
   - component: {fileID: -4040433910167881033}
+  - component: {fileID: 1230921152195161151}
   m_Layer: 3
   m_Name: PlayerPrefab
   m_TagString: Player
@@ -388,7 +389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a3424524ca98847aaefeadf5ae47a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_1
-  MovSpeed: 20
+  MovSpeed: 40
   RunSpeed: 35
   CrouchSpeed: 12
 --- !u!114 &-4040433910167881033
@@ -407,3 +408,25 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 2560
+--- !u!114 &1230921152195161151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8228299723434981340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7402c7d0036c8a144b62e8fb77d8f902, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSoundEmitter
+  channel: {fileID: 11400000, guid: b3f9311fdd0f8bb4784f6fed52a6fa23, type: 2}
+  playerMovement: {fileID: 3884008987325982196}
+  movementThreshold: 0.05
+  walkInterval: 0.5
+  walkRadius: 4.39
+  walkPriority: 1
+  runInterval: 0.3
+  runRadius: 7
+  runPriority: 2
+  drawGizmo: 1
