@@ -90,6 +90,10 @@ public class AntennaIK : MonoBehaviour
     [SerializeField] private float tiltAmplitudeBase = 0.002f;
     [SerializeField] private float tiltAmplitudeGrowth = 0.003f;
 
+    [Header("Head Tremble Sync")]
+    [SerializeField] private HeadSpriteFacing headSpriteFacing;
+    [SerializeField, Range(0f, 1f)] private float trembleInfluence = 1f;
+
     private Vector2[] jointPositions;
     private Vector2 currentTarget;
     private Vector2 elbowNearPos;
@@ -372,6 +376,10 @@ public class AntennaIK : MonoBehaviour
     {
         if (lineRenderer == null) return;
 
+        Vector2 root = socket.position;
+        float trembleAngle = headSpriteFacing != null ? headSpriteFacing.TrembleOffsetDegrees * trembleInfluence : 0f;
+        Quaternion trembleRot = Quaternion.Euler(0f, 0f, trembleAngle);
+
         for (int i = 0; i < jointPositions.Length; i++)
         {
             Vector2 renderedPos = jointPositions[i];
@@ -389,6 +397,12 @@ public class AntennaIK : MonoBehaviour
                     float amplitude = tiltAmplitudeBase + tiltAmplitudeGrowth * i;
                     renderedPos += perp * Mathf.Sin(phase) * amplitude;
                 }
+            }
+
+            if (trembleAngle != 0f)
+            {
+                Vector2 offsetFromRoot = renderedPos - root;
+                renderedPos = root + (Vector2)(trembleRot * offsetFromRoot);
             }
 
             lineRenderer.SetPosition(i, renderedPos);

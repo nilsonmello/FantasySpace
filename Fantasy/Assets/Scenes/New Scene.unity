@@ -181,25 +181,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8814420252930331027, guid: 7a2f3af8f303ea14084067e492c48fda, type: 3}
   m_PrefabInstance: {fileID: 633941073}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &119383570 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6343486528965798876, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
-  m_PrefabInstance: {fileID: 1616434254}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &119383573
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 119383570}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c58caa7525ada2c48a17dc537f99aa1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HeadSpriteFacing
-  headMovement: {fileID: 1995908722}
-  rotationOffsetDegrees: 0
 --- !u!1 &584135401
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,6 +326,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a2f3af8f303ea14084067e492c48fda, type: 3}
+--- !u!114 &900717056 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1668402673711241430, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+  m_PrefabInstance: {fileID: 1616434254}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c58caa7525ada2c48a17dc537f99aa1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeadSpriteFacing
 --- !u!1001 &1085430789
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -576,6 +568,38 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1668402673711241430, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: trembleFrequency
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 1668402673711241430, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: trembleIntervalMax
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1668402673711241430, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: trembleAmplitudeDegrees
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2795472111776380791, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: segmentCount
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2854488360420129246, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: headSpriteFacing
+      value: 
+      objectReference: {fileID: 900717056}
+    - target: {fileID: 2854488360420129246, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: trembleInfluence
+      value: 0.124
+      objectReference: {fileID: 0}
+    - target: {fileID: 2967894926480641640, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: headSpriteFacing
+      value: 
+      objectReference: {fileID: 900717056}
+    - target: {fileID: 2967894926480641640, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: trembleInfluence
+      value: 0.124
+      objectReference: {fileID: 0}
     - target: {fileID: 7790761122210160312, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
       propertyPath: m_Name
       value: DrawnedCentipide Variant
@@ -624,17 +648,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8809738715896906475, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
-      propertyPath: m_SortingOrder
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6343486528965798876, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 119383573}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
 --- !u!1 &1757048409
 GameObject:
@@ -864,17 +881,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1995908722 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8216193767920321223, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
-  m_PrefabInstance: {fileID: 1616434254}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca407820184b8764da1b7d149dadb4fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RandomHeadMovement
 --- !u!1001 &2046576021
 PrefabInstance:
   m_ObjectHideFlags: 0

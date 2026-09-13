@@ -123,13 +123,13 @@ public class HeadStateMovement : MonoBehaviour
             if (soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
                 InvestigateSoundAt(soundPos, soundRadius, soundSourceId);
         }
-        else if (currentState == State.Patrol && currentPatrolIsFromSound
+        else if (currentState == State.Patrol && previousState == State.Patrol && currentPatrolIsFromSound
             && activeInvestigationSourceId != 0 && soundPerception != null)
         {
             if (soundPerception.TryPeekActiveTrackedPosition(activeInvestigationSourceId, out Vector2 updatedPos, out float updatedRadius))
                 RedirectInvestigation(updatedPos, updatedRadius, activeInvestigationSourceId);
         }
-        else if (currentState == State.Patrol && !currentPatrolIsFromSound && soundPerception != null
+        else if (currentState == State.Patrol && previousState == State.Patrol && !currentPatrolIsFromSound && soundPerception != null
             && soundPerception.HasPendingSound)
         {
             if (soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
@@ -216,7 +216,7 @@ public class HeadStateMovement : MonoBehaviour
         activeInvestigationSourceId = sourceId;
         patrolPointsVisited = 0;
         patrolWaiting = false;
-        patrolTarget = PickNewPatrolPoint();
+        patrolTarget = newCenter;
         patrolTargetTimer = 0f;
     }
 
