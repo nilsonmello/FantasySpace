@@ -85,6 +85,8 @@ public class HeadStateMovement : MonoBehaviour
     private Vector2 currentVelocity;
     private State previousState;
 
+    public Vector2 FacingDirection { get; private set; } = Vector2.right;
+
     private Transform backPoint;
 
 
@@ -100,6 +102,13 @@ public class HeadStateMovement : MonoBehaviour
 
     private void Update()
     {
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+                player = playerObj.transform;
+        }
+
         if (backPoint == null)
         {
             backPoint = bodyChain.lastSegment;
@@ -153,6 +162,9 @@ public class HeadStateMovement : MonoBehaviour
 
         if (bodyChain != null)
             bodyChain.SetMoving(currentVelocity.sqrMagnitude > 0.0001f);
+
+        if (currentVelocity.sqrMagnitude > 0.0001f)
+            FacingDirection = currentVelocity.normalized;
 
         if (useBounds)
         {

@@ -181,6 +181,25 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8814420252930331027, guid: 7a2f3af8f303ea14084067e492c48fda, type: 3}
   m_PrefabInstance: {fileID: 633941073}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &119383570 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6343486528965798876, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+  m_PrefabInstance: {fileID: 1616434254}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &119383573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 119383570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c58caa7525ada2c48a17dc537f99aa1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeadSpriteFacing
+  headMovement: {fileID: 1995908722}
+  rotationOffsetDegrees: 0
 --- !u!1 &584135401
 GameObject:
   m_ObjectHideFlags: 0
@@ -605,10 +624,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8809738715896906475, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6343486528965798876, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 119383573}
   m_SourcePrefab: {fileID: 100100000, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
 --- !u!1 &1757048409
 GameObject:
@@ -838,6 +864,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1995908722 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8216193767920321223, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+  m_PrefabInstance: {fileID: 1616434254}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca407820184b8764da1b7d149dadb4fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RandomHeadMovement
 --- !u!1001 &2046576021
 PrefabInstance:
   m_ObjectHideFlags: 0
