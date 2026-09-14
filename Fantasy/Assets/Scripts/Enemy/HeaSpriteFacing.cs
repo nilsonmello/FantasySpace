@@ -6,7 +6,7 @@ public class HeadSpriteFacing : MonoBehaviour
 
     [SerializeField] private float rotationOffsetDegrees = 0f;
 
-    [Header("Tremor")]
+    [Header("tremble")]
     [SerializeField] private bool enableTremble = true;
     [SerializeField] private float trembleIntervalMin = 3f;
     [SerializeField] private float trembleIntervalMax = 6f;

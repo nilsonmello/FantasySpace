@@ -267,7 +267,7 @@ MonoBehaviour:
   kneeSmoothSpeed: 15
   restOffset: {x: 0.26, y: -1.5}
   stepTriggerDistance: 1.4
-  stepDuration: 0.2
+  stepDuration: 0.1
   stepOvershoot: 0.3
   waveParent: {fileID: 5684551772774003710}
   phaseOffset: 0.8
@@ -733,7 +733,7 @@ MonoBehaviour:
   kneeSmoothSpeed: 15
   restOffset: {x: 0.5, y: 1.5}
   stepTriggerDistance: 1.4
-  stepDuration: 0.2
+  stepDuration: 0.1
   stepOvershoot: 0.3
   waveParent: {fileID: 5822195057121414948}
   phaseOffset: 0

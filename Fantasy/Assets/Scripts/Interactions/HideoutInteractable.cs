@@ -28,8 +28,23 @@ public class HideoutInteractable : InteractionManager
         currentOccupant = interactor;
         occupantPreviousPosition = interactor.transform.position;
 
+        var movement = interactor.GetComponent<PlayerMovementBase>();
+        var rb = interactor.GetComponent<Rigidbody2D>();
+
+        movement?.SetMovementLocked(true);
+
         if (hidingSpot != null)
-            interactor.transform.position = hidingSpot.position;
+        {
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.position = hidingSpot.position;
+            }
+            else
+            {
+                interactor.transform.position = hidingSpot.position;
+            }
+        }
 
         onPlayerEnter?.Invoke();
     }
@@ -39,7 +54,17 @@ public class HideoutInteractable : InteractionManager
         isOccupied = false;
 
         if (currentOccupant != null)
-            currentOccupant.transform.position = occupantPreviousPosition;
+        {
+            var movement = currentOccupant.GetComponent<PlayerMovementBase>();
+            var rb = currentOccupant.GetComponent<Rigidbody2D>();
+
+            if (rb != null)
+                rb.position = occupantPreviousPosition;
+            else
+                currentOccupant.transform.position = occupantPreviousPosition;
+
+            movement?.SetMovementLocked(false);
+        }
 
         onPlayerExit?.Invoke();
         currentOccupant = null;

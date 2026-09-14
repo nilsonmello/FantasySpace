@@ -25,6 +25,8 @@ public abstract class PlayerMovementBase : MonoBehaviour
 
     public Vector2 CurrentVelocity => rb != null ? rb.linearVelocity : Vector2.zero;
 
+    public bool MovementLocked { get; private set; }
+
     protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -43,11 +45,15 @@ public abstract class PlayerMovementBase : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (MovementLocked) return;
+
         GetMoveInput();
     }
 
     protected virtual void FixedUpdate()
     {
+        if (MovementLocked) return;
+
         Move();
     }
 
@@ -74,6 +80,14 @@ public abstract class PlayerMovementBase : MonoBehaviour
     {
         Vector2 moveInput = moveAction.ReadValue<Vector2>();
         rb.linearVelocity = moveInput * currentSpeed * 10f * Time.fixedDeltaTime;
+    }
+
+    public void SetMovementLocked(bool locked)
+    {
+        MovementLocked = locked;
+
+        if (locked && rb != null)
+            rb.linearVelocity = Vector2.zero;
     }
 
     protected void OnDisable()
