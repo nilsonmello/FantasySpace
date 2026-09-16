@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
@@ -14,6 +15,8 @@ public class RoomInstance : MonoBehaviour
     [Header("Spawn/Exit points")]
     [SerializeField] private string spawnPointTag = "SpawnPoint";
     [SerializeField] private string exitPointTag = "ExitPoint";
+    [SerializeField] private string doorPointTag = "DoorPoint";
+    [SerializeField] private string buttonPointTag = "ButtonPoint";
 
     private BoxCollider2D _bounds;
 
@@ -48,6 +51,21 @@ public class RoomInstance : MonoBehaviour
 
     public Vector3 SpawnPosition => FindPointByTag(spawnPointTag, WorldBounds.center);
     public Vector3 ExitPosition => FindPointByTag(exitPointTag, WorldBounds.center);
+    public Vector3 DoorPosition => FindPointByTag(doorPointTag, ExitPosition);
+
+    public List<Vector3> ButtonPoints
+    {
+        get
+        {
+            var points = new List<Vector3>();
+            foreach (Transform child in GetComponentsInChildren<Transform>())
+            {
+                if (child.CompareTag(buttonPointTag))
+                    points.Add(child.position);
+            }
+            return points;
+        }
+    }
 
     public void Initialize(RoomData sourceData)
     {

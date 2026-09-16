@@ -299,8 +299,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DungeonGenerator
   availableRooms:
   - {fileID: 11400000, guid: 2415cf0a87a7d4549bd4fef59ea3f381, type: 2}
-  - {fileID: 11400000, guid: 29de69fb9ec760a459c357938b5ab447, type: 2}
-  - {fileID: 11400000, guid: ec6cf9fc566a6d943b80cb4242f32200, type: 2}
   roomCount: 20
   placementRadius: 120
   minSpacing: 10
@@ -338,6 +336,11 @@ MonoBehaviour:
   spawnPlayerOnGeneration: 1
   exitMarkerPrefab: {fileID: 5093365645699051646, guid: 96c7866cf1f891947aecaab69f52f233, type: 3}
   spawnExitMarkerOnGeneration: 1
+  doorPrefab: {fileID: 6978049556735507058, guid: fe8b2bcc132b4084999e0cd53b83a5ee, type: 3}
+  spawnDoorOnGeneration: 1
+  buttonPrefab: {fileID: 446320399915181138, guid: 1d147f78543a2df4686f05eb99cc2132, type: 3}
+  buttonCount: 5
+  spawnButtonsOnGeneration: 1
   generateOnStart: 1
   regenerateOnEnterKey: 1
   maxGenerationAttempts: 30

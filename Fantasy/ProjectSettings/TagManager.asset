@@ -8,6 +8,9 @@ TagManager:
   - ExitPoint
   - RoomPoint
   - CamPoint
+  - PuzzleButton
+  - DoorPoint
+  - ButtonPoint
   layers:
   - Default
   - TransparentFX

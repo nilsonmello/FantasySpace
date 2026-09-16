@@ -76,8 +76,19 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private GameObject exitMarkerPrefab;
     [SerializeField] private bool spawnExitMarkerOnGeneration = true;
 
+    [Header("Exit Door")]
+    [SerializeField] private GameObject doorPrefab;
+    [SerializeField] private bool spawnDoorOnGeneration = true;
+
+    [Header("Buttons")]
+    [SerializeField] private GameObject buttonPrefab;
+    [SerializeField] private int buttonCount = 5;
+    [SerializeField] private bool spawnButtonsOnGeneration = true;
+
     private GameObject _spawnedPlayer;
     private GameObject _spawnedExitMarker;
+    private GameObject _spawnedDoor;
+    private readonly List<GameObject> _spawnedButtons = new List<GameObject>();
 
     private RoomInstance _startRoom;
     private RoomInstance _exitRoom;
@@ -236,6 +247,14 @@ public class DungeonGenerator : MonoBehaviour
 
         SpawnPlayer();
         SpawnExitMarker();
+        SpawnExitDoor();
+
+        if (!SpawnButtons(rng))
+        {
+            if (logGenerationTiming)
+                Debug.Log($"[Gen #{attemptNumber}] FALHOU — pontos de botão insuficientes (precisa de {buttonCount})");
+            return false;
+        }
 
         if (logGenerationTiming)
         {
@@ -262,7 +281,11 @@ public class DungeonGenerator : MonoBehaviour
         foreach (var shadowCaster in _spawnedWallShadowCasters)
             DestroyGameObject(shadowCaster);
 
+        foreach (var button in _spawnedButtons)
+            DestroyGameObject(button);
+
         DestroyGameObject(_spawnedExitMarker);
+        DestroyGameObject(_spawnedDoor);
 
         if (wallTilemap != null) wallTilemap.ClearAllTiles();
 
@@ -272,6 +295,7 @@ public class DungeonGenerator : MonoBehaviour
         _spawnedCorridorVisuals.Clear();
         _spawnedCorridorProps.Clear();
         _spawnedWallShadowCasters.Clear();
+        _spawnedButtons.Clear();
         _startRoom = null;
         _exitRoom = null;
         Grid = null;
@@ -367,6 +391,42 @@ public class DungeonGenerator : MonoBehaviour
         DestroyGameObject(_spawnedExitMarker);
 
         _spawnedExitMarker = Instantiate(exitMarkerPrefab, exitPos, Quaternion.identity, transform);
+    }
+
+    private void SpawnExitDoor()
+    {
+        if (!spawnDoorOnGeneration || doorPrefab == null || ExitRoom == null) return;
+
+        Vector3 doorPos = ExitRoom.DoorPosition;
+
+        DestroyGameObject(_spawnedDoor);
+
+        _spawnedDoor = Instantiate(doorPrefab, doorPos, Quaternion.identity, transform);
+    }
+
+    private bool SpawnButtons(System.Random rng)
+    {
+        if (!spawnButtonsOnGeneration || buttonPrefab == null) return true;
+
+        var candidates = new List<Vector3>();
+        foreach (var room in _placedRooms)
+        {
+            if (room == ExitRoom) continue;
+            candidates.AddRange(room.ButtonPoints);
+        }
+
+        if (candidates.Count < buttonCount)
+            return false;
+
+        Shuffle(candidates, rng);
+
+        for (int i = 0; i < buttonCount; i++)
+        {
+            GameObject button = Instantiate(buttonPrefab, candidates[i], Quaternion.identity, transform);
+            _spawnedButtons.Add(button);
+        }
+
+        return true;
     }
 
     private void BuildGrid()
