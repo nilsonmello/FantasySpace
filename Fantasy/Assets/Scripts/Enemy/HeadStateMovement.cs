@@ -88,6 +88,7 @@ public class HeadStateMovement : MonoBehaviour
     public Vector2 FacingDirection { get; private set; } = Vector2.right;
 
     private Transform backPoint;
+    private PlayerHideState playerHideState;
 
 
     private void Awake()
@@ -108,6 +109,9 @@ public class HeadStateMovement : MonoBehaviour
             if (playerObj != null)
                 player = playerObj.transform;
         }
+
+        if (playerHideState == null && player != null)
+            playerHideState = player.GetComponent<PlayerHideState>();
 
         if (backPoint == null)
         {
@@ -281,6 +285,9 @@ public class HeadStateMovement : MonoBehaviour
         if (player == null)
             return false;
 
+        if (playerHideState != null && playerHideState.IsHidden)
+            return false;
+
         Vector2 origin = transform.position;
         Vector2 toPlayer = (Vector2)player.position - origin;
         float dist = toPlayer.magnitude;
@@ -297,6 +304,9 @@ public class HeadStateMovement : MonoBehaviour
 
     private bool BackVision()
     {
+        if (playerHideState != null && playerHideState.IsHidden)
+            return false;
+
         Vector2 backOrigin = backPoint.position;
         Vector2 toPlayer = (Vector2)player.position - backOrigin;
         float dist = toPlayer.magnitude;
@@ -326,7 +336,8 @@ public class HeadStateMovement : MonoBehaviour
 
     private void UpdateChase()
     {
-        bool visible = CanSeePlayer() || BackVision();
+        bool playerIsHidden = playerHideState != null && playerHideState.IsHidden;
+        bool visible = !playerIsHidden && (CanSeePlayer() || BackVision());
 
         if (!hasLastKnownPos)
         {
@@ -336,7 +347,7 @@ public class HeadStateMovement : MonoBehaviour
 
         if (!visible)
         {
-            if (soundPerception != null &&
+            if (!playerIsHidden && soundPerception != null &&
                 soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
             {
                 currentVelocity = Vector2.zero;
@@ -344,10 +355,12 @@ public class HeadStateMovement : MonoBehaviour
                 return;
             }
 
-            if (Time.time - lastSeenPlayerTime >= chaseGiveUpTime)
+            if (playerIsHidden || Time.time - lastSeenPlayerTime >= chaseGiveUpTime)
             {
                 currentVelocity = Vector2.zero;
-                SetState(State.Patrol);
+                hasLastKnownPos = false;
+                activeInvestigationSourceId = 0;
+                SetState(State.Wander);
                 return;
             }
         }
@@ -368,7 +381,10 @@ public class HeadStateMovement : MonoBehaviour
             currentVelocity = Vector2.zero;
 
             if (!visible)
-                SetState(State.Patrol);
+            {
+                hasLastKnownPos = false;
+                SetState(playerIsHidden ? State.Wander : State.Patrol);
+            }
         }
     }
 

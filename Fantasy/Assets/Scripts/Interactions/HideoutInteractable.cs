@@ -30,8 +30,10 @@ public class HideoutInteractable : InteractionManager
 
         var movement = interactor.GetComponent<PlayerMovementBase>();
         var rb = interactor.GetComponent<Rigidbody2D>();
+        var hideState = interactor.GetComponent<PlayerHideState>();
 
         movement?.SetMovementLocked(true);
+        hideState?.SetHidden(true);
 
         if (hidingSpot != null)
         {
@@ -57,6 +59,7 @@ public class HideoutInteractable : InteractionManager
         {
             var movement = currentOccupant.GetComponent<PlayerMovementBase>();
             var rb = currentOccupant.GetComponent<Rigidbody2D>();
+            var hideState = currentOccupant.GetComponent<PlayerHideState>();
 
             if (rb != null)
                 rb.position = occupantPreviousPosition;
@@ -64,6 +67,7 @@ public class HideoutInteractable : InteractionManager
                 currentOccupant.transform.position = occupantPreviousPosition;
 
             movement?.SetMovementLocked(false);
+            hideState?.SetHidden(false);
         }
 
         onPlayerExit?.Invoke();
