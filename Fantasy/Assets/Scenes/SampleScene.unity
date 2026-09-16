@@ -546,7 +546,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 7.5
+  orthographic size: 5.625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1459,6 +1459,10 @@ PrefabInstance:
       value: DrawnedCentipide Variant
       objectReference: {fileID: 0}
     - target: {fileID: 8216193767920321223, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: maxTimer
+      value: 1500
+      objectReference: {fileID: 0}
+    - target: {fileID: 8216193767920321223, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
       propertyPath: useBounds
       value: 1
       objectReference: {fileID: 0}
@@ -1481,6 +1485,14 @@ PrefabInstance:
     - target: {fileID: 8216193767920321223, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
       propertyPath: boundsCenter.y
       value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8216193767920321223, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: chaseGiveUpTime
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 8216193767920321223, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8730553547375570194, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
       propertyPath: m_LocalPosition.x

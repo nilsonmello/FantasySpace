@@ -1044,7 +1044,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5083286111725039269, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: shakeAmplitudeGrowth
-      value: 0
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 5083286111725039269, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: 'segments.Array.data[15]'

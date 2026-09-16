@@ -90,6 +90,8 @@ public class HeadStateMovement : MonoBehaviour
     private Transform backPoint;
     private PlayerHideState playerHideState;
 
+    private float timer;
+    [SerializeField] private float maxTimer = 240f;
 
     private void Awake()
     {
@@ -99,10 +101,32 @@ public class HeadStateMovement : MonoBehaviour
         EnterState(currentState);
         OnStateChanged?.Invoke(currentState);
 
+        //done with my ass, fix later
+        timer = maxTimer;
+
+    }
+
+    //done with my ass, fix later
+    void Decrement()
+    {
+        if(timer > 0)
+        {
+            timer--;
+            visionRadius = 6;
+        }
+        else
+        {
+            timer = maxTimer;
+            visionRadius = 9000;
+        }
     }
 
     private void Update()
     {
+        //done with my ass, fix later
+        Decrement();
+        Debug.Log(timer);
+
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
