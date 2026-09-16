@@ -7,12 +7,19 @@ public class HideoutInteractable : InteractionManager
     [SerializeField] private Transform hidingSpot;
     [SerializeField] private UnityEvent onPlayerEnter;
     [SerializeField] private UnityEvent onPlayerExit;
+    [SerializeField] private BoxCollider2D collider;
+
 
     private bool isOccupied;
     private GameObject currentOccupant;
     private Vector3 occupantPreviousPosition;
 
     public bool IsOccupied => isOccupied;
+
+    void Awake()
+    {
+        collider = GetComponent<BoxCollider2D>();
+    }
 
     protected override void OnInteract(GameObject interactor)
     {
@@ -24,6 +31,7 @@ public class HideoutInteractable : InteractionManager
 
     private void Enter(GameObject interactor)
     {
+        collider.isTrigger = true;
         isOccupied = true;
         currentOccupant = interactor;
         occupantPreviousPosition = interactor.transform.position;
@@ -53,6 +61,7 @@ public class HideoutInteractable : InteractionManager
 
     private void Exit()
     {
+        collider.isTrigger = false;
         isOccupied = false;
 
         if (currentOccupant != null)
