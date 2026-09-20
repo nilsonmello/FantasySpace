@@ -1491,6 +1491,18 @@ PrefabInstance:
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8216193767920321223, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: signalMaxDistance
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 8216193767920321223, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: signalMinDistance
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8216193767920321223, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
+      propertyPath: signalPingInterval
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 8216193767920321223, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
       propertyPath: obstacleMask.m_Bits
       value: 0
       objectReference: {fileID: 0}

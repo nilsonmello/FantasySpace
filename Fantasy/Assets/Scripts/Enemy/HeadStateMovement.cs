@@ -11,6 +11,13 @@ public class HeadStateMovement : MonoBehaviour
         Patrol
     }
 
+    private enum PatrolOrigin
+    {
+        PlayerLastSeen,
+        Sound,
+        Signal
+    }
+
     [Header("Current State")]
     [SerializeField] private State currentState = State.Wander;
     public State CurrentState => currentState;
@@ -58,6 +65,7 @@ public class HeadStateMovement : MonoBehaviour
     private float patrolWaitTimer;
     private float patrolTargetTimer;
     private float effectivePatrolSearchRadius;
+    private PatrolOrigin patrolOrigin;
 
     [Header("Sound / Investigation")]
     [SerializeField] private SoundPerception soundPerception;
@@ -66,9 +74,19 @@ public class HeadStateMovement : MonoBehaviour
     private Vector2 pendingInvestigationCenter;
     private float pendingInvestigationRadius;
     private int pendingInvestigationSourceId;
+    private PatrolOrigin pendingInvestigationOrigin;
     private int activeInvestigationSourceId;
     private float nextInvestigationAllowedTime;
-    private bool currentPatrolIsFromSound;
+
+    [Header("Signal")]
+    [SerializeField] private bool useAlienSignal = true;
+    [SerializeField] private float signalPingInterval = 8f;
+    [SerializeField] private float signalMinDistance = 1.5f;
+    [SerializeField] private float signalMaxDistance = 4f;
+    [SerializeField] private float signalPursueDuration = 15f;
+    private float nextSignalPingTime;
+    private float signalPursueEndTime;
+    private bool pursuingSignal;
 
     [Header("Limits")]
     [SerializeField] private bool useBounds = false;
@@ -77,7 +95,7 @@ public class HeadStateMovement : MonoBehaviour
 
     [Header("Body Bend")]
     [SerializeField] private bool limitBodyBend = true;
-    [SerializeField, Range(0f, 180f)] private float maxBendAngle = 45f; 
+    [SerializeField, Range(0f, 180f)] private float maxBendAngle = 45f;
     [SerializeField] private bool drawBendGizmo = true;
 
     private float noiseOffsetX;
@@ -90,9 +108,6 @@ public class HeadStateMovement : MonoBehaviour
     private Transform backPoint;
     private PlayerHideState playerHideState;
 
-    private float timer;
-    [SerializeField] private float maxTimer = 240f;
-
     private void Awake()
     {
         noiseOffsetX = UnityEngine.Random.Range(0f, 1000f);
@@ -100,33 +115,10 @@ public class HeadStateMovement : MonoBehaviour
         previousState = currentState;
         EnterState(currentState);
         OnStateChanged?.Invoke(currentState);
-
-        //done with my ass, fix later
-        timer = maxTimer;
-
-    }
-
-    //done with my ass, fix later
-    void Decrement()
-    {
-        if(timer > 0)
-        {
-            timer--;
-            visionRadius = 6;
-        }
-        else
-        {
-            timer = maxTimer;
-            visionRadius = 9000;
-        }
     }
 
     private void Update()
     {
-        //done with my ass, fix later
-        Decrement();
-        Debug.Log(timer);
-
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -145,23 +137,53 @@ public class HeadStateMovement : MonoBehaviour
         if (currentState != State.Hide)
             UpdateDetection();
 
-        if (currentState == State.Wander && Time.time >= nextInvestigationAllowedTime
-            && soundPerception != null && soundPerception.HasPendingSound)
+        if (currentState == State.Wander)
         {
-            if (soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
-                InvestigateSoundAt(soundPos, soundRadius, soundSourceId);
+            TryTriggerAlienSignal();
+
+            if (Time.time >= nextInvestigationAllowedTime
+                && soundPerception != null && soundPerception.HasPendingSound)
+            {
+                if (soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
+                    InvestigateSoundAt(soundPos, soundRadius, soundSourceId);
+            }
         }
-        else if (currentState == State.Patrol && previousState == State.Patrol && currentPatrolIsFromSound
-            && activeInvestigationSourceId != 0 && soundPerception != null)
+        else if (currentState == State.Patrol && previousState == State.Patrol)
         {
-            if (soundPerception.TryPeekActiveTrackedPosition(activeInvestigationSourceId, out Vector2 updatedPos, out float updatedRadius))
-                RedirectInvestigation(updatedPos, updatedRadius, activeInvestigationSourceId);
-        }
-        else if (currentState == State.Patrol && previousState == State.Patrol && !currentPatrolIsFromSound && soundPerception != null
-            && soundPerception.HasPendingSound)
-        {
-            if (soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
-                RedirectInvestigation(soundPos, soundRadius, soundSourceId);
+            switch (patrolOrigin)
+            {
+                case PatrolOrigin.Sound:
+                    if (activeInvestigationSourceId != 0 && soundPerception != null
+                        && soundPerception.TryPeekActiveTrackedPosition(activeInvestigationSourceId, out Vector2 updatedPos, out float updatedRadius))
+                    {
+                        UpdateInvestigationTarget(updatedPos, updatedRadius);
+                    }
+                    break;
+
+                case PatrolOrigin.Signal:
+                    if (!TryUpdateAlienSignalPatrol())
+                    {
+                        // sinal expirou (passou de signalPursueDuration): volta a vagar livremente
+                        pursuingSignal = false;
+                        SetState(State.Wander);
+                    }
+                    else if (soundPerception != null && soundPerception.HasPendingSound
+                        && soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
+                    {
+                        // um som real tem prioridade sobre o sinal
+                        pursuingSignal = false;
+                        RedirectInvestigation(soundPos, soundRadius, soundSourceId, PatrolOrigin.Sound);
+                    }
+                    break;
+
+                case PatrolOrigin.PlayerLastSeen:
+                    if (soundPerception != null && soundPerception.HasPendingSound
+                        && soundPerception.TryConsumeBestSound(out Vector2 lsSoundPos, out float lsSoundRadius, out int lsSoundSourceId))
+                    {
+                        RedirectInvestigation(lsSoundPos, lsSoundRadius, lsSoundSourceId, PatrolOrigin.Sound);
+                    }
+                    break;
+            }
         }
 
         if (currentState != previousState)
@@ -229,23 +251,92 @@ public class HeadStateMovement : MonoBehaviour
 
     public void InvestigateSoundAt(Vector2 position, float searchRadius, int sourceId = 0)
     {
+        InvestigateAt(position, searchRadius, sourceId, PatrolOrigin.Sound);
+    }
+
+    private void InvestigateAt(Vector2 position, float searchRadius, int sourceId, PatrolOrigin origin)
+    {
         hasPendingInvestigation = true;
         pendingInvestigationCenter = position;
         pendingInvestigationRadius = searchRadius;
         pendingInvestigationSourceId = sourceId;
+        pendingInvestigationOrigin = origin;
         SetState(State.Patrol);
     }
 
-    private void RedirectInvestigation(Vector2 newCenter, float newSearchRadius, int sourceId)
+    private void RedirectInvestigation(Vector2 newCenter, float newSearchRadius, int sourceId, PatrolOrigin origin)
     {
         patrolCenter = newCenter;
         effectivePatrolSearchRadius = newSearchRadius;
-        currentPatrolIsFromSound = true;
+        patrolOrigin = origin;
         activeInvestigationSourceId = sourceId;
         patrolPointsVisited = 0;
         patrolWaiting = false;
         patrolTarget = newCenter;
         patrolTargetTimer = 0f;
+    }
+
+    private void UpdateInvestigationTarget(Vector2 newCenter, float newSearchRadius)
+    {
+        patrolCenter = newCenter;
+        effectivePatrolSearchRadius = newSearchRadius;
+        patrolTarget = newCenter;
+        patrolWaiting = false;
+        patrolTargetTimer = 0f;
+    }
+
+    private void TryTriggerAlienSignal()
+    {
+        if (!useAlienSignal || player == null)
+            return;
+
+        if (Time.time < nextSignalPingTime)
+            return;
+
+        nextSignalPingTime = Time.time + signalPingInterval;
+        pursuingSignal = true;
+        signalPursueEndTime = Time.time + signalPursueDuration;
+
+        Vector2 point = PickSignalPoint();
+        InvestigateAt(point, signalMaxDistance, 0, PatrolOrigin.Signal);
+    }
+
+    private Vector2 PickSignalPoint()
+    {
+        float minDist = Mathf.Max(0f, Mathf.Min(signalMinDistance, signalMaxDistance));
+        float maxDist = Mathf.Max(signalMaxDistance, minDist);
+
+        float angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+        float dist = UnityEngine.Random.Range(minDist, maxDist);
+        Vector2 offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * dist;
+
+        Vector2 point = (Vector2)player.position + offset;
+        return useBounds ? ClampToBounds(point) : point;
+    }
+
+    private Vector2 ClampToBounds(Vector2 point)
+    {
+        point.x = Mathf.Clamp(point.x, boundsCenter.x - boundsSize.x / 2f, boundsCenter.x + boundsSize.x / 2f);
+        point.y = Mathf.Clamp(point.y, boundsCenter.y - boundsSize.y / 2f, boundsCenter.y + boundsSize.y / 2f);
+        return point;
+    }
+
+    private bool TryUpdateAlienSignalPatrol()
+    {
+        if (!pursuingSignal || player == null)
+            return false;
+
+        if (Time.time >= signalPursueEndTime)
+            return false;
+
+        if (Time.time >= nextSignalPingTime)
+        {
+            nextSignalPingTime = Time.time + signalPingInterval;
+            Vector2 point = PickSignalPoint();
+            RedirectInvestigation(point, signalMaxDistance, 0, PatrolOrigin.Signal);
+        }
+
+        return true;
     }
 
     private void EnterState(State state)
@@ -264,20 +355,21 @@ public class HeadStateMovement : MonoBehaviour
                 patrolCenter = pendingInvestigationCenter;
                 effectivePatrolSearchRadius = pendingInvestigationRadius;
                 activeInvestigationSourceId = pendingInvestigationSourceId;
+                patrolOrigin = pendingInvestigationOrigin;
                 hasPendingInvestigation = false;
-                currentPatrolIsFromSound = true;
             }
             else
             {
                 patrolCenter = hasLastKnownPos ? lastKnownPlayerPos : (Vector2)transform.position;
                 effectivePatrolSearchRadius = patrolSearchRadius;
                 activeInvestigationSourceId = 0;
-                currentPatrolIsFromSound = false;
+                patrolOrigin = PatrolOrigin.PlayerLastSeen;
             }
 
             patrolPointsVisited = 0;
             patrolWaiting = false;
-            patrolTarget = PickNewPatrolPoint();
+            // Signal vai direto pro ponto sorteado; os outros usam um primeiro ponto aleatório no raio
+            patrolTarget = patrolOrigin == PatrolOrigin.Signal ? patrolCenter : PickNewPatrolPoint();
             patrolTargetTimer = 0f;
         }
     }
@@ -421,15 +513,26 @@ public class HeadStateMovement : MonoBehaviour
             patrolWaitTimer -= Time.deltaTime;
             if (patrolWaitTimer <= 0f)
             {
+                if (patrolOrigin == PatrolOrigin.Signal)
+                {
+                    patrolWaitTimer = patrolWaitTime;
+                    return;
+                }
+
                 patrolWaiting = false;
                 patrolPointsVisited++;
 
                 if (patrolPointsVisited >= patrolPointCount)
                 {
-                    if (currentPatrolIsFromSound)
-                        nextInvestigationAllowedTime = Time.time + minWanderTimeBetweenInvestigations;
-                    else
-                        hasLastKnownPos = false;
+                    switch (patrolOrigin)
+                    {
+                        case PatrolOrigin.Sound:
+                            nextInvestigationAllowedTime = Time.time + minWanderTimeBetweenInvestigations;
+                            break;
+                        case PatrolOrigin.PlayerLastSeen:
+                            hasLastKnownPos = false;
+                            break;
+                    }
 
                     activeInvestigationSourceId = 0;
                     SetState(State.Wander);
@@ -446,7 +549,9 @@ public class HeadStateMovement : MonoBehaviour
         float dist = toTarget.magnitude;
 
         patrolTargetTimer += Time.deltaTime;
-        bool timedOut = patrolTargetTimer >= patrolTargetTimeout;
+        // Signal ignora o timeout de chegada: ela continua tentando alcançar o ponto até
+        // realmente chegar, em vez de desistir e ficar parada esperando o próximo ping.
+        bool timedOut = patrolOrigin != PatrolOrigin.Signal && patrolTargetTimer >= patrolTargetTimeout;
 
         if (dist > patrolPointArriveDistance && !timedOut)
         {
@@ -501,19 +606,31 @@ public class HeadStateMovement : MonoBehaviour
             Gizmos.DrawWireSphere(transform.position, visionRadius);
 
             if (backPoint != null)
-            Gizmos.DrawWireSphere(backPoint.position, visionRadius);
+                Gizmos.DrawWireSphere(backPoint.position, visionRadius);
         }
 
         if (Application.isPlaying && currentState == State.Patrol)
         {
-            Gizmos.color = currentPatrolIsFromSound
-                ? new Color(1f, 0.2f, 0.9f, 0.4f)
-                : new Color(1f, 1f, 0f, 0.4f);
+            Color patrolColor;
+            switch (patrolOrigin)
+            {
+                case PatrolOrigin.Sound:
+                    patrolColor = new Color(1f, 0.2f, 0.9f, 0.4f);
+                    break;
+                case PatrolOrigin.Signal:
+                    patrolColor = new Color(0.2f, 0.6f, 1f, 0.4f);
+                    break;
+                default:
+                    patrolColor = new Color(1f, 1f, 0f, 0.4f);
+                    break;
+            }
+
+            Gizmos.color = patrolColor;
             Gizmos.DrawWireSphere(patrolCenter, effectivePatrolSearchRadius);
             Gizmos.DrawLine(transform.position, patrolCenter);
         }
 
-        bool patrolIsPlayerRelated = currentState == State.Patrol && !currentPatrolIsFromSound;
+        bool patrolIsPlayerRelated = currentState == State.Patrol && patrolOrigin == PatrolOrigin.PlayerLastSeen;
         if (Application.isPlaying && hasLastKnownPos && (currentState == State.Chase || patrolIsPlayerRelated))
         {
             Gizmos.color = Color.red;

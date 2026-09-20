@@ -10,10 +10,16 @@ public class ButtonInteractable : InteractionManager
 
     public event System.Action<ButtonInteractable> OnPressedChanged;
 
+    public Color color;
+
+    public SpriteRenderer renderer;
+
     protected override void Awake()
     {
         maxUses = 1;
         base.Awake();
+
+        renderer = GetComponent<SpriteRenderer>();
     }
 
     protected override void OnInteract(GameObject interactor)
@@ -34,5 +40,6 @@ public class ButtonInteractable : InteractionManager
         IsPressed = true;
         onPressed?.Invoke();
         OnPressedChanged?.Invoke(this);
+        renderer.color = color;
     }
 }
