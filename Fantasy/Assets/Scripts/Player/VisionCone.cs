@@ -4,8 +4,7 @@ using System.Collections.Generic;
 
 public interface IVisionTarget
 {
-    void OnEnterVision();
-    void OnExitVision();
+    void UpdateVision(bool inCone, float proximity01);
 }
 
 public class VisionCone : MonoBehaviour
@@ -27,8 +26,7 @@ public class VisionCone : MonoBehaviour
     private Camera renderCamera;
 
     private Vector2 aimDirection = Vector2.right;
-    private readonly HashSet<IVisionTarget> currentlyVisible = new();
-    private readonly HashSet<IVisionTarget> previouslyVisible = new();
+    private readonly HashSet<IVisionTarget> trackedTargets = new();
 
     private Vector3 Origin => visionOrigin != null ? visionOrigin.position : transform.position;
 
@@ -59,37 +57,40 @@ public class VisionCone : MonoBehaviour
 
     private void UpdateVision()
     {
-        currentlyVisible.Clear();
+        var currentFrame = new HashSet<IVisionTarget>();
 
         Collider2D[] candidates = Physics2D.OverlapCircleAll(Origin, viewRadius, targetMask);
 
         foreach (var col in candidates)
         {
-            Vector2 dirToTarget = (Vector2)col.transform.position - (Vector2)Origin;
-            float dist = dirToTarget.magnitude;
-            dirToTarget.Normalize();
+            if (!col.TryGetComponent<IVisionTarget>(out var target)) continue;
 
-            if (Vector2.Angle(aimDirection, dirToTarget) > viewAngle / 2f)
-                continue;
+            Vector2 toTarget = (Vector2)col.transform.position - (Vector2)Origin;
+            float dist = toTarget.magnitude;
+            Vector2 dirToTarget = toTarget.normalized;
 
+            bool blocked = false;
             if (useLineOfSight)
             {
                 RaycastHit2D hit = Physics2D.Raycast(Origin, dirToTarget, dist, obstacleMask);
-                if (hit.collider != null) continue;
+                blocked = hit.collider != null;
             }
 
-            if (col.TryGetComponent<IVisionTarget>(out var target))
-                currentlyVisible.Add(target);
+            float proximity01 = blocked ? 0f : Mathf.Clamp01(1f - dist / viewRadius);
+            bool inCone = !blocked && Vector2.Angle(aimDirection, dirToTarget) <= viewAngle / 2f;
+
+            target.UpdateVision(inCone, proximity01);
+            currentFrame.Add(target);
         }
 
-        foreach (var t in currentlyVisible)
-            if (!previouslyVisible.Contains(t)) t.OnEnterVision();
+        foreach (var t in trackedTargets)
+        {
+            if (!currentFrame.Contains(t))
+                t.UpdateVision(false, 0f);
+        }
 
-        foreach (var t in previouslyVisible)
-            if (!currentlyVisible.Contains(t)) t.OnExitVision();
-
-        previouslyVisible.Clear();
-        previouslyVisible.UnionWith(currentlyVisible);
+        trackedTargets.Clear();
+        trackedTargets.UnionWith(currentFrame);
     }
 
     private void OnDrawGizmosSelected()

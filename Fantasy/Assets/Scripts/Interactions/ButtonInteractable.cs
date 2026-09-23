@@ -24,18 +24,7 @@ public class ButtonInteractable : InteractionManager
 
     protected override void OnInteract(GameObject interactor)
     {
-        
-
-        if (IsPressed) 
-        {
-
-        Debug.Log($"já apertado");
-            
-        return ;
-
-        }
-
-        Debug.Log($"{name}: botão pressionado");
+        if (IsPressed) return;
 
         IsPressed = true;
         onPressed?.Invoke();

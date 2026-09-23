@@ -6,35 +6,64 @@ public class VisionActivatedObject : MonoBehaviour, IVisionTarget
     [Header("Collider")]
     [SerializeField] private Collider2D detectionCollider;
 
-    [Header("Components to deactive")]
     [SerializeField] private Behaviour[] behavioursToToggle;
-    [SerializeField] private Renderer[] renderersToToggle;
+
+    [Header("Fade")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField, Range(0f, 1f)] private float maxPartialAlpha = 0.5f;
+    [SerializeField] private float fadeSpeed = 2.5f;
+
+    private float targetAlpha = 0f;
+    private float currentAlpha = 0f;
+    private bool behavioursActive = false;
 
     private void Awake()
     {
-        if (detectionCollider == null)
-            detectionCollider = GetComponent<Collider2D>();
+        AutoFill();
     }
 
     private void Start()
     {
-        SetActiveState(false);
+        currentAlpha = 0f;
+        targetAlpha = 0f;
+        ApplyAlpha(0f);
+        SetBehavioursActive(false);
     }
 
-    public void OnEnterVision() => SetActiveState(true);
-    public void OnExitVision() => SetActiveState(false);
-
-    private void SetActiveState(bool state)
+    private void Update()
     {
+        if (Mathf.Approximately(currentAlpha, targetAlpha)) return;
+
+        currentAlpha = Mathf.MoveTowards(currentAlpha, targetAlpha, fadeSpeed * Time.deltaTime);
+        ApplyAlpha(currentAlpha);
+    }
+
+    public void UpdateVision(bool inCone, float proximity01)
+    {
+        targetAlpha = inCone ? 1f : Mathf.Clamp01(proximity01) * maxPartialAlpha;
+
+        if (inCone != behavioursActive)
+            SetBehavioursActive(inCone);
+    }
+
+    private void ApplyAlpha(float alpha)
+    {
+        if (spriteRenderer == null) return;
+
+            Color color = spriteRenderer.color;
+            color.a = alpha;
+            spriteRenderer.color = color;
+    }
+
+    private void SetBehavioursActive(bool state)
+    {
+        behavioursActive = state;
         foreach (var b in behavioursToToggle)
         {
             if (b == null) continue;
             if (b == detectionCollider) continue;
             b.enabled = state;
         }
-
-        foreach (var r in renderersToToggle)
-            if (r != null) r.enabled = state;
     }
 
     private void AutoFill()
@@ -53,6 +82,6 @@ public class VisionActivatedObject : MonoBehaviour, IVisionTarget
         }
 
         behavioursToToggle = filtered.ToArray();
-        renderersToToggle = GetComponentsInChildren<Renderer>(true);
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 }

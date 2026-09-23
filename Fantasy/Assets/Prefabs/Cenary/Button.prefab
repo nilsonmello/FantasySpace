@@ -123,7 +123,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  color: {r: 0, g: 0.34002638, b: 1, a: 0}
+  color: {r: 0, g: 0.34002638, b: 1, a: 1}
   renderer: {fileID: 0}
 --- !u!61 &4035495484611725636
 BoxCollider2D:
