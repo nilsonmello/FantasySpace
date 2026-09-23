@@ -11,6 +11,7 @@ TagManager:
   - PuzzleButton
   - DoorPoint
   - ButtonPoint
+  - Centipide
   layers:
   - Default
   - TransparentFX

@@ -112,6 +112,9 @@ public class HeadStateMovement : MonoBehaviour
     {
         noiseOffsetX = UnityEngine.Random.Range(0f, 1000f);
         noiseOffsetY = UnityEngine.Random.Range(0f, 1000f);
+
+        nextSignalPingTime = Time.time + signalPingInterval;
+
         previousState = currentState;
         EnterState(currentState);
         OnStateChanged?.Invoke(currentState);
@@ -163,14 +166,12 @@ public class HeadStateMovement : MonoBehaviour
                 case PatrolOrigin.Signal:
                     if (!TryUpdateAlienSignalPatrol())
                     {
-                        // sinal expirou (passou de signalPursueDuration): volta a vagar livremente
                         pursuingSignal = false;
                         SetState(State.Wander);
                     }
                     else if (soundPerception != null && soundPerception.HasPendingSound
                         && soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
                     {
-                        // um som real tem prioridade sobre o sinal
                         pursuingSignal = false;
                         RedirectInvestigation(soundPos, soundRadius, soundSourceId, PatrolOrigin.Sound);
                     }
@@ -549,8 +550,6 @@ public class HeadStateMovement : MonoBehaviour
         float dist = toTarget.magnitude;
 
         patrolTargetTimer += Time.deltaTime;
-        // Signal ignora o timeout de chegada: ela continua tentando alcançar o ponto até
-        // realmente chegar, em vez de desistir e ficar parada esperando o próximo ping.
         bool timedOut = patrolOrigin != PatrolOrigin.Signal && patrolTargetTimer >= patrolTargetTimeout;
 
         if (dist > patrolPointArriveDistance && !timedOut)

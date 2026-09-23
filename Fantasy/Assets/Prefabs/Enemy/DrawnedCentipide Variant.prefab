@@ -314,6 +314,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 891326990907311978, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: m_TagString
+      value: Centipide
+      objectReference: {fileID: 0}
     - target: {fileID: 948930215320965672, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_Layer
       value: 10
