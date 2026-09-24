@@ -82,7 +82,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0, g: 0.0022234917, b: 1, a: 1}
@@ -108,8 +108,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VisionActivatedObject
   detectionCollider: {fileID: 0}
   behavioursToToggle: []
-  renderersToToggle:
-  - {fileID: 5766004532086351835}
+  spriteRenderer: {fileID: 0}
+  maxPartialAlpha: 0.5
+  fadeSpeed: 2.5
 --- !u!61 &5720281911877915904
 BoxCollider2D:
   m_ObjectHideFlags: 0
