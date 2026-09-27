@@ -79,7 +79,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 4
   m_MaskInteraction: 0
   m_Sprite: {fileID: -881943614, guid: 64ed4e434c3999a4d9b28fd4fb70f96e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -170,7 +170,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 4
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6007857137893288414, guid: 64ed4e434c3999a4d9b28fd4fb70f96e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -544,7 +544,7 @@ PrefabInstance:
       objectReference: {fileID: 1768679433190182986, guid: e33eabba2b7872f45b0b5d2747f8c193, type: 3}
     - target: {fileID: 1874214833272363833, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_SortingOrder
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1884706788289686268, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_Layer
@@ -821,6 +821,10 @@ PrefabInstance:
     - target: {fileID: 4055598915142447630, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4057906073073141055, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: m_SortingOrder
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4057906073073141055, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -1649,6 +1653,10 @@ PrefabInstance:
     - target: {fileID: 8787052974370616837, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8889657265202872575, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: m_SortingOrder
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8889657265202872575, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
