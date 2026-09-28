@@ -28,6 +28,8 @@ public class CameraFollow : MonoBehaviour
     private Collider2D activeRoomCollider;
     private Camera mainCam;
 
+    private Transform overrideTarget;
+
     void Awake()
     {
         HandleCamera();
@@ -40,6 +42,17 @@ public class CameraFollow : MonoBehaviour
         FindPlayerTransform();
         FindRoomPosition();
         UpdateFollowProxy();
+    }
+
+    public void SetOverrideTarget(Transform target)
+    {
+        overrideTarget = target;
+    }
+
+    public void ClearOverrideTarget(Transform target)
+    {
+        if (overrideTarget == target)
+            overrideTarget = null;
     }
 
     void HandleCamera()
@@ -137,7 +150,12 @@ public class CameraFollow : MonoBehaviour
     {
         Vector3 targetPosition;
 
-        if (roomPoint != null)
+        if (overrideTarget != null)
+        {
+            cameraTarget = overrideTarget;
+            targetPosition = overrideTarget.position;
+        }
+        else if (roomPoint != null)
         {
             cameraTarget = roomPoint;
             targetPosition = roomPoint.position;

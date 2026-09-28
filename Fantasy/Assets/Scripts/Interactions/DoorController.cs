@@ -8,7 +8,7 @@ public class DoorController : MonoBehaviour
     [Header("Door")]
     [SerializeField] private string buttonTag = "PuzzleButton";
     [SerializeField] private UnityEvent onDoorOpened;
-    [SerializeField] private ShadowCaster2D shadow;
+    [SerializeField] private ShadowCaster2D[] shadowCasters;
 
     public Sprite openedDoor;
     private SpriteRenderer spriteRenderer;
@@ -23,7 +23,7 @@ public class DoorController : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
-        shadow = GetComponent<ShadowCaster2D>();
+        shadowCasters = GetComponentsInChildren<ShadowCaster2D>();
     }
 
     private void Start()
@@ -74,9 +74,15 @@ public class DoorController : MonoBehaviour
         if (boxCollider != null)
             boxCollider.enabled = false;
 
-        if (shadow != null)
-            shadow.enabled = false;
-            
+        if (shadowCasters != null)
+        {
+            foreach (var caster in shadowCasters)
+            {
+                if (caster != null)
+                    caster.enabled = false;
+            }
+        }
+
         isOpen = true;
         onDoorOpened?.Invoke();
     }

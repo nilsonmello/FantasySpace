@@ -5,6 +5,21 @@ TextureImporter:
   - first:
       213: 1530174950936668054
     second: SprDoors_0
+  - first:
+      213: 2102127008043022523
+    second: SprDoors_1
+  - first:
+      213: -2535391335770486284
+    second: SprDoors_2
+  - first:
+      213: -4389256273280348346
+    second: SprDoors_3
+  - first:
+      213: 3897918557313859050
+    second: SprDoors_4
+  - first:
+      213: -2142416560835286075
+    second: SprDoors_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -105,8 +120,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 48
-        height: 23
+        width: 47
+        height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -125,20 +140,20 @@ TextureImporter:
       name: SprDoors_1
       rect:
         serializedVersion: 2
-        x: 48
+        x: 47
         y: 0
-        width: 48
-        height: 23
+        width: 47
+        height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: b6e8bf704c86a4d47b1f5506ece6e9e1
-      internalID: 1726432246
+      spriteID: bb8b82350614c2d10800000000000000
+      internalID: 2102127008043022523
       vertices: []
       indices: 
       edges: []
@@ -147,7 +162,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: b7c5d15684c6b6b4e9c11effebcc7f51
+    spriteID: af29f9372a6fe694590357d0a2817f5c
     internalID: 0
     vertices: []
     indices: 
@@ -157,10 +172,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":48.0,"y":23.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":47.0,"y":24.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       SprDoors_0: 1530174950936668054
-      SprDoors_1: 1726432246
+      SprDoors_1: 2102127008043022523
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
