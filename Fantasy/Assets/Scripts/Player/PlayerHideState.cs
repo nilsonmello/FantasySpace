@@ -2,7 +2,11 @@ using UnityEngine;
 
 public class PlayerHideState : MonoBehaviour
 {
+    [Header("Visual")]
     [SerializeField] private SpriteRenderer[] renderersToHide;
+
+    [Header("Light")]
+    [SerializeField] private GameObject[] objectsToDisableWhenHidden;
 
     public bool IsHidden { get; private set; }
 
@@ -18,5 +22,11 @@ public class PlayerHideState : MonoBehaviour
 
         foreach (var sr in renderersToHide)
             sr.enabled = !hidden;
+
+        foreach (var obj in objectsToDisableWhenHidden)
+        {
+            if (obj != null)
+                obj.SetActive(!hidden);
+        }
     }
 }

@@ -404,7 +404,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: useBounds
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: chaseSpeed
@@ -416,7 +416,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: wanderSpeed
-      value: 0
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: boundsSize.x
+      value: 312.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: boundsSize.y
+      value: 196.2
       objectReference: {fileID: 0}
     - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: visionRadius
@@ -427,6 +435,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: boundsCenter.x
+      value: 131.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: boundsCenter.y
+      value: -76.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: chaseGiveUpTime
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: soundPerception
       value: 
       objectReference: {fileID: 3899423853431117484}
@@ -435,8 +455,28 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: signalMaxDistance
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: signalMinDistance
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: patrolSearchRadius
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: signalPingInterval
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
+      propertyPath: signalPursueDuration
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: patrolPointArriveDistance
@@ -496,11 +536,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1831239827608433856, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.04
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1831239827608433856, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.48
+      value: -173
       objectReference: {fileID: 0}
     - target: {fileID: 1831239827608433856, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1032,7 +1072,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5083286111725039269, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: segmentCount
-      value: 20
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5083286111725039269, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: segmentPrefab
