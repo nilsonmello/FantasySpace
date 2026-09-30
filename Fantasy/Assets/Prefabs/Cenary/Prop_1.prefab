@@ -110,9 +110,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VisionActivatedObject
   detectionCollider: {fileID: 0}
   behavioursToToggle: []
+  visionRange: 0
+  proximityRange: 0
   spriteRenderer: {fileID: 0}
   maxPartialHighlight: 0.5
   fadeSpeed: 2.5
+  drawGizmo: 1
 --- !u!61 &8713113971955587320
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -147,7 +150,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.00000047683716}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -157,7 +160,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.8895569, y: 1.1341105}
   m_EdgeRadius: 0
 --- !u!114 &3036318057638766524
 MonoBehaviour:
@@ -171,7 +174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a15dc8aeed55e74f8fc1cdedcdf0ceb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrapInteractable
-  InteractionRange: 3
+  InteractionRange: 2
   maxUses: -1
   cooldownDuration: 0
   onTriggered:

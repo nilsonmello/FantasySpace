@@ -189,9 +189,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VisionActivatedObject
   detectionCollider: {fileID: 0}
   behavioursToToggle: []
+  visionRange: 0
+  proximityRange: 0
   spriteRenderer: {fileID: 0}
   maxPartialHighlight: 0.5
   fadeSpeed: 2.5
+  drawGizmo: 1
 --- !u!61 &5720281911877915904
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -250,7 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13e873172c392e14f9f3c7fdb1e512be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HideoutInteractable
-  InteractionRange: 3
+  InteractionRange: 2
   maxUses: -1
   cooldownDuration: 0
   onPlayerEnter:
