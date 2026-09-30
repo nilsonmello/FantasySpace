@@ -6,7 +6,6 @@ public interface IVisionTarget
 {
     void UpdateVision(bool inCone, float proximity01);
 
-    // 0 = usa o valor padrão do VisionCone
     float VisionRange => 0f;
     float ProximityRange => 0f;
 }
@@ -14,12 +13,10 @@ public interface IVisionTarget
 public class VisionCone : MonoBehaviour
 {
     [Header("Cone")]
-    [Tooltip("Alcance usado por objetos que não definem o próprio (VisionRange = 0)")]
     [SerializeField, Min(0f)] private float defaultViewRadius = 6f;
     [SerializeField, Range(0f, 360f)] private float viewAngle = 60f;
 
     [Header("Busca")]
-    [Tooltip("Limite técnico da busca. Deve ser >= ao maior VisionRange/ProximityRange de qualquer objeto")]
     [SerializeField, Min(0f)] private float searchRadius = 12f;
 
     [Header("Origin")]
