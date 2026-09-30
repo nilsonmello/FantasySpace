@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class MandibleController : MonoBehaviour
@@ -36,7 +37,14 @@ public class MandibleController : MonoBehaviour
     private float biteTimer;
     private float bitePhase;
 
+    private bool overrideActive;
+    private float overrideTarget;
+    private float overrideSmoothTime;
+
     public bool IsBiting => isBiting;
+    public bool HasOverride => overrideActive;
+
+    public event Action OnBiteFinished;
 
     private void Reset()
     {
@@ -45,7 +53,7 @@ public class MandibleController : MonoBehaviour
 
     private void Awake()
     {
-        noiseSeed = Random.Range(0f, 1000f);
+        noiseSeed = UnityEngine.Random.Range(0f, 1000f);
     }
 
     private void Update()
@@ -60,8 +68,20 @@ public class MandibleController : MonoBehaviour
                 player = playerObj.transform;
         }
 
-        float targetOpen = ComputeTargetOpen();
-        currentOpenAmount = Mathf.SmoothDamp(currentOpenAmount, targetOpen, ref openVelocity, openSmoothTime);
+        float targetOpen;
+        float smooth = openSmoothTime;
+
+        if (overrideActive)
+        {
+            targetOpen = overrideTarget;
+            smooth = overrideSmoothTime;
+        }
+        else
+        {
+            targetOpen = ComputeTargetOpen();
+        }
+
+        currentOpenAmount = Mathf.SmoothDamp(currentOpenAmount, targetOpen, ref openVelocity, Mathf.Max(smooth, 0.0001f));
         ApplyMandibleAngle(currentOpenAmount);
     }
 
@@ -102,7 +122,10 @@ public class MandibleController : MonoBehaviour
             float snap = Mathf.Max(0f, Mathf.Sin(bitePhase));
 
             if (biteTimer <= 0f)
+            {
                 isBiting = false;
+                OnBiteFinished?.Invoke();
+            }
 
             return snap;
         }
@@ -132,7 +155,7 @@ public class MandibleController : MonoBehaviour
 
     private void ApplyMandibleAngle(float openAmount)
     {
-        float angle = Mathf.Lerp(closedAngle, maxOpenAngle, openAmount);
+        float angle = Mathf.LerpUnclamped(closedAngle, maxOpenAngle, openAmount);
 
         if (leftMandible != null)
             leftMandible.localRotation = Quaternion.Euler(0f, 0f, angle);
@@ -144,5 +167,18 @@ public class MandibleController : MonoBehaviour
     public void ForceBite()
     {
         StartBite();
+    }
+
+    public void SetOpenOverride(float openAmount, float smoothTime)
+    {
+        overrideActive = true;
+        overrideTarget = openAmount;
+        overrideSmoothTime = smoothTime;
+        isBiting = false;
+    }
+
+    public void ClearOpenOverride()
+    {
+        overrideActive = false;
     }
 }
