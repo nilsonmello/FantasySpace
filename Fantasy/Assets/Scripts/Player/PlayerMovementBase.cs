@@ -33,11 +33,11 @@ public abstract class PlayerMovementBase : MonoBehaviour
 
         actions = new InputSystem_Actions();
 
-        crouchAction = actions.Player.Crouch;
-        crouchAction.Enable();
+        //crouchAction = actions.Player.Crouch;
+        //crouchAction.Enable();
 
-        runAction = actions.Player.Sprint;
-        runAction.Enable();
+        //runAction = actions.Player.Sprint;
+        //runAction.Enable();
 
         moveAction = actions.Player.Move;
         moveAction.Enable();
