@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8713113971955587320}
   - component: {fileID: 3036318057638766524}
   - component: {fileID: 7891469427774662491}
+  - component: {fileID: 2497232475832920192}
   m_Layer: 9
   m_Name: Prop_1
   m_TagString: Untagged
@@ -62,7 +63,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 7e591d0e11e82b74685cbbb14975461b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -110,7 +111,7 @@ MonoBehaviour:
   detectionCollider: {fileID: 0}
   behavioursToToggle: []
   spriteRenderer: {fileID: 0}
-  maxPartialAlpha: 0.5
+  maxPartialHighlight: 0.5
   fadeSpeed: 2.5
 --- !u!61 &8713113971955587320
 BoxCollider2D:
@@ -150,7 +151,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.75, y: 1}
+    oldSize: {x: 0.875, y: 1.125}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -208,3 +209,22 @@ MonoBehaviour:
   emitPoint: {fileID: 6105838960901790219}
   drawGizmo: 1
   gizmoColor: {r: 1, g: 0, b: 0, a: 0.5}
+--- !u!114 &2497232475832920192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7254171876923773621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9193c4c87d1fba64d9c4434d068ffe65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionHighlight
+  interactable: {fileID: 3036318057638766524}
+  spriteRenderer: {fileID: 7722875147442988013}
+  player: {fileID: 0}
+  fadeInSpeed: 8
+  fadeOutSpeed: 4
+  previewRadius: 0
+  maxPreviewHighlight: 0.4

@@ -5,13 +5,22 @@ using System.Collections.Generic;
 public interface IVisionTarget
 {
     void UpdateVision(bool inCone, float proximity01);
+
+    // 0 = usa o valor padrão do VisionCone
+    float VisionRange => 0f;
+    float ProximityRange => 0f;
 }
 
 public class VisionCone : MonoBehaviour
 {
     [Header("Cone")]
-    [SerializeField] private float viewRadius = 6f;
+    [Tooltip("Alcance usado por objetos que não definem o próprio (VisionRange = 0)")]
+    [SerializeField, Min(0f)] private float defaultViewRadius = 6f;
     [SerializeField, Range(0f, 360f)] private float viewAngle = 60f;
+
+    [Header("Busca")]
+    [Tooltip("Limite técnico da busca. Deve ser >= ao maior VisionRange/ProximityRange de qualquer objeto")]
+    [SerializeField, Min(0f)] private float searchRadius = 12f;
 
     [Header("Origin")]
     [SerializeField] private Transform visionOrigin;
@@ -27,6 +36,7 @@ public class VisionCone : MonoBehaviour
 
     private Vector2 aimDirection = Vector2.right;
     private readonly HashSet<IVisionTarget> trackedTargets = new();
+    private readonly HashSet<IVisionTarget> currentFrame = new();
 
     private Vector3 Origin => visionOrigin != null ? visionOrigin.position : transform.position;
 
@@ -57,9 +67,10 @@ public class VisionCone : MonoBehaviour
 
     private void UpdateVision()
     {
-        var currentFrame = new HashSet<IVisionTarget>();
+        currentFrame.Clear();
 
-        Collider2D[] candidates = Physics2D.OverlapCircleAll(Origin, viewRadius, targetMask);
+        float radius = Mathf.Max(searchRadius, defaultViewRadius);
+        Collider2D[] candidates = Physics2D.OverlapCircleAll(Origin, radius, targetMask);
 
         foreach (var col in candidates)
         {
@@ -69,6 +80,9 @@ public class VisionCone : MonoBehaviour
             float dist = toTarget.magnitude;
             Vector2 dirToTarget = toTarget.normalized;
 
+            float visionRange = target.VisionRange > 0f ? target.VisionRange : defaultViewRadius;
+            float proximityRange = target.ProximityRange > 0f ? target.ProximityRange : defaultViewRadius;
+
             bool blocked = false;
             if (useLineOfSight)
             {
@@ -76,8 +90,13 @@ public class VisionCone : MonoBehaviour
                 blocked = hit.collider != null;
             }
 
-            float proximity01 = blocked ? 0f : Mathf.Clamp01(1f - dist / viewRadius);
-            bool inCone = !blocked && Vector2.Angle(aimDirection, dirToTarget) <= viewAngle / 2f;
+            float proximity01 = blocked || proximityRange <= 0f
+                ? 0f
+                : Mathf.Clamp01(1f - dist / proximityRange);
+
+            bool inCone = !blocked
+                          && dist <= visionRange
+                          && Vector2.Angle(aimDirection, dirToTarget) <= viewAngle / 2f;
 
             target.UpdateVision(inCone, proximity01);
             currentFrame.Add(target);
@@ -95,14 +114,18 @@ public class VisionCone : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
         Vector3 pos = Origin;
+
+        Gizmos.color = new Color(1f, 1f, 1f, 0.15f);
+        Gizmos.DrawWireSphere(pos, Mathf.Max(searchRadius, defaultViewRadius));
+
+        Gizmos.color = Color.yellow;
         Vector3 left = DirFromAngle(-viewAngle / 2f);
         Vector3 right = DirFromAngle(viewAngle / 2f);
 
-        Gizmos.DrawLine(pos, pos + left * viewRadius);
-        Gizmos.DrawLine(pos, pos + right * viewRadius);
-        Gizmos.DrawWireSphere(pos, viewRadius);
+        Gizmos.DrawLine(pos, pos + left * defaultViewRadius);
+        Gizmos.DrawLine(pos, pos + right * defaultViewRadius);
+        Gizmos.DrawWireSphere(pos, defaultViewRadius);
     }
 
     private Vector3 DirFromAngle(float angleDeg)

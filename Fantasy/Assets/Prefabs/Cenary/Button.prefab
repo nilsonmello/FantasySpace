@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 5321122892779439753}
   - component: {fileID: 7272001866357706333}
   - component: {fileID: 4035495484611725636}
+  - component: {fileID: 8728049798660055515}
   - component: {fileID: 5902242134276870718}
+  - component: {fileID: 8144009165347373606}
   m_Layer: 9
   m_Name: Button
   m_TagString: PuzzleButton
@@ -61,7 +63,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 7e591d0e11e82b74685cbbb14975461b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82,14 +84,14 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 8
+  m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 225fc1798b334c1438a0638beff54de8, type: 3}
+  m_Sprite: {fileID: 6427914986783152631, guid: 225fc1798b334c1438a0638beff54de8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.125, y: 1.125}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -106,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8e1bf297f7ee39488afda2000c3abb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonInteractable
-  InteractionRange: 1.5
+  InteractionRange: 2
   maxUses: -1
   cooldownDuration: 0
   onPressed:
@@ -125,7 +127,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   color: {r: 1, g: 1, b: 1, a: 1}
-  renderer: {fileID: 0}
+  renderer: {fileID: 5321122892779439753}
 --- !u!61 &4035495484611725636
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -164,14 +166,34 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 1.125, y: 1.125}
+    newSize: {x: 1.125, y: 1.125}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &8728049798660055515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 446320399915181138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2df1ad63208d3c045854ff86b3fe86e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionActivatedObject
+  detectionCollider: {fileID: 4035495484611725636}
+  behavioursToToggle: []
+  visionRange: 15
+  proximityRange: 160
+  spriteRenderer: {fileID: 5321122892779439753}
+  maxPartialHighlight: 0.5
+  fadeSpeed: 2.5
+  drawGizmo: 1
 --- !u!114 &5902242134276870718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,7 +207,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.ShadowCaster2D
   m_ShadowGroup: 0
-  m_Priority: 8
+  m_Priority: 1
   m_ComponentVersion: 5
   m_HasRenderer: 1
   m_UseRendererSilhouette: 1
@@ -225,3 +247,22 @@ MonoBehaviour:
     - rid: 4218024031788204109
       type: {class: ShadowShape2DProvider_SpriteRenderer, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
       data: 
+--- !u!114 &8144009165347373606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 446320399915181138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9193c4c87d1fba64d9c4434d068ffe65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionHighlight
+  interactable: {fileID: 7272001866357706333}
+  spriteRenderer: {fileID: 5321122892779439753}
+  player: {fileID: 0}
+  fadeInSpeed: 8
+  fadeOutSpeed: 4
+  previewRadius: 0
+  maxPreviewHighlight: 0.4
