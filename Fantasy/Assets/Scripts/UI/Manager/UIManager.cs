@@ -3,7 +3,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using System;
-using NUnit.Framework.Constraints;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -27,6 +26,13 @@ public class UIManager : Singleton<UIManager>
     [Header("End Screen")]
     public Canvas endScreenCanvas;
     public GameObject firstButtonEndScreen;
+
+    [Header("Game Over")]
+    public Canvas gameOverCanvas;
+    public GameOverPanelController gameOverPanelController;
+    
+    public float gameOverFadeDuration = 0.25f;
+    public bool isGameOver { get; private set; }
 
     [Header("Controllers")]
     public PausePanelController pausePanelController;
@@ -52,6 +58,7 @@ public class UIManager : Singleton<UIManager>
 
         ToggleCanvas(mainCanvas, true);
         ToggleCanvas(pauseCanvas, false);
+        ToggleCanvas(gameOverCanvas, false);
         TurOffPanels();
 
         if (inputActions != null)
@@ -152,7 +159,7 @@ public class UIManager : Singleton<UIManager>
 
     private void OnPausePerformed(InputAction.CallbackContext ctx)
     {
-        if (mainCanvas.gameObject.activeInHierarchy) return;
+        if (mainCanvas.gameObject.activeInHierarchy || isGameOver) return;
         SetPause(!paused);
     }
 
@@ -194,6 +201,8 @@ public class UIManager : Singleton<UIManager>
 
     private void ResetPause()
     {
+        isGameOver = false;
+        ToggleCanvas(gameOverCanvas, false);
         SetPause(false);
     }
 
@@ -232,6 +241,27 @@ public class UIManager : Singleton<UIManager>
         }
         
         onCutsceneFinished?.Invoke();
+    }
+
+    public void ShowGameOver()
+    {
+        if (isGameOver) return;
+        isGameOver = true;
+
+        TransitionManager.Instance.PlayPanelTransition(() =>
+        {
+            Time.timeScale = 0f;
+            SoundManager.Instance.PauseAllSounds();
+
+            if (inputActions != null)
+            {
+                var playerMap = inputActions.FindActionMap("Player");
+                if (playerMap != null) playerMap.Disable();
+            }
+
+            ToggleCanvas(gameOverCanvas, true);
+            gameOverPanelController.Open();
+        }, gameOverFadeDuration);
     }
 
     public void RestartLevel()

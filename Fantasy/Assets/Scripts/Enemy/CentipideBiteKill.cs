@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class CentipedeBiteKill : MonoBehaviour
 {
@@ -24,10 +23,11 @@ public class CentipedeBiteKill : MonoBehaviour
 
     [Header("Bite")]
     [SerializeField] private float snapDuration = 0.08f;
+    [Tooltip("Tempo com a boca fechada antes de devolver o controle")]
     [SerializeField] private float cooldown = 0.5f;
 
     [Header("Death")]
-    [SerializeField] private float restartDelay = 0.1f;
+    [SerializeField] private float gameOverDelay = 0.3f;
 
     [Header("Gizmos")]
     [SerializeField] private bool drawGizmo = true;
@@ -164,24 +164,13 @@ public class CentipedeBiteKill : MonoBehaviour
         killed = true;
         OnPlayerKilled?.Invoke();
 
-        if (restartDelay > 0f) Invoke(nameof(RestartScene), restartDelay);
-        else RestartScene();
+        if (gameOverDelay > 0f) Invoke(nameof(TriggerGameOver), gameOverDelay);
+        else TriggerGameOver();
     }
 
-    private void RestartScene()
+    private void TriggerGameOver()
     {
-        Scene scene = SceneManager.GetActiveScene();
-
-        if (scene.buildIndex >= 0)
-        {
-            SceneManager.LoadScene(scene.buildIndex);
-            return;
-        }
-
-#if UNITY_EDITOR
-        UnityEditor.SceneManagement.EditorSceneManager.LoadSceneInPlayMode(
-            scene.path, new LoadSceneParameters(LoadSceneMode.Single));
-#endif
+        UIManager.Instance.ShowGameOver();
     }
 
     private void OnDrawGizmosSelected()
