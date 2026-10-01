@@ -27,7 +27,7 @@ public class VisionCone : MonoBehaviour
     [SerializeField] private LayerMask obstacleMask;
     [SerializeField] private bool useLineOfSight = true;
 
-    [Header("Câmera")]
+    [Header("Camera")]
     public CinemachineCamera mainCamera;
     private Camera renderCamera;
 
@@ -36,12 +36,33 @@ public class VisionCone : MonoBehaviour
     private readonly HashSet<IVisionTarget> currentFrame = new();
 
     private Vector3 Origin => visionOrigin != null ? visionOrigin.position : transform.position;
+    [SerializeField] private PlayerHideState playerHideState;
+
+    private void Awake()
+    {
+        playerHideState = FindObjectOfType<PlayerHideState>();
+    }
 
     private void Update()
     {
         EnsureCameraReference();
         UpdateAimDirection();
-        UpdateVision();
+        HandleHidePlayer();
+    }
+
+    void HandleHidePlayer()
+    {
+        if(playerHideState == null) return;
+
+        if(!playerHideState.IsHidden)
+        {
+            UpdateVision();
+            Debug.Log("oi");
+        }
+        else
+        {
+
+        }
     }
 
     private void EnsureCameraReference()

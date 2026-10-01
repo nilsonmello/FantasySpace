@@ -17,6 +17,7 @@ public class InteractionHighlight : MonoBehaviour
     [SerializeField] private float previewRadius = 0f;
     [SerializeField, Range(0f, 1f)] private float maxPreviewHighlight = 0.4f;
 
+    [SerializeField] private PlayerHideState playerHideState;
     private MaterialPropertyBlock block;
     private float current;
 
@@ -28,10 +29,14 @@ public class InteractionHighlight : MonoBehaviour
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
 
         Apply(0f);
+
+        playerHideState = FindObjectOfType<PlayerHideState>();
     }
 
     private void Update()
     {
+        Debug.Log(current);
+
         if (interactable == null || spriteRenderer == null) return;
 
         if (player == null)
@@ -40,12 +45,29 @@ public class InteractionHighlight : MonoBehaviour
             if (player == null) return;
         }
 
-        float target = ComputeTarget();
-        if (Mathf.Approximately(current, target)) return;
+        HandleHidePlayer();
+    }
 
-        float speed = target > current ? fadeInSpeed : fadeOutSpeed;
-        current = Mathf.MoveTowards(current, target, speed * Time.deltaTime);
-        Apply(current);
+    void HandleHidePlayer()
+    {
+        if(playerHideState == null) return;
+
+        if(!playerHideState.IsHidden)
+        {
+            float target = ComputeTarget();
+            if (Mathf.Approximately(current, target)) return;
+
+            float speed = target > current ? fadeInSpeed : fadeOutSpeed;
+            current = Mathf.MoveTowards(current, target, speed * Time.deltaTime);
+
+
+            Apply(current);
+        }
+        else
+        {
+            current = 0;
+            Apply(current);  
+        }
     }
 
     private float ComputeTarget()
