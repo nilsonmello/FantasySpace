@@ -266,3 +266,4 @@ MonoBehaviour:
   fadeOutSpeed: 4
   previewRadius: 0
   maxPreviewHighlight: 0.4
+  playerHideState: {fileID: 0}

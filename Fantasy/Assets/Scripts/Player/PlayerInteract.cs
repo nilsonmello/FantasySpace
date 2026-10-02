@@ -23,7 +23,6 @@ public class PlayerInteract : MonoBehaviour
         interactAction.Disable();
     }
 
-
     private void Update()
     {
         CurrentTarget = FindClosestInteractable();
@@ -32,7 +31,6 @@ public class PlayerInteract : MonoBehaviour
         {
             CurrentTarget.interact(gameObject);
         }
-
     }
 
     private InteractionManager FindClosestInteractable()

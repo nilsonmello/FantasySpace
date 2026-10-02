@@ -21,7 +21,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6105838960901790219
 Transform:
   m_ObjectHideFlags: 0
@@ -231,3 +231,4 @@ MonoBehaviour:
   fadeOutSpeed: 4
   previewRadius: 0
   maxPreviewHighlight: 0.4
+  playerHideState: {fileID: 0}

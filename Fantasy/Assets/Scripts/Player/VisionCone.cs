@@ -57,7 +57,6 @@ public class VisionCone : MonoBehaviour
         if(!playerHideState.IsHidden)
         {
             UpdateVision();
-            Debug.Log("oi");
         }
         else
         {

@@ -1,0 +1,184 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9b10a3635fdd6947ac17459f37e0933, type: 3}
+  m_Name: ColorTileMapping
+  m_EditorClassIdentifier: Assembly-CSharp::ColorTileMapping
+  entries:
+  - label: Diag Sup esq
+    color:
+      serializedVersion: 2
+      rgba: 4136046
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 99e0183a4395b504d80220b9199bf982, type: 2}
+  - label: Sup meio
+    color:
+      serializedVersion: 2
+      rgba: 4934590
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 333d727d54960ae4d970a7abc114a091, type: 2}
+  - label: Diag Sup dir
+    color:
+      serializedVersion: 2
+      rgba: 7187679
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 6f955a4187f80ef4fa3b7246789c1af6, type: 2}
+  - label: direita
+    color:
+      serializedVersion: 2
+      rgba: 1721250
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 70cfba653f5983547a27af7813bc2813, type: 2}
+  - label: diag inf dir
+    color:
+      serializedVersion: 2
+      rgba: 4688077
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 5ef47697d663ffd40ab434b059686cae, type: 2}
+  - label: inferior
+    color:
+      serializedVersion: 2
+      rgba: 9226478
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: bec4d82014668614eb78de2b6dae2008, type: 2}
+  - label: diag inf esq
+    color:
+      serializedVersion: 2
+      rgba: 1863580
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 9923791424f43b5479b462341621ec1b, type: 2}
+  - label: esquerda
+    color:
+      serializedVersion: 2
+      rgba: 6008776
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 620c4395afc4cbc459baa899cc02f76c, type: 2}
+  - label: diag sup esq
+    color:
+      serializedVersion: 2
+      rgba: 10481647
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 2ef044d8518c0674ca474a10ec232aa3, type: 2}
+  - label: superior
+    color:
+      serializedVersion: 2
+      rgba: 5602328
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: d472663dfca093949ab77622d0299ff3, type: 2}
+  - label: diag sup dir
+    color:
+      serializedVersion: 2
+      rgba: 5292610
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 67808a6517d8e4847b8361092ba586d5, type: 2}
+  - label: direita
+    color:
+      serializedVersion: 2
+      rgba: 7792052
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 3bfc01eb199602c46ae46e366fc471dc, type: 2}
+  - label: diag inf dir
+    color:
+      serializedVersion: 2
+      rgba: 10778142
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 487f5be6dad982a409aa2b69672617de, type: 2}
+  - label: inferior
+    color:
+      serializedVersion: 2
+      rgba: 12892756
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 49d24555721902c43a4f05253e480755, type: 2}
+  - label: diag inf esq
+    color:
+      serializedVersion: 2
+      rgba: 13953939
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 2f46957e3efb3894a91b6112af2adf49, type: 2}
+  - label: esquerda
+    color:
+      serializedVersion: 2
+      rgba: 9772337
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: e60bde169bef13d45bb90c3336b4c0a8, type: 2}
+  - label: Diag Esq sup
+    color:
+      serializedVersion: 2
+      rgba: 8722743
+    floor: {fileID: 0}
+    wall: {fileID: 11400000, guid: ad8f70ebf8ec13c41abaa1572ac4218a, type: 2}
+    ceiling: {fileID: 0}
+  - label: mid sup
+    color:
+      serializedVersion: 2
+      rgba: 12468609
+    floor: {fileID: 0}
+    wall: {fileID: 11400000, guid: 8f23c89d34c87774da2f52d45d0c5409, type: 2}
+    ceiling: {fileID: 0}
+  - label: Diag dir sup
+    color:
+      serializedVersion: 2
+      rgba: 15103420
+    floor: {fileID: 0}
+    wall: {fileID: 11400000, guid: ecb8f245f8ca150429f1c67edbc7d182, type: 2}
+    ceiling: {fileID: 0}
+  - label: diag inf esq
+    color:
+      serializedVersion: 2
+      rgba: 9575520
+    floor: {fileID: 0}
+    wall: {fileID: 11400000, guid: 1c40aea2e94af7341bb01c6d6eb05510, type: 2}
+    ceiling: {fileID: 0}
+  - label: mid inf
+    color:
+      serializedVersion: 2
+      rgba: 12340934
+    floor: {fileID: 0}
+    wall: {fileID: 11400000, guid: ddeb4c7f36b76764693a7ade01dfd72b, type: 2}
+    ceiling: {fileID: 0}
+  - label: diag inf dir
+    color:
+      serializedVersion: 2
+      rgba: 10585323
+    floor: {fileID: 0}
+    wall: {fileID: 11400000, guid: 195029a9c0fce9f41940a8a216d10165, type: 2}
+    ceiling: {fileID: 0}
+  - label: "ch\xE3o"
+    color:
+      serializedVersion: 2
+      rgba: 13129303
+    floor: {fileID: 11400000, guid: 69f68e8e4c0336f448b0178823a611ab, type: 2}
+    wall: {fileID: 0}
+    ceiling: {fileID: 0}
+  - label: void
+    color:
+      serializedVersion: 2
+      rgba: 4293174918
+    floor: {fileID: 0}
+    wall: {fileID: 0}
+    ceiling: {fileID: 11400000, guid: 3e9efe971aeb13c4a8eb3b74cd0986c5, type: 2}
+  tolerance: 0
