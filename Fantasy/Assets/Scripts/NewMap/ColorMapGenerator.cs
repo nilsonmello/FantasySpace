@@ -2,34 +2,49 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+/// <summary>
+/// Lê um Tilemap "fonte" pintado com tiles de cores básicas e, para cada célula,
+/// procura a cor no ColorTileMapping e coloca os tiles correspondentes nas
+/// três camadas de destino (chão, paredes, teto), nas MESMAS posições de célula.
+///
+/// Dá para alimentar o Apply() com qualquer grid de cores no futuro
+/// (gerador procedural), sem depender do Tilemap fonte.
+/// </summary>
 public class ColorMapGenerator : MonoBehaviour
 {
     public enum ColorSource
     {
+        /// <summary>Lê o pixel central do sprite do tile (textura precisa de Read/Write).</summary>
         SpritePixel,
+        /// <summary>Usa a cor do asset Tile multiplicada pela cor da célula no Tilemap.
+        /// Bom se seus tiles são um sprite branco tingido.</summary>
         TileTint
     }
 
     [Header("Dados")]
     [SerializeField] private ColorTileMapping mapping;
 
-    [Header("base/color tilemap")]
+    [Header("Fonte (Tilemap pintado com as cores)")]
     [SerializeField] private Tilemap sourceTilemap;
     [SerializeField] private ColorSource colorSource = ColorSource.SpritePixel;
-    [Tooltip("deactive color tile")]
+    [Tooltip("Desativa o TilemapRenderer da fonte depois de gerar (o Clear reativa).")]
     [SerializeField] private bool hideSourceOnGenerate = true;
 
-    [Header("layers")]
+    [Header("Camadas de destino")]
     [SerializeField] private Tilemap floorTilemap;
     [SerializeField] private Tilemap wallTilemap;
     [SerializeField] private Tilemap ceilingTilemap;
 
-    [Header("random use")]
+    [Header("Preenchimento aleatório (opcional)")]
+    [Tooltip("Sorteia tiles para as células vazias do mapa. Deixe vazio para desligar.")]
     [SerializeField] private EmptyCellFill emptyFill;
 
-    [Header("options")]
+    [Header("Opções")]
     [SerializeField] private bool generateOnStart = true;
     [SerializeField] private bool logUnmappedColors = true;
+
+    /// <summary>Disparado ao final de cada geração (camadas e preenchimento já aplicados).</summary>
+    public event System.Action MapGenerated;
 
     private readonly Dictionary<Sprite, Color32> spriteColorCache = new Dictionary<Sprite, Color32>();
 
@@ -38,6 +53,7 @@ public class ColorMapGenerator : MonoBehaviour
         if (generateOnStart) Generate();
     }
 
+    /// <summary>Lê o Tilemap fonte e gera as três camadas.</summary>
     [ContextMenu("Generate")]
     public void Generate()
     {
@@ -46,10 +62,11 @@ public class ColorMapGenerator : MonoBehaviour
         BoundsInt src = sourceTilemap.cellBounds;
         if (src.size.x <= 0 || src.size.y <= 0)
         {
-            Debug.LogWarning("font is null", this);
+            Debug.LogWarning("[ColorMapGenerator] O Tilemap fonte está vazio.", this);
             return;
         }
 
+        // Só 2D: força z = 0 com profundidade 1.
         var bounds = new BoundsInt(src.xMin, src.yMin, 0, src.size.x, src.size.y, 1);
 
         Color32[] grid = ReadSourceColors(bounds);
@@ -64,11 +81,15 @@ public class ColorMapGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Preenche as três camadas a partir de um grid de cores.
+    /// Índice = (x - bounds.xMin) + (y - bounds.yMin) * largura. Alpha 0 = célula vazia.
+    /// </summary>
     public void Apply(Color32[] pixels, BoundsInt bounds)
     {
         if (mapping == null || floorTilemap == null || wallTilemap == null || ceilingTilemap == null)
         {
-            Debug.LogError("theres no mapping or layer", this);
+            Debug.LogError("[ColorMapGenerator] Falta atribuir o mapping ou alguma camada de destino.", this);
             return;
         }
 
@@ -94,9 +115,9 @@ public class ColorMapGenerator : MonoBehaviour
             }
             else if (logUnmappedColors && unmapped.Add((px.r << 16) | (px.g << 8) | px.b))
             {
-                Debug.LogWarning($"color has no mapping: " +
+                Debug.LogWarning($"[ColorMapGenerator] Cor sem mapeamento: " +
                                  $"#{px.r:X2}{px.g:X2}{px.b:X2} " +
-                                 $"(ex.: celule {bounds.xMin + i % width}, {bounds.yMin + i / width})", this);
+                                 $"(ex.: célula {bounds.xMin + i % width}, {bounds.yMin + i / width})", this);
             }
         }
 
@@ -105,11 +126,23 @@ public class ColorMapGenerator : MonoBehaviour
         ceilingTilemap.SetTilesBlock(bounds, ceilingTiles);
 
         FillEmptyCells(pixels, bounds);
+
+        MapGenerated?.Invoke();
     }
 
+    /// <summary>
+    /// Sorteia tiles para as células sem tile no fonte (alpha 0), mais a margem de padding.
+    /// </summary>
     private void FillEmptyCells(Color32[] pixels, BoundsInt bounds)
     {
-        if (emptyFill == null || !emptyFill.HasTiles) return;
+        if (emptyFill == null) return;
+
+        if (!emptyFill.HasTiles)
+        {
+            Debug.LogWarning("[ColorMapGenerator] O Empty Fill não tem nenhum tile válido " +
+                             "(tile vazio ou Weight = 0).", this);
+            return;
+        }
 
         Tilemap target = GetLayer(emptyFill.layer);
         if (target == null) return;
@@ -128,6 +161,7 @@ public class ColorMapGenerator : MonoBehaviour
                 bool insideSource = x >= bounds.xMin && x < bounds.xMax &&
                                     y >= bounds.yMin && y < bounds.yMax;
 
+                // Dentro do fonte, só preenche onde não havia tile.
                 if (insideSource && pixels[(x - bounds.xMin) + (y - bounds.yMin) * width].a != 0)
                     continue;
 
@@ -154,6 +188,7 @@ public class ColorMapGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>Limpa as camadas de destino e mostra o Tilemap fonte de novo.</summary>
     [ContextMenu("Clear")]
     public void Clear()
     {
@@ -173,14 +208,17 @@ public class ColorMapGenerator : MonoBehaviour
         if (ceilingTilemap != null) ceilingTilemap.ClearAllTiles();
     }
 
+    // ---------------------------------------------------------------- leitura
+
     private Color32[] ReadSourceColors(BoundsInt bounds)
     {
         spriteColorCache.Clear();
 
+        // Garante que Rule Tiles do fonte já escolheram seus sprites antes da leitura.
         sourceTilemap.RefreshAllTiles();
 
         TileBase[] tiles = sourceTilemap.GetTilesBlock(bounds);
-        var grid = new Color32[tiles.Length];
+        var grid = new Color32[tiles.Length]; // default = alpha 0 (vazio)
         int width = bounds.size.x;
 
         for (int i = 0; i < tiles.Length; i++)
@@ -202,7 +240,7 @@ public class ColorMapGenerator : MonoBehaviour
                 color = tileColor * sourceTilemap.GetColor(cell);
             }
 
-            color.a = 255;
+            color.a = 255; // existe tile nessa célula
             grid[i] = color;
         }
 
@@ -216,9 +254,9 @@ public class ColorMapGenerator : MonoBehaviour
         Texture2D tex = sprite.texture;
         if (!tex.isReadable)
         {
-            Debug.LogError($"texture '{tex.name}' (sprite '{sprite.name}') " +
-                           "needs Read/Write active, " +
-                           "or use TileTint.", this);
+            Debug.LogError($"[ColorMapGenerator] A textura '{tex.name}' (sprite '{sprite.name}') " +
+                           "precisa de Read/Write habilitado nas Import Settings, " +
+                           "ou use o modo TileTint.", this);
             return false;
         }
 
@@ -235,13 +273,13 @@ public class ColorMapGenerator : MonoBehaviour
     {
         if (sourceTilemap == null)
         {
-            Debug.LogError("it doesnt have tilemap font.", this);
+            Debug.LogError("[ColorMapGenerator] Nenhum Tilemap fonte atribuído.", this);
             return false;
         }
 
         if (sourceTilemap == floorTilemap || sourceTilemap == wallTilemap || sourceTilemap == ceilingTilemap)
         {
-            Debug.LogError("tilemap font cant be one of the designated Tilemaps", this);
+            Debug.LogError("[ColorMapGenerator] O Tilemap fonte não pode ser um dos Tilemaps de destino.", this);
             return false;
         }
 
