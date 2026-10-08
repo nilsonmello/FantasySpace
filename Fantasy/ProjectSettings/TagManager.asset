@@ -12,6 +12,7 @@ TagManager:
   - DoorPoint
   - ButtonPoint
   - Centipide
+  - EndPoint
   layers:
   - Default
   - TransparentFX
