@@ -99,7 +99,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3006172205455002336
 Transform:
   m_ObjectHideFlags: 0
@@ -187,11 +187,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df1ad63208d3c045854ff86b3fe86e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VisionActivatedObject
-  detectionCollider: {fileID: 0}
+  detectionCollider: {fileID: 5720281911877915904}
   behavioursToToggle: []
   visionRange: 0
   proximityRange: 0
-  spriteRenderer: {fileID: 0}
+  spriteRenderer: {fileID: 5766004532086351835}
   maxPartialHighlight: 0.5
   fadeSpeed: 2.5
   drawGizmo: 1
@@ -274,6 +274,16 @@ MonoBehaviour:
   onPlayerExit:
     m_PersistentCalls:
       m_Calls: []
+  maxHideTime: 10
+  onTimeExpired:
+    m_PersistentCalls:
+      m_Calls: []
+  gameOverOnTimeExpired: 1
+  onGameOver:
+    m_PersistentCalls:
+      m_Calls: []
+  reentryDelay: 2
+  effects: {fileID: 0}
   cameraPoint: {fileID: 4623759623300334361}
 --- !u!114 &7553309824350512745
 MonoBehaviour:
@@ -294,7 +304,7 @@ MonoBehaviour:
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
   m_SelfShadows: 0
-  m_AlphaCutoff: 0.1
+  m_AlphaCutoff: 0.4
   m_ApplyToSortingLayers: 1dc533e2f97f665500000000
   m_ShapePath:
   - {x: -0.5, y: -0.90625, z: 0}
@@ -303,15 +313,15 @@ MonoBehaviour:
   - {x: 0.5, y: -0.90625, z: 0}
   m_ShapePathHash: 0
   m_InstanceId: 0
-  m_ShadowShape2DComponent: {fileID: 5766004532086351835}
+  m_ShadowShape2DComponent: {fileID: 5720281911877915904}
   m_ShadowShape2DProvider:
-    rid: 4218024053576302665
+    rid: 6163309463934861384
   m_ShadowCastingSource: 2
   m_ShadowMesh:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
-      m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0.5, y: 0.90625, z: 0}
+      m_Center: {x: 0.013458252, y: 0.011238098, z: 0}
+      m_Extent: {x: 0.57621765, y: 0.9775467, z: 0}
     m_EdgeProcessing: 1
     m_TrimEdge: 0
     m_FlipX: 0
@@ -321,12 +331,12 @@ MonoBehaviour:
   m_PreviousTrimEdge: 0
   m_PreviousEdgeProcessing: 1
   m_PreviousShadowCastingSource: 2
-  m_PreviousShadowShape2DSource: {fileID: 5766004532086351835}
+  m_PreviousShadowShape2DSource: {fileID: 5720281911877915904}
   references:
     version: 2
     RefIds:
-    - rid: 4218024053576302665
-      type: {class: ShadowShape2DProvider_SpriteRenderer, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
+    - rid: 6163309463934861384
+      type: {class: ShadowShape2DProvider_Collider2D, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
       data: 
 --- !u!114 &444589820441211562
 MonoBehaviour:

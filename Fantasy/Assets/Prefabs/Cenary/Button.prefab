@@ -109,23 +109,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonInteractable
   InteractionRange: 2
-  maxUses: -1
+  maxUses: 4
   cooldownDuration: 0
   onPressed:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ButtonInteractable, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
+  puzzle: {fileID: 0}
   color: {r: 1, g: 1, b: 1, a: 1}
   renderer: {fileID: 5321122892779439753}
 --- !u!61 &4035495484611725636
@@ -188,8 +177,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VisionActivatedObject
   detectionCollider: {fileID: 4035495484611725636}
   behavioursToToggle: []
-  visionRange: 15
-  proximityRange: 160
+  visionRange: 6
+  proximityRange: 8
   spriteRenderer: {fileID: 5321122892779439753}
   maxPartialHighlight: 0.5
   fadeSpeed: 2.5
@@ -213,7 +202,7 @@ MonoBehaviour:
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
   m_SelfShadows: 0
-  m_AlphaCutoff: 0.1
+  m_AlphaCutoff: 0.4
   m_ApplyToSortingLayers: 1dc533e2f97f665500000000
   m_ShapePath:
   - {x: -0.5, y: -0.5, z: 0}
@@ -222,9 +211,9 @@ MonoBehaviour:
   - {x: 0.5, y: -0.5, z: 0}
   m_ShapePathHash: 0
   m_InstanceId: 0
-  m_ShadowShape2DComponent: {fileID: 5321122892779439753}
+  m_ShadowShape2DComponent: {fileID: 4035495484611725636}
   m_ShadowShape2DProvider:
-    rid: 4218024031788204109
+    rid: 6163309463934861385
   m_ShadowCastingSource: 2
   m_ShadowMesh:
     m_Mesh: {fileID: 0}
@@ -240,12 +229,12 @@ MonoBehaviour:
   m_PreviousTrimEdge: 0
   m_PreviousEdgeProcessing: 1
   m_PreviousShadowCastingSource: 2
-  m_PreviousShadowShape2DSource: {fileID: 5321122892779439753}
+  m_PreviousShadowShape2DSource: {fileID: 4035495484611725636}
   references:
     version: 2
     RefIds:
-    - rid: 4218024031788204109
-      type: {class: ShadowShape2DProvider_SpriteRenderer, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
+    - rid: 6163309463934861385
+      type: {class: ShadowShape2DProvider_Collider2D, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
       data: 
 --- !u!114 &8144009165347373606
 MonoBehaviour:

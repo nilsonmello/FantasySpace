@@ -8,20 +8,38 @@ public class HideoutEffects : MonoBehaviour
 {
     [Header("Vignette")]
     [SerializeField] private RawImage vignette;
-    [SerializeField, Range(16, 256)] private int vignetteResolution = 96;
+    [SerializeField, Range(16, 256)] private int vignetteResolution = 64;
     [SerializeField, Range(0.1f, 2f)] private float vignetteSoftness = 0.6f;
     [SerializeField] private AnimationCurve vignetteCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
     [SerializeField] private float fadeOutTime = 0.4f;
+
+    [Header("Pixel")]
+    [SerializeField, Range(0, 8)] private int alphaLevels = 4;
+    [SerializeField] private bool useDither = true;
+    [SerializeField, Range(16, 128)] private int damageResolution = 48;
 
     [Header("Game Over")]
     [SerializeField] private RawImage redVignette;
     [SerializeField] private Color redColor = new Color(0.8f, 0.02f, 0.02f, 1f);
     [SerializeField] private float redDuration = 1.2f;
     [Range(0f, 1f)] [SerializeField] private float redMaxIntensity = 0.9f;
-    [SerializeField] private Image flashImage;
-    [SerializeField] private float flashRiseTime = 0.05f;
-    [SerializeField] private float flashHold = 0.06f;
-    [SerializeField] private float flashFadeTime = 0.3f;
+    [SerializeField] private float gameOverClearDelay = 0.3f;
+
+    [Header("Eyes")]
+    [SerializeField] private float gameOverEyeWidth = 320f;
+    [SerializeField] private float gameOverEyeDuration = 0.9f;
+    [SerializeField] private float gameOverEyeFadeIn = 0.08f;
+    [SerializeField] private float shakeAmplitude = 14f;
+    [SerializeField] private float shakeRotation = 6f;
+    [SerializeField] private bool keepEyeDuringDamage = false;
+
+    [Header("Damage")]
+    [Range(0.3f, 0.95f)] [SerializeField] private float damageInnerRadius = 0.6f;
+    [Range(0f, 0.5f)] [SerializeField] private float damageNoise = 0.25f;
+    [SerializeField] private float damageNoiseScale = 4f;
+    [Range(1, 5)] [SerializeField] private int damagePulses = 3;
+    [SerializeField] private float damagePunchScale = 1.25f;
+    [SerializeField] private float damageBlackFadeIn = 0f;
 
     [Header("Eyes")]
     [SerializeField] private RectTransform eyesArea;
@@ -35,7 +53,8 @@ public class HideoutEffects : MonoBehaviour
     [SerializeField] private int maxEyes = 8;
 
     private VignetteLayer black;
-    private VignetteLayer red;
+    private Texture2D damageTexture;
+    private float builtAspect;
 
     private float progress;
     private bool active;
@@ -46,30 +65,64 @@ public class HideoutEffects : MonoBehaviour
 
     private readonly Stack<Image> freeEyes = new Stack<Image>();
     private int activeEyes;
+    private Image gameOverEye;
+
+    private static readonly float[] Bayer4 =
+    {
+         0,  8,  2, 10,
+        12,  4, 14,  6,
+         3, 11,  1,  9,
+        15,  7, 13,  5
+    };
+
+    private static byte Quantize(float a, int x, int y, int levels, bool dither)
+    {
+        a = Mathf.Clamp01(a);
+        if (levels <= 0) return (byte)(a * 255f);
+
+        float v = a * levels;
+        if (dither)
+        {
+            float threshold = (Bayer4[(y & 3) * 4 + (x & 3)] + 0.5f) / 16f;
+            v = Mathf.Floor(v + threshold);
+        }
+        else
+        {
+            v = Mathf.Round(v);
+        }
+
+        return (byte)(Mathf.Clamp01(v / levels) * 255f);
+    }
 
     private class VignetteLayer
     {
         private readonly Texture2D texture;
         private readonly Color32[] pixels;
-        private readonly int res;
+        private readonly int width;
+        private readonly int height;
         private readonly float softness;
         private readonly Color32 color;
+        private readonly int levels;
+        private readonly bool dither;
         private float last = -1f;
 
         public float Last => last < 0f ? 0f : last;
 
-        public VignetteLayer(RawImage image, int res, float softness, Color color)
+        public VignetteLayer(RawImage image, int width, int height, float softness, Color color, int levels, bool dither)
         {
-            this.res = res;
+            this.width = width;
+            this.height = height;
             this.softness = softness;
             this.color = color;
+            this.levels = levels;
+            this.dither = dither;
 
-            texture = new Texture2D(res, res, TextureFormat.RGBA32, false)
+            texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
             {
                 wrapMode = TextureWrapMode.Clamp,
-                filterMode = FilterMode.Bilinear
+                filterMode = FilterMode.Point
             };
-            pixels = new Color32[res * res];
+            pixels = new Color32[width * height];
 
             image.raycastTarget = false;
             image.texture = texture;
@@ -83,16 +136,16 @@ public class HideoutEffects : MonoBehaviour
 
             float inner = Mathf.Lerp(1f, -softness, t);
 
-            for (int y = 0; y < res; y++)
+            for (int y = 0; y < height; y++)
             {
-                float ny = (y + 0.5f) / res - 0.5f;
+                float ny = (y + 0.5f) / height - 0.5f;
 
-                for (int x = 0; x < res; x++)
+                for (int x = 0; x < width; x++)
                 {
-                    float nx = (x + 0.5f) / res - 0.5f;
+                    float nx = (x + 0.5f) / width - 0.5f;
                     float d = Mathf.Sqrt(nx * nx + ny * ny) / 0.7071f; // 0 no centro, 1 no canto
                     float a = Mathf.InverseLerp(inner, inner + softness, d);
-                    pixels[y * res + x] = new Color32(color.r, color.g, color.b, (byte)(a * 255f));
+                    pixels[y * width + x] = new Color32(color.r, color.g, color.b, Quantize(a, x, y, levels, dither));
                 }
             }
 
@@ -108,23 +161,19 @@ public class HideoutEffects : MonoBehaviour
 
     private void Awake()
     {
-        if (vignette == null || redVignette == null || flashImage == null || eyesArea == null)
+        if (vignette == null || redVignette == null || eyesArea == null)
         {
             enabled = false;
             return;
         }
 
-        black = new VignetteLayer(vignette, vignetteResolution, vignetteSoftness, Color.black);
-        red = new VignetteLayer(redVignette, vignetteResolution, vignetteSoftness, redColor);
-
-        flashImage.raycastTarget = false;
-        SetFlash(0f);
+        BuildLayers();
     }
 
     private void OnDestroy()
     {
         black?.Destroy();
-        red?.Destroy();
+        if (damageTexture != null) Destroy(damageTexture);
     }
 
     private void OnDisable()
@@ -132,24 +181,63 @@ public class HideoutEffects : MonoBehaviour
         active = false;
     }
 
+    private float GetAspect()
+    {
+        Rect r = vignette.rectTransform.rect;
+        if (r.width > 1f && r.height > 1f) return r.width / r.height;
+
+        if (Screen.height > 0) return (float)Screen.width / Screen.height;
+        return 16f / 9f;
+    }
+
+    private static int WidthFor(int rows, float aspect)
+    {
+        return Mathf.Max(8, Mathf.RoundToInt(rows * aspect));
+    }
+
+    private void BuildLayers()
+    {
+        black?.Destroy();
+        if (damageTexture != null) Destroy(damageTexture);
+
+        float aspect = GetAspect();
+        builtAspect = aspect;
+
+        black = new VignetteLayer(
+            vignette,
+            WidthFor(vignetteResolution, aspect),
+            vignetteResolution,
+            vignetteSoftness,
+            Color.black,
+            alphaLevels,
+            useDither);
+
+        damageTexture = BuildDamageTexture(WidthFor(damageResolution, aspect), damageResolution);
+        redVignette.raycastTarget = false;
+        redVignette.texture = damageTexture;
+        SetDamage(0f, 1f);
+    }
+
     public void Begin()
     {
+        if (Mathf.Abs(GetAspect() - builtAspect) > 0.01f)
+            BuildLayers();
+
         if (fade != null) StopCoroutine(fade);
         if (gameOverRoutine != null) StopCoroutine(gameOverRoutine);
         gameOverRoutine = null;
+        ReleaseGameOverEye();
 
         active = true;
         progress = 0f;
 
         black.Render(0f);
-        red.Render(0f);
-        SetFlash(0f);
+        SetDamage(0f, 1f);
 
         if (spawner != null) StopCoroutine(spawner);
         spawner = StartCoroutine(SpawnLoop());
     }
 
-    // 0 a 1
     public void SetProgress(float value)
     {
         if (gameOverRoutine != null) return;
@@ -179,6 +267,27 @@ public class HideoutEffects : MonoBehaviour
         gameOverRoutine = StartCoroutine(GameOverSequence(onGameOver));
     }
 
+    public void PlayDamage(Action onDone)
+    {
+        if (damageTexture == null)
+        {
+            onDone?.Invoke();
+            return;
+        }
+
+        if (fade != null) StopCoroutine(fade);
+        fade = null;
+        if (gameOverRoutine != null) StopCoroutine(gameOverRoutine);
+
+        active = false;
+        if (spawner != null) StopCoroutine(spawner);
+        spawner = null;
+
+        ReleaseGameOverEye();
+
+        gameOverRoutine = StartCoroutine(DamageSequence(onDone));
+    }
+
     private IEnumerator FadeOut()
     {
         float start = black.Last;
@@ -197,53 +306,177 @@ public class HideoutEffects : MonoBehaviour
 
     private IEnumerator GameOverSequence(Action onGameOver)
     {
-        black.Render(1f);
-
-        float elapsed = 0f;
-        while (elapsed < redDuration)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            float k = Mathf.Clamp01(elapsed / redDuration);
-            red.Render(vignetteCurve.Evaluate(k) * redMaxIntensity);
-            yield return null;
-        }
-        red.Render(redMaxIntensity);
-
-        elapsed = 0f;
-        while (elapsed < flashRiseTime)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            SetFlash(Mathf.Clamp01(elapsed / flashRiseTime));
-            yield return null;
-        }
-        SetFlash(1f);
-
         active = false;
         if (spawner != null) StopCoroutine(spawner);
         spawner = null;
 
-        black.Render(0f);
-        red.Render(0f);
+        ReleaseGameOverEye();
+        black.Render(1f);
+
+        if (eyeSprites != null && eyeSprites.Length > 0)
+        {
+            gameOverEye = ShowGameOverEye();
+            RectTransform rt = (RectTransform)gameOverEye.transform;
+
+            float e = 0f;
+            while (e < gameOverEyeDuration)
+            {
+                e += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(e / gameOverEyeDuration);
+
+                float intensity = Mathf.Lerp(0.4f, 1f, t);
+
+                rt.anchoredPosition = UnityEngine.Random.insideUnitCircle * shakeAmplitude * intensity;
+                rt.localRotation = Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(-1f, 1f) * shakeRotation * intensity);
+
+                float alpha = gameOverEyeFadeIn > 0f ? Mathf.Clamp01(e / gameOverEyeFadeIn) : 1f;
+                SetAlpha(gameOverEye, alpha);
+
+                yield return null;
+            }
+
+            if (!keepEyeDuringDamage)
+                ReleaseGameOverEye();
+        }
+
+        yield return RedPulses();
 
         onGameOver?.Invoke();
 
-        yield return new WaitForSecondsRealtime(flashHold);
+        if (gameOverClearDelay > 0f)
+            yield return new WaitForSecondsRealtime(gameOverClearDelay);
 
-        elapsed = 0f;
-        while (elapsed < flashFadeTime)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            SetFlash(1f - Mathf.Clamp01(elapsed / flashFadeTime));
-            yield return null;
-        }
-        SetFlash(0f);
+        ReleaseGameOverEye();
+        black.Render(0f);
+        SetDamage(0f, 1f);
 
         gameOverRoutine = null;
     }
 
-    private void SetFlash(float a)
+    private IEnumerator DamageSequence(Action onDone)
     {
-        flashImage.color = new Color(1f, 1f, 1f, a);
+        if (damageBlackFadeIn > 0f)
+        {
+            float start = black.Last;
+            float e = 0f;
+            while (e < damageBlackFadeIn)
+            {
+                e += Time.unscaledDeltaTime;
+                black.Render(Mathf.Lerp(start, 1f, Mathf.Clamp01(e / damageBlackFadeIn)));
+                yield return null;
+            }
+        }
+        black.Render(1f);
+
+        yield return RedPulses();
+
+        onDone?.Invoke();
+
+        if (gameOverClearDelay > 0f)
+            yield return new WaitForSecondsRealtime(gameOverClearDelay);
+
+        black.Render(0f);
+        SetDamage(0f, 1f);
+
+        gameOverRoutine = null;
+    }
+
+    private IEnumerator RedPulses()
+    {
+        float pulseTime = redDuration / damagePulses;
+
+        for (int p = 0; p < damagePulses; p++)
+        {
+            float k = damagePulses > 1 ? p / (float)(damagePulses - 1) : 1f;
+            float peak = Mathf.Lerp(0.45f, 1f, k) * redMaxIntensity;
+
+            float e = 0f;
+            while (e < pulseTime)
+            {
+                e += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(e / pulseTime);
+
+                float env = t < 0.2f ? t / 0.2f : Mathf.Lerp(1f, 0.55f, (t - 0.2f) / 0.8f);
+                float scale = Mathf.Lerp(damagePunchScale, 1f, Mathf.Clamp01(t / 0.35f));
+
+                SetDamage(peak * env, scale);
+                yield return null;
+            }
+        }
+
+        SetDamage(redMaxIntensity, 1f);
+    }
+
+    private Image ShowGameOverEye()
+    {
+        Image eye = GetEye();
+        Sprite sprite = eyeSprites[UnityEngine.Random.Range(0, eyeSprites.Length)];
+
+        eye.sprite = sprite;
+        eye.preserveAspect = true;
+
+        float w = gameOverEyeWidth;
+        float h = w * (sprite.rect.height / sprite.rect.width);
+
+        RectTransform rt = (RectTransform)eye.transform;
+        rt.sizeDelta = new Vector2(w, h);
+        rt.anchoredPosition = Vector2.zero;
+        rt.localRotation = Quaternion.identity;
+        rt.SetAsLastSibling();
+
+        SetAlpha(eye, 0f);
+        eye.gameObject.SetActive(true);
+        return eye;
+    }
+
+    private void ReleaseGameOverEye()
+    {
+        if (gameOverEye == null) return;
+
+        gameOverEye.gameObject.SetActive(false);
+        freeEyes.Push(gameOverEye);
+        gameOverEye = null;
+    }
+
+    private Texture2D BuildDamageTexture(int width, int height)
+    {
+        var tex = new Texture2D(width, height, TextureFormat.RGBA32, false)
+        {
+            wrapMode = TextureWrapMode.Clamp,
+            filterMode = FilterMode.Point
+        };
+
+        var px = new Color32[width * height];
+        var c = (Color32)redColor;
+        float seed = UnityEngine.Random.Range(0f, 100f);
+
+        for (int y = 0; y < height; y++)
+        {
+            float ny = (y + 0.5f) / height - 0.5f;
+            for (int x = 0; x < width; x++)
+            {
+                float nx = (x + 0.5f) / width - 0.5f;
+                float d = Mathf.Sqrt(nx * nx + ny * ny) / 0.7071f;
+
+                float n = Mathf.PerlinNoise(nx * damageNoiseScale + seed, ny * damageNoiseScale + seed) - 0.5f;
+                float inner = damageInnerRadius + n * damageNoise;
+
+                float a = Mathf.Clamp01(Mathf.InverseLerp(inner, 1f, d));
+                a *= a;
+
+                px[y * width + x] = new Color32(c.r, c.g, c.b, Quantize(a, x, y, alphaLevels, useDither));
+            }
+        }
+
+        tex.SetPixels32(px);
+        tex.Apply(false);
+        return tex;
+    }
+
+    private void SetDamage(float alpha, float scale)
+    {
+        redVignette.color = new Color(1f, 1f, 1f, alpha);
+        redVignette.rectTransform.localScale = new Vector3(scale, scale, 1f);
     }
 
     private IEnumerator SpawnLoop()

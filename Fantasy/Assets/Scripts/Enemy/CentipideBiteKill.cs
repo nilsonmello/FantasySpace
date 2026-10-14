@@ -28,6 +28,9 @@ public class CentipedeBiteKill : MonoBehaviour
     [Header("Death")]
     [SerializeField] private float gameOverDelay = 0.3f;
 
+    [Header("Effects")]
+    [SerializeField] private HideoutEffects effects;
+
     [Header("Gizmos")]
     [SerializeField] private bool drawGizmo = true;
 
@@ -163,8 +166,21 @@ public class CentipedeBiteKill : MonoBehaviour
         killed = true;
         OnPlayerKilled?.Invoke();
 
-        if (gameOverDelay > 0f) Invoke(nameof(TriggerGameOver), gameOverDelay);
-        else TriggerGameOver();
+        if (effects == null)
+            effects = FindFirstObjectByType<HideoutEffects>();
+
+        if (effects != null)
+        {
+            effects.PlayDamage(TriggerGameOver);
+        }
+        else if (gameOverDelay > 0f)
+        {
+            Invoke(nameof(TriggerGameOver), gameOverDelay);
+        }
+        else
+        {
+            TriggerGameOver();
+        }
     }
 
     private void TriggerGameOver()
@@ -178,7 +194,7 @@ public class CentipedeBiteKill : MonoBehaviour
 
         Vector3 o = biteOrigin != null ? biteOrigin.position : transform.position;
 
-        Gizmos.color = new Color(1f, 0.6f, 0f, 0.8f);
+        Gizmos.color = new Color(1f, 0.6f, 0.0f, 0.8f);
         Gizmos.DrawWireSphere(o, triggerRadius);
 
         Gizmos.color = Color.red;

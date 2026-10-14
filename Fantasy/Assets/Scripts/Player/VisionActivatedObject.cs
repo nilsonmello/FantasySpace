@@ -11,10 +11,8 @@ public class VisionActivatedObject : MonoBehaviour, IVisionTarget
 
     [SerializeField] private Behaviour[] behavioursToToggle;
 
-    [Header("Vision Range (0 = usa o padrão do player)")]
-    [Tooltip("Distância máxima em que o objeto é revelado dentro do cone")]
+    [Header("Vision Range")]
     [SerializeField, Min(0f)] private float visionRange = 0f;
-    [Tooltip("Raio em que o objeto começa a brilhar parcialmente, fora do cone")]
     [SerializeField, Min(0f)] private float proximityRange = 0f;
 
     [Header("Highlight")]
@@ -87,7 +85,9 @@ public class VisionActivatedObject : MonoBehaviour, IVisionTarget
 
     private bool ShouldSkip(Behaviour b)
     {
-        return b == this || b is InteractionHighlight;
+        return b == this
+            || b is InteractionHighlight
+            || b is HideoutInteractable;
     }
 
     private void AutoFill()
