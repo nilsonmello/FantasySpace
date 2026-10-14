@@ -23,7 +23,6 @@ public class CentipedeBiteKill : MonoBehaviour
 
     [Header("Bite")]
     [SerializeField] private float snapDuration = 0.08f;
-    [Tooltip("Tempo com a boca fechada antes de devolver o controle")]
     [SerializeField] private float cooldown = 0.5f;
 
     [Header("Death")]

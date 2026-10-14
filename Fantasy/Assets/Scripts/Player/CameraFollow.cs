@@ -29,6 +29,9 @@ public class CameraFollow : MonoBehaviour
     private Camera mainCam;
 
     private Transform overrideTarget;
+    private bool frozen;
+
+    public bool IsFrozen => frozen;
 
     void Awake()
     {
@@ -54,6 +57,10 @@ public class CameraFollow : MonoBehaviour
         if (overrideTarget == target)
             overrideTarget = null;
     }
+
+    public void Freeze() => frozen = true;
+
+    public void Unfreeze() => frozen = false;
 
     void HandleCamera()
     {
@@ -148,6 +155,8 @@ public class CameraFollow : MonoBehaviour
 
     private void UpdateFollowProxy()
     {
+        if (frozen) return;
+
         Vector3 targetPosition;
 
         if (overrideTarget != null)

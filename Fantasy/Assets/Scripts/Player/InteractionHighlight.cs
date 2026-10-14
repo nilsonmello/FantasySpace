@@ -13,7 +13,7 @@ public class InteractionHighlight : MonoBehaviour
     [SerializeField] private float fadeInSpeed = 8f;
     [SerializeField] private float fadeOutSpeed = 4f;
 
-    [Header("Preview (opcional)")]
+    [Header("Preview")]
     [SerializeField] private float previewRadius = 0f;
     [SerializeField, Range(0f, 1f)] private float maxPreviewHighlight = 0.4f;
 
@@ -35,8 +35,6 @@ public class InteractionHighlight : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(current);
-
         if (interactable == null || spriteRenderer == null) return;
 
         if (player == null)
