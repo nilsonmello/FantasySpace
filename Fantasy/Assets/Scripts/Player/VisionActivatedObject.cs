@@ -21,6 +21,9 @@ public class VisionActivatedObject : MonoBehaviour, IVisionTarget
     [SerializeField, Range(0f, 1f)] private float maxPartialHighlight = 0.5f;
     [SerializeField] private float fadeSpeed = 2.5f;
 
+    [Header("Pin")]
+    [SerializeField] private bool keepBehavioursActiveWhilePinned = false;
+
     [Header("Gizmos")]
     [SerializeField] private bool drawGizmo = true;
 
@@ -29,8 +32,13 @@ public class VisionActivatedObject : MonoBehaviour, IVisionTarget
     private float currentHighlight = 0f;
     private bool behavioursActive = false;
 
+    private bool lastInCone;
+    private float lastProximity01;
+    private bool pinned;
+
     public float VisionRange => visionRange;
     public float ProximityRange => proximityRange;
+    public bool IsPinned => pinned;
 
     private void Awake()
     {
@@ -56,10 +64,45 @@ public class VisionActivatedObject : MonoBehaviour, IVisionTarget
 
     public void UpdateVision(bool inCone, float proximity01)
     {
-        targetHighlight = inCone ? 1f : Mathf.Clamp01(proximity01) * maxPartialHighlight;
+        lastInCone = inCone;
+        lastProximity01 = proximity01;
 
-        if (inCone != behavioursActive)
-            SetBehavioursActive(inCone);
+        Refresh();
+    }
+
+    public void Pin()
+    {
+        if (pinned) return;
+        pinned = true;
+        Refresh();
+    }
+
+    public void Unpin()
+    {
+        if (!pinned) return;
+        pinned = false;
+        Refresh();
+    }
+
+    public void SetPinned(bool value)
+    {
+        if (value) Pin();
+        else Unpin();
+    }
+
+    public void TogglePin() => SetPinned(!pinned);
+
+    private void Refresh()
+    {
+        if (pinned)
+            targetHighlight = 1f;
+        else
+            targetHighlight = lastInCone ? 1f : Mathf.Clamp01(lastProximity01) * maxPartialHighlight;
+
+        bool shouldBeActive = lastInCone || (pinned && keepBehavioursActiveWhilePinned);
+
+        if (shouldBeActive != behavioursActive)
+            SetBehavioursActive(shouldBeActive);
     }
 
     private void ApplyHighlight(float amount)

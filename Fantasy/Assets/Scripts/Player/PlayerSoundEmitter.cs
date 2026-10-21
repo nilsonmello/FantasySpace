@@ -1,4 +1,12 @@
+using System;
 using UnityEngine;
+
+public enum NoiseKind
+{
+    Crouch,
+    Walk,
+    Run
+}
 
 [RequireComponent(typeof(PlayerMovementBase))]
 public class PlayerSoundEmitter : MonoBehaviour
@@ -9,15 +17,27 @@ public class PlayerSoundEmitter : MonoBehaviour
 
     [SerializeField] private float movementThreshold = 0.05f;
 
+    [Header("Crouch")]
+    [SerializeField] private float crouchInterval = 0.7f;
+    [SerializeField] private float crouchRadius = 2f;
+    [SerializeField] private float crouchPriority = 0.5f;
+    
+    [SerializeField] private bool crouchEmitsSound = false;
+
+    [Header("Walk")]
     [SerializeField] private float walkInterval = 0.5f;
     [SerializeField] private float walkRadius = 4f;
     [SerializeField] private float walkPriority = 1f;
 
+    [Header("Run")]
     [SerializeField] private float runInterval = 0.3f;
     [SerializeField] private float runRadius = 7f;
     [SerializeField] private float runPriority = 2f;
 
+    [Header("Gizmos")]
     [SerializeField] private bool drawGizmo = true;
+
+    public event Action<NoiseKind> OnNoisePulse;
 
     private float nextEmitTime;
     private float lastEmitFlashUntil = -1f;
@@ -36,34 +56,64 @@ public class PlayerSoundEmitter : MonoBehaviour
 
     private void Update()
     {
-        if (playerMovement == null || channel == null) return;
-
-        if (playerMovement.CurrentMovementState == PlayerMovementBase.MovementState.Crouch)
-            return;
+        if (playerMovement == null) return;
 
         bool isMoving = playerMovement.CurrentVelocity.sqrMagnitude >= movementThreshold * movementThreshold;
         if (!isMoving) return;
 
         if (Time.time < nextEmitTime) return;
 
-        bool isRunning = playerMovement.CurrentMovementState == PlayerMovementBase.MovementState.Run;
+        var state = playerMovement.CurrentMovementState;
+        bool isCrouching = state == PlayerMovementBase.MovementState.Crouch;
+        bool isRunning = state == PlayerMovementBase.MovementState.Run;
 
-        float interval = isRunning ? runInterval : walkInterval;
-        float radius = isRunning ? runRadius : walkRadius;
-        float priority = isRunning ? runPriority : walkPriority;
+        NoiseKind kind;
+        float interval, radius, priority;
 
-        channel.RaiseSound(transform.position, radius, priority, gameObject.GetInstanceID());
+        if (isCrouching)
+        {
+            kind = NoiseKind.Crouch;
+            interval = crouchInterval;
+            radius = crouchRadius;
+            priority = crouchPriority;
+        }
+        else if (isRunning)
+        {
+            kind = NoiseKind.Run;
+            interval = runInterval;
+            radius = runRadius;
+            priority = runPriority;
+        }
+        else
+        {
+            kind = NoiseKind.Walk;
+            interval = walkInterval;
+            radius = walkRadius;
+            priority = walkPriority;
+        }
+
+        bool raiseOnChannel = !isCrouching || crouchEmitsSound;
+
+        if (raiseOnChannel && channel != null)
+        {
+            channel.RaiseSound(transform.position, radius, priority, gameObject.GetInstanceID());
+            lastEmitFlashUntil = Time.time + EmitFlashDuration;
+        }
+
+        OnNoisePulse?.Invoke(kind);
 
         nextEmitTime = Time.time + interval;
-        lastEmitFlashUntil = Time.time + EmitFlashDuration;
     }
 
     private void OnDrawGizmosSelected()
     {
         if (!drawGizmo || playerMovement == null) return;
 
-        bool isRunning = playerMovement.CurrentMovementState == PlayerMovementBase.MovementState.Run;
-        float radius = isRunning ? runRadius : walkRadius;
+        var state = playerMovement.CurrentMovementState;
+        float radius = walkRadius;
+
+        if (state == PlayerMovementBase.MovementState.Run) radius = runRadius;
+        else if (state == PlayerMovementBase.MovementState.Crouch) radius = crouchRadius;
 
         Gizmos.color = new Color(0.2f, 1f, 0.4f, 0.35f);
         Gizmos.DrawWireSphere(transform.position, radius);
