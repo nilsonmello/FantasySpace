@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 5589016491169800973}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.009, y: 0, z: 0}
+  m_LocalPosition: {x: 0.685, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -435,7 +435,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: useBounds
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1316527086807440149, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: chaseSpeed
@@ -567,11 +567,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1831239827608433856, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 24.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1831239827608433856, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -23.3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1831239827608433856, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1123,7 +1123,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5083286111725039269, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: shakeAmplitudeGrowth
-      value: 0.03
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5083286111725039269, guid: fa699168938b8294ea400e9e5b2b2c05, type: 3}
       propertyPath: 'segments.Array.data[15]'
@@ -1938,13 +1938,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   triggerRadius: 4
-  hitRadius: 0.7
+  hitRadius: 0.49
   wideOpenAmount: 1.6
   openSmoothTime: 0.12
   snapSmoothTime: 0.02
   snapDuration: 0.08
   cooldown: 0.5
-  restartDelay: 0.1
+  gameOverDelay: 0.1
+  effects: {fileID: 0}
   drawGizmo: 1
 --- !u!1 &7790761122210160312 stripped
 GameObject:
