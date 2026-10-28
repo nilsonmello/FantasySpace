@@ -2,58 +2,73 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-/// <summary>
-/// Lê um Tilemap "fonte" pintado com tiles de cores básicas e, para cada célula,
-/// procura a cor no ColorTileMapping e coloca os tiles correspondentes nas
-/// três camadas de destino (chão, paredes, teto), nas MESMAS posições de célula.
-///
-/// Dá para alimentar o Apply() com qualquer grid de cores no futuro
-/// (gerador procedural), sem depender do Tilemap fonte.
-/// </summary>
 public class ColorMapGenerator : MonoBehaviour
 {
     public enum ColorSource
     {
-        /// <summary>Lê o pixel central do sprite do tile (textura precisa de Read/Write).</summary>
         SpritePixel,
-        /// <summary>Usa a cor do asset Tile multiplicada pela cor da célula no Tilemap.
-        /// Bom se seus tiles são um sprite branco tingido.</summary>
         TileTint
     }
 
-    [Header("Dados")]
     [SerializeField] private ColorTileMapping mapping;
 
-    [Header("Fonte (Tilemap pintado com as cores)")]
-    [SerializeField] private Tilemap sourceTilemap;
-    [SerializeField] private ColorSource colorSource = ColorSource.SpritePixel;
-    [Tooltip("Desativa o TilemapRenderer da fonte depois de gerar (o Clear reativa).")]
-    [SerializeField] private bool hideSourceOnGenerate = true;
+    [SerializeField] private string sourceName = "Source";
+    [SerializeField] private string floorName = "Floor";
+    [SerializeField] private string wallName = "Wall";
+    [SerializeField] private string ceilingName = "Ceiling";
 
-    [Header("Camadas de destino")]
+    [SerializeField] private Tilemap sourceTilemap;
     [SerializeField] private Tilemap floorTilemap;
     [SerializeField] private Tilemap wallTilemap;
     [SerializeField] private Tilemap ceilingTilemap;
 
-    [Header("Preenchimento aleatório (opcional)")]
-    [Tooltip("Sorteia tiles para as células vazias do mapa. Deixe vazio para desligar.")]
+    [SerializeField] private ColorSource colorSource = ColorSource.SpritePixel;
+    [SerializeField] private bool hideSourceOnGenerate = true;
     [SerializeField] private EmptyCellFill emptyFill;
-
-    [Header("Opções")]
     [SerializeField] private bool generateOnStart = true;
     [SerializeField] private bool logUnmappedColors = true;
 
-    /// <summary>Disparado ao final de cada geração (camadas e preenchimento já aplicados).</summary>
     public event System.Action MapGenerated;
 
+    public Tilemap SourceTilemap => sourceTilemap;
+    public Tilemap FloorTilemap => floorTilemap;
+    public Tilemap WallTilemap => wallTilemap;
+    public Tilemap CeilingTilemap => ceilingTilemap;
+
     private readonly Dictionary<Sprite, Color32> spriteColorCache = new Dictionary<Sprite, Color32>();
+    private bool hasGenerated;
+
+    private void Awake()
+    {
+        ResolveReferences();
+    }
 
     private void Start()
     {
-        if (generateOnStart) Generate();
+        if (generateOnStart && !hasGenerated) Generate();
     }
 
-    /// <summary>Lê o Tilemap fonte e gera as três camadas.</summary>
+    public void ResolveReferences()
+    {
+        Tilemap[] all = GetComponentsInChildren<Tilemap>(true);
+
+        if (sourceTilemap == null) sourceTilemap = FindByName(all, sourceName);
+        if (floorTilemap == null) floorTilemap = FindByName(all, floorName);
+        if (wallTilemap == null) wallTilemap = FindByName(all, wallName);
+        if (ceilingTilemap == null) ceilingTilemap = FindByName(all, ceilingName);
+    }
+
+    private static Tilemap FindByName(Tilemap[] tilemaps, string objectName)
+    {
+        if (string.IsNullOrEmpty(objectName)) return null;
+
+        foreach (Tilemap t in tilemaps)
+        {
+            if (t.gameObject.name == objectName) return t;
+        }
+        return null;
+    }
+
     [ContextMenu("Generate")]
     public void Generate()
     {
@@ -62,11 +77,9 @@ public class ColorMapGenerator : MonoBehaviour
         BoundsInt src = sourceTilemap.cellBounds;
         if (src.size.x <= 0 || src.size.y <= 0)
         {
-            Debug.LogWarning("[ColorMapGenerator] O Tilemap fonte está vazio.", this);
             return;
         }
 
-        // Só 2D: força z = 0 com profundidade 1.
         var bounds = new BoundsInt(src.xMin, src.yMin, 0, src.size.x, src.size.y, 1);
 
         Color32[] grid = ReadSourceColors(bounds);
@@ -81,15 +94,12 @@ public class ColorMapGenerator : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Preenche as três camadas a partir de um grid de cores.
-    /// Índice = (x - bounds.xMin) + (y - bounds.yMin) * largura. Alpha 0 = célula vazia.
-    /// </summary>
     public void Apply(Color32[] pixels, BoundsInt bounds)
     {
+        ResolveReferences();
+
         if (mapping == null || floorTilemap == null || wallTilemap == null || ceilingTilemap == null)
         {
-            Debug.LogError("[ColorMapGenerator] Falta atribuir o mapping ou alguma camada de destino.", this);
             return;
         }
 
@@ -113,12 +123,6 @@ public class ColorMapGenerator : MonoBehaviour
                 wallTiles[i] = entry.wall;
                 ceilingTiles[i] = entry.ceiling;
             }
-            else if (logUnmappedColors && unmapped.Add((px.r << 16) | (px.g << 8) | px.b))
-            {
-                Debug.LogWarning($"[ColorMapGenerator] Cor sem mapeamento: " +
-                                 $"#{px.r:X2}{px.g:X2}{px.b:X2} " +
-                                 $"(ex.: célula {bounds.xMin + i % width}, {bounds.yMin + i / width})", this);
-            }
         }
 
         floorTilemap.SetTilesBlock(bounds, floorTiles);
@@ -127,20 +131,16 @@ public class ColorMapGenerator : MonoBehaviour
 
         FillEmptyCells(pixels, bounds);
 
+        hasGenerated = true;
         MapGenerated?.Invoke();
     }
 
-    /// <summary>
-    /// Sorteia tiles para as células sem tile no fonte (alpha 0), mais a margem de padding.
-    /// </summary>
     private void FillEmptyCells(Color32[] pixels, BoundsInt bounds)
     {
         if (emptyFill == null) return;
 
         if (!emptyFill.HasTiles)
         {
-            Debug.LogWarning("[ColorMapGenerator] O Empty Fill não tem nenhum tile válido " +
-                             "(tile vazio ou Weight = 0).", this);
             return;
         }
 
@@ -161,7 +161,6 @@ public class ColorMapGenerator : MonoBehaviour
                 bool insideSource = x >= bounds.xMin && x < bounds.xMax &&
                                     y >= bounds.yMin && y < bounds.yMax;
 
-                // Dentro do fonte, só preenche onde não havia tile.
                 if (insideSource && pixels[(x - bounds.xMin) + (y - bounds.yMin) * width].a != 0)
                     continue;
 
@@ -188,11 +187,12 @@ public class ColorMapGenerator : MonoBehaviour
         }
     }
 
-    /// <summary>Limpa as camadas de destino e mostra o Tilemap fonte de novo.</summary>
     [ContextMenu("Clear")]
     public void Clear()
     {
+        ResolveReferences();
         ClearDestinations();
+        hasGenerated = false;
 
         if (sourceTilemap != null)
         {
@@ -208,17 +208,14 @@ public class ColorMapGenerator : MonoBehaviour
         if (ceilingTilemap != null) ceilingTilemap.ClearAllTiles();
     }
 
-    // ---------------------------------------------------------------- leitura
-
     private Color32[] ReadSourceColors(BoundsInt bounds)
     {
         spriteColorCache.Clear();
 
-        // Garante que Rule Tiles do fonte já escolheram seus sprites antes da leitura.
         sourceTilemap.RefreshAllTiles();
 
         TileBase[] tiles = sourceTilemap.GetTilesBlock(bounds);
-        var grid = new Color32[tiles.Length]; // default = alpha 0 (vazio)
+        var grid = new Color32[tiles.Length];
         int width = bounds.size.x;
 
         for (int i = 0; i < tiles.Length; i++)
@@ -240,7 +237,7 @@ public class ColorMapGenerator : MonoBehaviour
                 color = tileColor * sourceTilemap.GetColor(cell);
             }
 
-            color.a = 255; // existe tile nessa célula
+            color.a = 255;
             grid[i] = color;
         }
 
@@ -254,9 +251,6 @@ public class ColorMapGenerator : MonoBehaviour
         Texture2D tex = sprite.texture;
         if (!tex.isReadable)
         {
-            Debug.LogError($"[ColorMapGenerator] A textura '{tex.name}' (sprite '{sprite.name}') " +
-                           "precisa de Read/Write habilitado nas Import Settings, " +
-                           "ou use o modo TileTint.", this);
             return false;
         }
 
@@ -271,15 +265,20 @@ public class ColorMapGenerator : MonoBehaviour
 
     private bool ValidateReferences()
     {
+        ResolveReferences();
+
         if (sourceTilemap == null)
         {
-            Debug.LogError("[ColorMapGenerator] Nenhum Tilemap fonte atribuído.", this);
+            return false;
+        }
+
+        if (floorTilemap == null || wallTilemap == null || ceilingTilemap == null)
+        {
             return false;
         }
 
         if (sourceTilemap == floorTilemap || sourceTilemap == wallTilemap || sourceTilemap == ceilingTilemap)
         {
-            Debug.LogError("[ColorMapGenerator] O Tilemap fonte não pode ser um dos Tilemaps de destino.", this);
             return false;
         }
 

@@ -4,69 +4,142 @@ using UnityEngine.Tilemaps;
 
 public class TilemapMaskBuilder : MonoBehaviour
 {
-    [Header("Origem")]
-    [Tooltip("Opcional. Se atribuído, a máscara é refeita sempre que o gerador terminar de gerar o mapa.")]
+    [SerializeField] private string targetName = "Ground";
+
     [SerializeField] private ColorMapGenerator generator;
-    [Tooltip("Tilemaps lidos. Só o chão = 1 item; as três camadas = 3 itens.")]
     [SerializeField] private List<Tilemap> sources = new List<Tilemap>();
-
-    [Header("Destino")]
-    [Tooltip("Tilemap que recebe os quadrados brancos (um objeto separado, filho do Grid).")]
     [SerializeField] private Tilemap target;
-    [Tooltip("Opcional. Se vazio, o script cria um tile de quadrado branco em runtime.")]
-    [SerializeField] private TileBase whiteTile;
-    [Tooltip("Cor aplicada ao Tilemap de destino inteiro (branco = sem alteração).")]
-    [SerializeField] private Color maskColor = Color.white;
 
-    [Header("Opções")]
-    [Tooltip("Só vale quando nenhum gerador está atribuído.")]
+    [SerializeField] private TileBase whiteTile;
+    [SerializeField] private Color maskColor = Color.white;
     [SerializeField] private bool buildOnStart = true;
 
     private Tile runtimeTile;
     private Sprite runtimeSprite;
     private Texture2D runtimeTexture;
+    private ColorMapGenerator subscribedTo;
+
+    private Transform anchor;
+
+    private void Awake()
+    {
+        ResolveReferences();
+    }
 
     private void OnEnable()
     {
-        if (generator != null) generator.MapGenerated += Build;
+        ResolveReferences();
+        Subscribe();
     }
 
     private void OnDisable()
     {
-        if (generator != null) generator.MapGenerated -= Build;
+        Unsubscribe();
     }
 
     private void Start()
     {
+        if (generator == null)
+        {
+            ResolveReferences();
+            Subscribe();
+        }
+
         if (generator == null && buildOnStart) Build();
     }
 
     private void OnDestroy()
     {
+        Unsubscribe();
+
         if (runtimeTile != null) Destroy(runtimeTile);
         if (runtimeSprite != null) Destroy(runtimeSprite);
         if (runtimeTexture != null) Destroy(runtimeTexture);
     }
 
-    /// <summary>Refaz a máscara a partir do estado atual dos Tilemaps de origem.</summary>
+    public void ResolveReferences()
+    {
+        if (generator == null) generator = FindNearestGenerator(out anchor);
+        if (anchor == null) anchor = generator != null ? generator.transform : transform.root;
+
+        if (target == null && !string.IsNullOrEmpty(targetName))
+        {
+            target = FindTilemapByName(anchor);
+            if (target == null) target = FindTilemapByName(transform.root);
+        }
+
+        if (sources.Count == 0 && generator != null)
+        {
+            generator.ResolveReferences();
+            AddIfValid(generator.FloorTilemap);
+            AddIfValid(generator.WallTilemap);
+            AddIfValid(generator.CeilingTilemap);
+        }
+    }
+
+    private ColorMapGenerator FindNearestGenerator(out Transform foundAt)
+    {
+        for (Transform t = transform; t != null; t = t.parent)
+        {
+            var found = t.GetComponentInChildren<ColorMapGenerator>(true);
+            if (found != null)
+            {
+                foundAt = t;
+                return found;
+            }
+        }
+        foundAt = null;
+        return null;
+    }
+
+    private Tilemap FindTilemapByName(Transform root)
+    {
+        if (root == null) return null;
+
+        foreach (Tilemap t in root.GetComponentsInChildren<Tilemap>(true))
+        {
+            if (t.gameObject.name == targetName) return t;
+        }
+        return null;
+    }
+
+    private void AddIfValid(Tilemap t)
+    {
+        if (t != null && t != target && !sources.Contains(t)) sources.Add(t);
+    }
+
+    private void Subscribe()
+    {
+        if (generator == null || subscribedTo == generator) return;
+
+        Unsubscribe();
+        generator.MapGenerated += Build;
+        subscribedTo = generator;
+    }
+
+    private void Unsubscribe()
+    {
+        if (subscribedTo != null) subscribedTo.MapGenerated -= Build;
+        subscribedTo = null;
+    }
+
     [ContextMenu("Build")]
     public void Build()
     {
+        ResolveReferences();
+
         if (target == null)
         {
-            Debug.LogError("[TilemapMaskBuilder] Nenhum Tilemap de destino atribuído.", this);
             return;
         }
 
         if (sources.Count == 0)
         {
-            Debug.LogWarning("[TilemapMaskBuilder] A lista de origens está vazia.", this);
             return;
         }
 
         target.ClearAllTiles();
 
-        // União das células ocupadas em todas as origens.
         var occupied = new HashSet<Vector3Int>();
         foreach (Tilemap source in sources)
         {
@@ -96,10 +169,10 @@ public class TilemapMaskBuilder : MonoBehaviour
         target.SetTiles(positions, tiles);
     }
 
-    /// <summary>Apaga a máscara.</summary>
     [ContextMenu("Clear")]
     public void Clear()
     {
+        ResolveReferences();
         if (target != null) target.ClearAllTiles();
     }
 
@@ -108,7 +181,6 @@ public class TilemapMaskBuilder : MonoBehaviour
         if (whiteTile != null) return whiteTile;
         if (runtimeTile != null) return runtimeTile;
 
-        // Textura 1x1 branca; o PPU é ajustado para o sprite ocupar exatamente 1 célula.
         runtimeTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false)
         {
             filterMode = FilterMode.Point
