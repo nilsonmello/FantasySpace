@@ -207,6 +207,7 @@ GameObject:
   - component: {fileID: 1230921152195161151}
   - component: {fileID: 8332965748457744389}
   - component: {fileID: 8448046174009433249}
+  - component: {fileID: 3860476493794727352}
   m_Layer: 3
   m_Name: PlayerPrefab
   m_TagString: Player
@@ -434,6 +435,10 @@ MonoBehaviour:
   channel: {fileID: 11400000, guid: b3f9311fdd0f8bb4784f6fed52a6fa23, type: 2}
   playerMovement: {fileID: 3884008987325982196}
   movementThreshold: 0.05
+  crouchInterval: 0.7
+  crouchRadius: 2
+  crouchPriority: 0.5
+  crouchEmitsSound: 0
   walkInterval: 0.5
   walkRadius: 4.39
   walkPriority: 1
@@ -478,3 +483,30 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3860476493794727352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8228299723434981340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 933d2e24890a72e4a9c39b3b1a538bd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimationController
+  movement: {fileID: 3884008987325982196}
+  animator: {fileID: 8448046174009433249}
+  spriteRenderer: {fileID: 1763000673647168640}
+  facingMode: 0
+  useFlipX: 0
+  initialFacing: {x: 0, y: -1}
+  movingThreshold: 0.05
+  walkAnimSpeed: 1
+  runAnimSpeed: 1.4
+  crouchAnimSpeed: 0.7
+  moveXParam: MoveX
+  moveYParam: MoveY
+  isMovingParam: IsMoving
+  isRunningParam: IsRunning
+  isCrouchingParam: IsCrouching

@@ -1,0 +1,1459 @@
+fileFormatVersion: 2
+guid: 7c50b3460633ebd41baa14033f76a911
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7027292538137701616
+    second: industrial itens e deco_0
+  - first:
+      213: -7520035357952545384
+    second: industrial itens e deco_1
+  - first:
+      213: -1328027110572928035
+    second: industrial itens e deco_2
+  - first:
+      213: 1611746285112860437
+    second: industrial itens e deco_3
+  - first:
+      213: -2082696903114335292
+    second: industrial itens e deco_4
+  - first:
+      213: -619724575177884088
+    second: industrial itens e deco_5
+  - first:
+      213: 470602898664700497
+    second: industrial itens e deco_6
+  - first:
+      213: 1671992022541223672
+    second: industrial itens e deco_7
+  - first:
+      213: 4072856761391646385
+    second: industrial itens e deco_8
+  - first:
+      213: 2310200990386965298
+    second: industrial itens e deco_9
+  - first:
+      213: 1422058042998147239
+    second: industrial itens e deco_10
+  - first:
+      213: -3488156912399839278
+    second: industrial itens e deco_11
+  - first:
+      213: -3544542387875158846
+    second: industrial itens e deco_12
+  - first:
+      213: -441154024930779851
+    second: industrial itens e deco_13
+  - first:
+      213: 556703690489714316
+    second: industrial itens e deco_14
+  - first:
+      213: -5217793638214181899
+    second: industrial itens e deco_15
+  - first:
+      213: -7634477323466988183
+    second: industrial itens e deco_16
+  - first:
+      213: -5032514420310583274
+    second: industrial itens e deco_17
+  - first:
+      213: -5783182202898465542
+    second: industrial itens e deco_18
+  - first:
+      213: 5424234300759888568
+    second: industrial itens e deco_19
+  - first:
+      213: -7080156621617482638
+    second: industrial itens e deco_20
+  - first:
+      213: 7461940863017521045
+    second: industrial itens e deco_21
+  - first:
+      213: 6727102294243229062
+    second: industrial itens e deco_22
+  - first:
+      213: -1677850106423299300
+    second: industrial itens e deco_23
+  - first:
+      213: -4715319375139557395
+    second: industrial itens e deco_24
+  - first:
+      213: -6728388041159538591
+    second: industrial itens e deco_25
+  - first:
+      213: 1677959112066683269
+    second: industrial itens e deco_26
+  - first:
+      213: -120980787299482828
+    second: industrial itens e deco_27
+  - first:
+      213: 4919516452509626037
+    second: industrial itens e deco_28
+  - first:
+      213: 3207928468330230071
+    second: industrial itens e deco_29
+  - first:
+      213: -6688439740778152940
+    second: industrial itens e deco_30
+  - first:
+      213: 8655618750876554086
+    second: industrial itens e deco_31
+  - first:
+      213: 6650396821206628351
+    second: industrial itens e deco_32
+  - first:
+      213: -1842561952638136391
+    second: industrial itens e deco_33
+  - first:
+      213: -3768655495267879558
+    second: industrial itens e deco_34
+  - first:
+      213: 7784735447962658438
+    second: industrial itens e deco_35
+  - first:
+      213: 1346891619295145183
+    second: industrial itens e deco_36
+  - first:
+      213: -5243731469521741076
+    second: industrial itens e deco_37
+  - first:
+      213: -1069742181280813534
+    second: industrial itens e deco_38
+  - first:
+      213: -6029702042818585633
+    second: industrial itens e deco_39
+  - first:
+      213: 2799545642686123797
+    second: industrial itens e deco_40
+  - first:
+      213: 7636635991817576548
+    second: industrial itens e deco_41
+  - first:
+      213: 5748790988791980454
+    second: industrial itens e deco_42
+  - first:
+      213: 9145705357978567609
+    second: industrial itens e deco_43
+  - first:
+      213: -7743213508957913088
+    second: industrial itens e deco_44
+  - first:
+      213: -4482322792277487413
+    second: industrial itens e deco_45
+  - first:
+      213: 6372365930330485466
+    second: industrial itens e deco_46
+  - first:
+      213: 5426380498766470406
+    second: industrial itens e deco_47
+  - first:
+      213: 1300013252403560965
+    second: industrial itens e deco_48
+  - first:
+      213: -4898258512877756576
+    second: industrial itens e deco_49
+  - first:
+      213: -3926579802634422297
+    second: industrial itens e deco_50
+  - first:
+      213: -8286482674105478696
+    second: industrial itens e deco_51
+  - first:
+      213: -1954365451381511246
+    second: industrial itens e deco_52
+  - first:
+      213: 5811746801276104152
+    second: industrial itens e deco_53
+  - first:
+      213: 996361688855248470
+    second: industrial itens e deco_54
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: industrial itens e deco_0
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 848
+        width: 71
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fc637cc455f58160800000000000000
+      internalID: 7027292538137701616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_1
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 807
+        width: 18
+        height: 57
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89d6cde4fa773a790800000000000000
+      internalID: -7520035357952545384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_2
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 807
+        width: 23
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd3563e0166e19de0800000000000000
+      internalID: -1328027110572928035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_3
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 805
+        width: 24
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51f1538f4b21e5610800000000000000
+      internalID: 1611746285112860437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_4
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 807
+        width: 23
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cb50138336c813e0800000000000000
+      internalID: -2082696903114335292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_5
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 805
+        width: 23
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84e31f548cb4667f0800000000000000
+      internalID: -619724575177884088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_6
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 807
+        width: 58
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15abd2dc7dae78600800000000000000
+      internalID: 470602898664700497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_7
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 744
+        width: 29
+        height: 61
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f64bdac2eb143710800000000000000
+      internalID: 1671992022541223672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_8
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 776
+        width: 15
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b60cc345a1b58830800000000000000
+      internalID: 4072856761391646385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_9
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 774
+        width: 31
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23b45cf8f8b7f0020800000000000000
+      internalID: 2310200990386965298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_10
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 777
+        width: 14
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a844e6714a2cb310800000000000000
+      internalID: 1422058042998147239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_11
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 774
+        width: 17
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2df859be4c3979fc0800000000000000
+      internalID: -3488156912399839278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_12
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 773
+        width: 24
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c4e26f5a714fcec0800000000000000
+      internalID: -3544542387875158846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_13
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 683
+        width: 44
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53d54cc60c4b0e9f0800000000000000
+      internalID: -441154024930779851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_14
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 776
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c86d9c49e0fc9b700800000000000000
+      internalID: 556703690489714316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_15
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 774
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fb53f2c45ca697b0800000000000000
+      internalID: -5217793638214181899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_16
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 773
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 965a9f0d253ec0690800000000000000
+      internalID: -7634477323466988183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_17
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 773
+        width: 21
+        height: 17
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6185b525ccae82ab0800000000000000
+      internalID: -5032514420310583274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_18
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 683
+        width: 19
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afc30e45d620ebfa0800000000000000
+      internalID: -5783182202898465542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_23
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 742
+        width: 31
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c13b944c73417b8e0800000000000000
+      internalID: -1677850106423299300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_24
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 744
+        width: 12
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: def2a4ad202df8eb0800000000000000
+      internalID: -4715319375139557395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_25
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 742
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16803bf99b6ff92a0800000000000000
+      internalID: -6728388041159538591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_26
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 741
+        width: 16
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5815d561cee494710800000000000000
+      internalID: 1677959112066683269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_27
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 742
+        width: 15
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4330e5c6d90325ef0800000000000000
+      internalID: -120980787299482828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_28
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 744
+        width: 23
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bea68a1622a54440800000000000000
+      internalID: 4919516452509626037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_29
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 744
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 731bfa312f9d48c20800000000000000
+      internalID: 3207928468330230071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_30
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 741
+        width: 21
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41cff4d1e73ed23a0800000000000000
+      internalID: -6688439740778152940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_31
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 741
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 663153df46fee1870800000000000000
+      internalID: 8655618750876554086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_32
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 679
+        width: 29
+        height: 62
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff7786f6ca4fa4c50800000000000000
+      internalID: 6650396821206628351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_33
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 682
+        width: 61
+        height: 51
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bf8a589aa7ed66e0800000000000000
+      internalID: -1842561952638136391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_34
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 650
+        width: 31
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a75fbb35bcb03bbc0800000000000000
+      internalID: -3768655495267879558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_35
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 616
+        width: 30
+        height: 61
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 686a43605afe80c60800000000000000
+      internalID: 7784735447962658438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_36
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 651
+        width: 28
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdca907aace11b210800000000000000
+      internalID: 1346891619295145183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_37
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 647
+        width: 49
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cea9e9dc2068a37b0800000000000000
+      internalID: -5243731469521741076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_38
+      rect:
+        serializedVersion: 2
+        x: 431
+        y: 467
+        width: 226
+        height: 210
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22e618367238721f0800000000000000
+      internalID: -1069742181280813534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_39
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 619
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdbd95450f1325ca0800000000000000
+      internalID: -6029702042818585633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_40
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 614
+        width: 32
+        height: 33
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51f8cccedebf9d620800000000000000
+      internalID: 2799545642686123797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_41
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 549
+        width: 28
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 460ef3359f7caf960800000000000000
+      internalID: 7636635991817576548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_42
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 485
+        width: 28
+        height: 115
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a1a9e622fec7cf40800000000000000
+      internalID: 5748790988791980454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_43
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 517
+        width: 28
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b303ba21921cee70800000000000000
+      internalID: 9145705357978567609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_44
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 517
+        width: 27
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 000ce82c6549a8490800000000000000
+      internalID: -7743213508957913088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_45
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 517
+        width: 28
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc0d9a53b279bc1c0800000000000000
+      internalID: -4482322792277487413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_46
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 517
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad276282d013f6850800000000000000
+      internalID: 6372365930330485466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_47
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 485
+        width: 28
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60d151d30506e4b40800000000000000
+      internalID: 5426380498766470406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_48
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 485
+        width: 28
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50280d05a239a0210800000000000000
+      internalID: 1300013252403560965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_49
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 485
+        width: 27
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06f53e9a5d3e50cb0800000000000000
+      internalID: -4898258512877756576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_50
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 485
+        width: 28
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e770c1397cf189c0800000000000000
+      internalID: -3926579802634422297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_51
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 428
+        width: 28
+        height: 17
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d1938c59ef700d80800000000000000
+      internalID: -8286482674105478696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_52
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 421
+        width: 25
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bbeb150af2b0e4e0800000000000000
+      internalID: -1954365451381511246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_53
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 421
+        width: 30
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8dd239e7ce877a050800000000000000
+      internalID: 5811746801276104152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: industrial itens e deco_54
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 421
+        width: 30
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65e76045da9c3dd00800000000000000
+      internalID: 996361688855248470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 2cf5a3acc589db045a3fd4d8cd92ac4f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      industrial itens e deco_0: 7027292538137701616
+      industrial itens e deco_1: -7520035357952545384
+      industrial itens e deco_10: 1422058042998147239
+      industrial itens e deco_11: -3488156912399839278
+      industrial itens e deco_12: -3544542387875158846
+      industrial itens e deco_13: -441154024930779851
+      industrial itens e deco_14: 556703690489714316
+      industrial itens e deco_15: -5217793638214181899
+      industrial itens e deco_16: -7634477323466988183
+      industrial itens e deco_17: -5032514420310583274
+      industrial itens e deco_18: -5783182202898465542
+      industrial itens e deco_19: 5424234300759888568
+      industrial itens e deco_2: -1328027110572928035
+      industrial itens e deco_20: -7080156621617482638
+      industrial itens e deco_21: 7461940863017521045
+      industrial itens e deco_22: 6727102294243229062
+      industrial itens e deco_23: -1677850106423299300
+      industrial itens e deco_24: -4715319375139557395
+      industrial itens e deco_25: -6728388041159538591
+      industrial itens e deco_26: 1677959112066683269
+      industrial itens e deco_27: -120980787299482828
+      industrial itens e deco_28: 4919516452509626037
+      industrial itens e deco_29: 3207928468330230071
+      industrial itens e deco_3: 1611746285112860437
+      industrial itens e deco_30: -6688439740778152940
+      industrial itens e deco_31: 8655618750876554086
+      industrial itens e deco_32: 6650396821206628351
+      industrial itens e deco_33: -1842561952638136391
+      industrial itens e deco_34: -3768655495267879558
+      industrial itens e deco_35: 7784735447962658438
+      industrial itens e deco_36: 1346891619295145183
+      industrial itens e deco_37: -5243731469521741076
+      industrial itens e deco_38: -1069742181280813534
+      industrial itens e deco_39: -6029702042818585633
+      industrial itens e deco_4: -2082696903114335292
+      industrial itens e deco_40: 2799545642686123797
+      industrial itens e deco_41: 7636635991817576548
+      industrial itens e deco_42: 5748790988791980454
+      industrial itens e deco_43: 9145705357978567609
+      industrial itens e deco_44: -7743213508957913088
+      industrial itens e deco_45: -4482322792277487413
+      industrial itens e deco_46: 6372365930330485466
+      industrial itens e deco_47: 5426380498766470406
+      industrial itens e deco_48: 1300013252403560965
+      industrial itens e deco_49: -4898258512877756576
+      industrial itens e deco_5: -619724575177884088
+      industrial itens e deco_50: -3926579802634422297
+      industrial itens e deco_51: -8286482674105478696
+      industrial itens e deco_52: -1954365451381511246
+      industrial itens e deco_53: 5811746801276104152
+      industrial itens e deco_54: 996361688855248470
+      industrial itens e deco_6: 470602898664700497
+      industrial itens e deco_7: 1671992022541223672
+      industrial itens e deco_8: 4072856761391646385
+      industrial itens e deco_9: 2310200990386965298
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
