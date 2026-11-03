@@ -11,6 +11,9 @@ public class UIManager : Singleton<UIManager>
     public Canvas pauseCanvas;
     public Canvas configCanvas;
 
+    [Header("Video Background")]
+    public GameObject videoBackgroundCanvas;
+
     [Header("Panels")]
     public GameObject mainPanel;
     public GameObject playPanel;
@@ -65,6 +68,8 @@ public class UIManager : Singleton<UIManager>
         {
             pauseAction = inputActions.FindAction("Pause");
         }
+
+        UpdateVideoBackground();
     }
 
     void OnEnable()
@@ -120,6 +125,30 @@ public class UIManager : Singleton<UIManager>
                 if (creditsPanel.activeSelf || confirmQuitPanel.activeSelf) ReturnToMenu();
             }
         }
+    }
+
+    private void LateUpdate()
+    {
+        UpdateVideoBackground();
+    }
+
+    private void UpdateVideoBackground()
+    {
+        if (videoBackgroundCanvas == null) return;
+
+        bool show = IsCanvasActive(mainCanvas)
+                 || IsCanvasActive(pauseCanvas)
+                 || IsCanvasActive(configCanvas)
+                 || IsCanvasActive(gameOverCanvas)
+                 || IsCanvasActive(endScreenCanvas);
+
+        if (videoBackgroundCanvas.activeSelf != show)
+            videoBackgroundCanvas.SetActive(show);
+    }
+
+    private static bool IsCanvasActive(Canvas canvas)
+    {
+        return canvas != null && canvas.gameObject.activeInHierarchy;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -236,7 +265,6 @@ public class UIManager : Singleton<UIManager>
     {
         if (SceneManager.GetActiveScene().name == "Fase 1")
         {
-            //PlayerMovement.Instance.enabled = true;
             SoundManager.Instance.PlayLoopingSFX("BG_01");
         }
         
@@ -386,7 +414,7 @@ public class UIManager : Singleton<UIManager>
     {
         Time.timeScale = 0f;
 
-        ToggleCanvas(mainCanvas, true); // Bloqueia Pause
+        ToggleCanvas(mainCanvas, true);
         ToggleCanvas(endScreenCanvas, true);
 
         SetFocusToButton(firstButtonEndScreen);
