@@ -220,37 +220,6 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
---- !u!1 &3111091706452542519
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2366700168552211370}
-  m_Layer: 0
-  m_Name: PivotPlayer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2366700168552211370
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3111091706452542519}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.7, y: 5.6, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3289612908335371176}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4175227492600160530
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,8 +257,6 @@ Transform:
   - {fileID: 5869026815141640033}
   - {fileID: 7234653258534935486}
   - {fileID: 8125833005589631633}
-  - {fileID: 8655417509964276997}
-  - {fileID: 2366700168552211370}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!156049354 &7135744669717791931
@@ -646,37 +613,6 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
---- !u!1 &6567441558125196459
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8655417509964276997}
-  m_Layer: 0
-  m_Name: PivotCentipide
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8655417509964276997
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6567441558125196459}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -59.9, y: -230.6, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3289612908335371176}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7469306292820025787
 GameObject:
   m_ObjectHideFlags: 0
@@ -813,7 +749,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8125833005589631633}
-  - component: {fileID: 7496947023646896630}
   m_Layer: 0
   m_Name: Instantiate
   m_TagString: Untagged
@@ -836,22 +771,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3289612908335371176}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7496947023646896630
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7767690750355614884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 431b5a5be51c6c646a24d85f4cb0c4c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InstantiateCentipide
-  centipidePrefab: {fileID: 7790761122210160312, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
-  centipidePivot: {fileID: 8655417509964276997}
-  playerPrefab: {fileID: 8228299723434981340, guid: 7a2f3af8f303ea14084067e492c48fda, type: 3}
-  playerPivot: {fileID: 2366700168552211370}
 --- !u!1 &7812763559078210329
 GameObject:
   m_ObjectHideFlags: 0
