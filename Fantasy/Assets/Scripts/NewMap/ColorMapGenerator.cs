@@ -14,11 +14,14 @@ public class ColorMapGenerator : MonoBehaviour
 
     [SerializeField] private string sourceName = "Source";
     [SerializeField] private string floorName = "Floor";
+    [SerializeField] private string floor2Name = "Floor2";
     [SerializeField] private string wallName = "Wall";
     [SerializeField] private string ceilingName = "Ceiling";
 
     [SerializeField] private Tilemap sourceTilemap;
     [SerializeField] private Tilemap floorTilemap;
+    
+    [SerializeField] private Tilemap floor2Tilemap;
     [SerializeField] private Tilemap wallTilemap;
     [SerializeField] private Tilemap ceilingTilemap;
 
@@ -32,6 +35,7 @@ public class ColorMapGenerator : MonoBehaviour
 
     public Tilemap SourceTilemap => sourceTilemap;
     public Tilemap FloorTilemap => floorTilemap;
+    public Tilemap Floor2Tilemap => floor2Tilemap;
     public Tilemap WallTilemap => wallTilemap;
     public Tilemap CeilingTilemap => ceilingTilemap;
 
@@ -54,6 +58,7 @@ public class ColorMapGenerator : MonoBehaviour
 
         if (sourceTilemap == null) sourceTilemap = FindByName(all, sourceName);
         if (floorTilemap == null) floorTilemap = FindByName(all, floorName);
+        if (floor2Tilemap == null) floor2Tilemap = FindByName(all, floor2Name);
         if (wallTilemap == null) wallTilemap = FindByName(all, wallName);
         if (ceilingTilemap == null) ceilingTilemap = FindByName(all, ceilingName);
     }
@@ -126,6 +131,10 @@ public class ColorMapGenerator : MonoBehaviour
         }
 
         floorTilemap.SetTilesBlock(bounds, floorTiles);
+
+        if (floor2Tilemap != null)
+            floor2Tilemap.SetTilesBlock(bounds, floorTiles);
+
         wallTilemap.SetTilesBlock(bounds, wallTiles);
         ceilingTilemap.SetTilesBlock(bounds, ceilingTiles);
 
@@ -174,7 +183,13 @@ public class ColorMapGenerator : MonoBehaviour
             }
         }
 
-        target.SetTiles(positions.ToArray(), tiles.ToArray());
+        Vector3Int[] posArray = positions.ToArray();
+        TileBase[] tileArray = tiles.ToArray();
+
+        target.SetTiles(posArray, tileArray);
+
+        if (target == floorTilemap && floor2Tilemap != null)
+            floor2Tilemap.SetTiles(posArray, tileArray);
     }
 
     private Tilemap GetLayer(EmptyCellFill.Layer layer)
@@ -204,6 +219,7 @@ public class ColorMapGenerator : MonoBehaviour
     private void ClearDestinations()
     {
         if (floorTilemap != null) floorTilemap.ClearAllTiles();
+        if (floor2Tilemap != null) floor2Tilemap.ClearAllTiles();
         if (wallTilemap != null) wallTilemap.ClearAllTiles();
         if (ceilingTilemap != null) ceilingTilemap.ClearAllTiles();
     }
@@ -278,6 +294,11 @@ public class ColorMapGenerator : MonoBehaviour
         }
 
         if (sourceTilemap == floorTilemap || sourceTilemap == wallTilemap || sourceTilemap == ceilingTilemap)
+        {
+            return false;
+        }
+
+        if (floor2Tilemap != null && (floor2Tilemap == sourceTilemap || floor2Tilemap == floorTilemap))
         {
             return false;
         }
