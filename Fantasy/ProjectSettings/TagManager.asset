@@ -13,6 +13,9 @@ TagManager:
   - ButtonPoint
   - Centipide
   - EndPoint
+  - GetOutPoint
+  - PlayerSpawn
+  - CentipideSpawn
   layers:
   - Default
   - TransparentFX
