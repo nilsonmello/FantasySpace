@@ -3,11 +3,35 @@ using UnityEngine;
 
 public class MandibleController : MonoBehaviour
 {
+    public enum MandibleSide
+    {
+        Left,
+        Right
+    }
+
+    [Serializable]
+    public class Mandible
+    {
+        public Transform transform;
+        public MandibleSide side = MandibleSide.Left;
+        public float openMultiplier = 1f;
+        public float angleOffset = 0f;
+    }
+
     [Header("positions")]
     [SerializeField] private HeadStateMovement headMovement;
     [SerializeField] private Transform player;
-    [SerializeField] private Transform leftMandible;
-    [SerializeField] private Transform rightMandible;
+
+    [Header("mandibles")]
+    [SerializeField] private Mandible[] mandibles = new Mandible[0];
+
+    [SerializeField, HideInInspector] private Transform leftMandible;
+    [SerializeField, HideInInspector] private Transform rightMandible;
+
+    [Header("sorting order")]
+    [Tooltip("Se vazio, procura nos pais e depois na cena.")]
+    [SerializeField] private BodyChainController bodyChain;
+    [SerializeField] private bool useBodyChainOrder = true;
 
     [Header("angles")]
     [SerializeField] private float closedAngle = 0f;
@@ -49,11 +73,70 @@ public class MandibleController : MonoBehaviour
     private void Reset()
     {
         headMovement = GetComponentInParent<HeadStateMovement>();
+        bodyChain = GetComponentInParent<BodyChainController>();
+    }
+
+    private void OnValidate()
+    {
+        MigrateLegacyMandibles();
     }
 
     private void Awake()
     {
         noiseSeed = UnityEngine.Random.Range(0f, 1000f);
+        MigrateLegacyMandibles();
+    }
+
+    // Start (e não Awake) pra garantir que o BodyChainController já gerou os segmentos
+    private void Start()
+    {
+        ApplySortingOrder();
+    }
+
+    private void ApplySortingOrder()
+    {
+        if (!useBodyChainOrder || mandibles == null)
+            return;
+
+        if (bodyChain == null)
+            bodyChain = GetComponentInParent<BodyChainController>();
+
+        if (bodyChain == null)
+            bodyChain = FindFirstObjectByType<BodyChainController>();
+
+        if (bodyChain == null || !bodyChain.ControlsSortingOrder)
+            return;
+
+        int order = bodyChain.MandibleSortingOrder;
+
+        for (int i = 0; i < mandibles.Length; i++)
+        {
+            if (mandibles[i] == null)
+                continue;
+
+            BodyChainController.SetSortingOrder(mandibles[i].transform, order);
+        }
+    }
+
+    private void MigrateLegacyMandibles()
+    {
+        if (mandibles != null && mandibles.Length > 0)
+            return;
+
+        if (leftMandible == null && rightMandible == null)
+            return;
+
+        int count = (leftMandible != null ? 1 : 0) + (rightMandible != null ? 1 : 0);
+        mandibles = new Mandible[count];
+
+        int i = 0;
+        if (leftMandible != null)
+            mandibles[i++] = new Mandible { transform = leftMandible, side = MandibleSide.Left };
+        if (rightMandible != null)
+            mandibles[i++] = new Mandible { transform = rightMandible, side = MandibleSide.Right };
+
+        leftMandible = null;
+        rightMandible = null;
     }
 
     private void Update()
@@ -155,13 +238,20 @@ public class MandibleController : MonoBehaviour
 
     private void ApplyMandibleAngle(float openAmount)
     {
-        float angle = Mathf.LerpUnclamped(closedAngle, maxOpenAngle, openAmount);
+        if (mandibles == null)
+            return;
 
-        if (leftMandible != null)
-            leftMandible.localRotation = Quaternion.Euler(0f, 0f, angle);
+        for (int i = 0; i < mandibles.Length; i++)
+        {
+            Mandible m = mandibles[i];
+            if (m == null || m.transform == null)
+                continue;
 
-        if (rightMandible != null)
-            rightMandible.localRotation = Quaternion.Euler(0f, 0f, -angle);
+            float angle = Mathf.LerpUnclamped(closedAngle, maxOpenAngle, openAmount * m.openMultiplier) + m.angleOffset;
+            float sign = m.side == MandibleSide.Left ? 1f : -1f;
+
+            m.transform.localRotation = Quaternion.Euler(0f, 0f, angle * sign);
+        }
     }
 
     public void ForceBite()
