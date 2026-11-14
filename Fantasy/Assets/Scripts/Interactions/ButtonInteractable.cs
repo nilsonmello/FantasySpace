@@ -17,12 +17,38 @@ public class ButtonInteractable : InteractionManager
 
     public SpriteRenderer renderer;
 
+    private static WirePuzzle cachedPuzzle;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        cachedPuzzle = null;
+    }
+
     protected override void Awake()
     {
+        ResolvePuzzle();
+
         maxUses = puzzle != null ? -1 : 1;
         base.Awake();
 
         renderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void ResolvePuzzle()
+    {
+        if (puzzle != null) return;
+
+        if (cachedPuzzle == null)
+        {
+            cachedPuzzle = FindFirstObjectByType<WirePuzzle>(FindObjectsInactive.Include);
+
+        }
+
+        puzzle = cachedPuzzle;
+
+        if (puzzle == null)
+            Debug.LogWarning($"[{name}] Nenhum WirePuzzle na cena", this);
     }
 
     public override bool Caninteract()
@@ -36,6 +62,8 @@ public class ButtonInteractable : InteractionManager
     protected override void OnInteract(GameObject interactor)
     {
         if (IsPressed) return;
+
+        ResolvePuzzle();
 
         if (puzzle != null)
             puzzle.Open(Press);

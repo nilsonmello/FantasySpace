@@ -9,6 +9,10 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     [SerializeField] private RectTransform lineOrigin;
     [SerializeField] private LineRenderer lineRenderer;
 
+    [SerializeField] private Sprite endSprite;
+    [SerializeField] private Sprite slotSprite;
+    [SerializeField] private Sprite originSprite;
+
     [SerializeField] private Color wireColor = Color.red;
     [SerializeField] private float lineWidth = 10f;
     [SerializeField] private float sag = 0f;
@@ -36,7 +40,7 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
         SetupSorting();
         SetupLine();
-        ApplyColor();
+        ApplyVisuals();
     }
 
     private void OnEnable() => UpdateLine();
@@ -44,19 +48,32 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     public void SetTarget(WireSlot slot)
     {
         targetSlot = slot;
-        targetSlot.SetColor(wireColor);
+        targetSlot.SetVisual(slotSprite, wireColor);
     }
 
     private void SetupSorting()
     {
-        lineRenderer.sortingLayerID = rootCanvas.sortingLayerID;
-        lineRenderer.sortingOrder = rootCanvas.sortingOrder + 1;
+        int baseOrder = rootCanvas.sortingOrder;
+        int layerId = rootCanvas.sortingLayerID;
+
+        Canvas[] parents = transform.parent.GetComponentsInParent<Canvas>(true);
+        foreach (Canvas c in parents)
+        {
+            if (c.overrideSorting && c.sortingOrder > baseOrder)
+            {
+                baseOrder = c.sortingOrder;
+                layerId = c.sortingLayerID;
+            }
+        }
+
+        lineRenderer.sortingLayerID = layerId;
+        lineRenderer.sortingOrder = baseOrder + 1;
 
         Canvas endCanvas = GetComponent<Canvas>();
         if (endCanvas == null) endCanvas = gameObject.AddComponent<Canvas>();
         endCanvas.overrideSorting = true;
-        endCanvas.sortingLayerID = rootCanvas.sortingLayerID;
-        endCanvas.sortingOrder = rootCanvas.sortingOrder + 2;
+        endCanvas.sortingLayerID = layerId;
+        endCanvas.sortingOrder = baseOrder + 2;
 
         if (GetComponent<GraphicRaycaster>() == null)
             gameObject.AddComponent<GraphicRaycaster>();
@@ -69,13 +86,34 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
         points = new Vector3[segments + 1];
     }
 
-    private void ApplyColor()
+    private void ApplyVisuals()
     {
         lineRenderer.startColor = wireColor;
         lineRenderer.endColor = wireColor;
 
         Image image = GetComponent<Image>();
-        if (image != null) image.color = wireColor;
+        ApplySpriteOrColor(image, endSprite);
+
+        if (lineOrigin != null && originSprite != null)
+        {
+            Image originImage = lineOrigin.GetComponent<Image>();
+            ApplySpriteOrColor(originImage, originSprite);
+        }
+    }
+
+    private void ApplySpriteOrColor(Image image, Sprite sprite)
+    {
+        if (image == null) return;
+
+        if (sprite != null)
+        {
+            image.sprite = sprite;
+            image.color = Color.white;
+        }
+        else
+        {
+            image.color = wireColor;
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)

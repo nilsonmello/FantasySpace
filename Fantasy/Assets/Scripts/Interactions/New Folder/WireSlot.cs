@@ -13,9 +13,19 @@ public class WireSlot : MonoBehaviour
 
     private void Awake() => image = GetComponent<Image>();
 
-    public void SetColor(Color color)
+    public void SetVisual(Sprite sprite, Color fallbackColor)
     {
         if (image == null) image = GetComponent<Image>();
-        if (image != null) image.color = color;
+        if (image == null) return;
+
+        if (sprite != null)
+        {
+            image.sprite = sprite;
+            image.color = Color.white;
+        }
+        else
+        {
+            image.color = fallbackColor;
+        }
     }
 }
