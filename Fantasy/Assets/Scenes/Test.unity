@@ -728,10 +728,10 @@ MonoBehaviour:
   endSprite: {fileID: -980718193, guid: d28aa415678836b4ba86267d9cce6597, type: 3}
   slotSprite: {fileID: 1905740776, guid: c3cbc12a7fec4e34cb447ee0088acba3, type: 3}
   originSprite: {fileID: 0}
-  wireColor: {r: 1, g: 0.6412373, b: 0, a: 1}
-  lineWidth: 10
-  sag: 0
-  segments: 20
+  wireColor: {r: 0.32941177, g: 0.17254902, b: 0.17254902, a: 1}
+  lineWidth: 50
+  sag: 40
+  segments: 40
   targetSlot: {fileID: 0}
 --- !u!114 &399510966
 MonoBehaviour:
@@ -827,10 +827,10 @@ MonoBehaviour:
   endSprite: {fileID: -137850915, guid: d28aa415678836b4ba86267d9cce6597, type: 3}
   slotSprite: {fileID: -1918070040, guid: c3cbc12a7fec4e34cb447ee0088acba3, type: 3}
   originSprite: {fileID: 0}
-  wireColor: {r: 0, g: 0.46924734, b: 1, a: 1}
-  lineWidth: 10
-  sag: 0
-  segments: 20
+  wireColor: {r: 0.32941177, g: 0.23921569, b: 0.17254902, a: 1}
+  lineWidth: 50
+  sag: 40
+  segments: 40
   targetSlot: {fileID: 0}
 --- !u!114 &427218775
 MonoBehaviour:
@@ -2314,10 +2314,10 @@ MonoBehaviour:
   endSprite: {fileID: 2050735147, guid: d28aa415678836b4ba86267d9cce6597, type: 3}
   slotSprite: {fileID: 1673512376, guid: c3cbc12a7fec4e34cb447ee0088acba3, type: 3}
   originSprite: {fileID: 0}
-  wireColor: {r: 0, g: 0, b: 0, a: 1}
-  lineWidth: 10
-  sag: 0
-  segments: 20
+  wireColor: {r: 0.2627451, g: 0.17254902, b: 0.32941177, a: 1}
+  lineWidth: 50
+  sag: 40
+  segments: 40
   targetSlot: {fileID: 0}
 --- !u!114 &1129323700
 MonoBehaviour:
@@ -4113,10 +4113,10 @@ MonoBehaviour:
   endSprite: {fileID: -2179325819479374262, guid: d28aa415678836b4ba86267d9cce6597, type: 3}
   slotSprite: {fileID: -9116334549045188553, guid: c3cbc12a7fec4e34cb447ee0088acba3, type: 3}
   originSprite: {fileID: 0}
-  wireColor: {r: 1, g: 0, b: 0, a: 1}
-  lineWidth: 10
-  sag: 0
-  segments: 20
+  wireColor: {r: 0.28235295, g: 0.4, b: 0.50980395, a: 1}
+  lineWidth: 50
+  sag: 40
+  segments: 40
   targetSlot: {fileID: 0}
 --- !u!114 &1927839285
 MonoBehaviour:

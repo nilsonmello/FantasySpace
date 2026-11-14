@@ -38,6 +38,9 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
         if (puzzle == null)
             Debug.LogError($"{name}: nenhum WirePuzzle");
 
+        if (rootCanvas.renderMode != RenderMode.ScreenSpaceCamera || rootCanvas.worldCamera == null)
+            Debug.LogWarning($"{name}: o canvas precisa ser Overlay", this);
+
         SetupSorting();
         SetupLine();
         ApplyVisuals();
@@ -53,27 +56,16 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     private void SetupSorting()
     {
-        int baseOrder = rootCanvas.sortingOrder;
-        int layerId = rootCanvas.sortingLayerID;
+        lineRenderer.gameObject.layer = rootCanvas.gameObject.layer;
 
-        Canvas[] parents = transform.parent.GetComponentsInParent<Canvas>(true);
-        foreach (Canvas c in parents)
-        {
-            if (c.overrideSorting && c.sortingOrder > baseOrder)
-            {
-                baseOrder = c.sortingOrder;
-                layerId = c.sortingLayerID;
-            }
-        }
-
-        lineRenderer.sortingLayerID = layerId;
-        lineRenderer.sortingOrder = baseOrder + 1;
+        lineRenderer.sortingLayerID = rootCanvas.sortingLayerID;
+        lineRenderer.sortingOrder = rootCanvas.sortingOrder + WireSorting.Line;
 
         Canvas endCanvas = GetComponent<Canvas>();
         if (endCanvas == null) endCanvas = gameObject.AddComponent<Canvas>();
         endCanvas.overrideSorting = true;
-        endCanvas.sortingLayerID = layerId;
-        endCanvas.sortingOrder = baseOrder + 2;
+        endCanvas.sortingLayerID = rootCanvas.sortingLayerID;
+        endCanvas.sortingOrder = rootCanvas.sortingOrder + WireSorting.End;
 
         if (GetComponent<GraphicRaycaster>() == null)
             gameObject.AddComponent<GraphicRaycaster>();
