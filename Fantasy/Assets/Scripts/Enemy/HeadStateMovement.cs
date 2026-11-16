@@ -108,6 +108,14 @@ public class HeadStateMovement : MonoBehaviour
     private Transform backPoint;
     private PlayerHideState playerHideState;
 
+    private bool wasPlayerHidden;
+    private bool hideBusted;
+
+    public bool HideBusted => hideBusted;
+
+    private bool PlayerEffectivelyHidden =>
+        playerHideState != null && playerHideState.IsHidden && !hideBusted;
+
     private void Awake()
     {
         noiseOffsetX = UnityEngine.Random.Range(0f, 1000f);
@@ -136,6 +144,8 @@ public class HeadStateMovement : MonoBehaviour
         {
             backPoint = bodyChain.lastSegment;
         }
+
+        UpdateHideTracking();
 
         if (currentState != State.Hide)
             UpdateDetection();
@@ -226,6 +236,25 @@ public class HeadStateMovement : MonoBehaviour
         }
     }
 
+    private void UpdateHideTracking()
+    {
+        if (playerHideState == null || player == null || backPoint == null)
+            return;
+
+        bool hidden = playerHideState.IsHidden;
+
+        if (hidden && !wasPlayerHidden)
+        {
+            hideBusted = currentState != State.Hide && (CanSeePlayer(true) || BackVision(true));
+        }
+        else if (!hidden)
+        {
+            hideBusted = false;
+        }
+
+        wasPlayerHidden = hidden;
+    }
+
     private Vector2 ClampDirectionToBend(Vector2 desiredDir)
     {
         if (!limitBodyBend || bodyChain == null || desiredDir.sqrMagnitude < 0.0001f)
@@ -247,6 +276,11 @@ public class HeadStateMovement : MonoBehaviour
 
     public void SetState(State newState)
     {
+        // Saiu da perseguição = perdeu o "lock" no player. O flagrante deixa de valer,
+        // então se ela voltar depois (por som, por exemplo) e ele ainda estiver escondido, ela não o vê.
+        if (currentState == State.Chase && newState != State.Chase)
+            hideBusted = false;
+
         currentState = newState;
     }
 
@@ -369,7 +403,6 @@ public class HeadStateMovement : MonoBehaviour
 
             patrolPointsVisited = 0;
             patrolWaiting = false;
-            // Signal vai direto pro ponto sorteado; os outros usam um primeiro ponto aleatório no raio
             patrolTarget = patrolOrigin == PatrolOrigin.Signal ? patrolCenter : PickNewPatrolPoint();
             patrolTargetTimer = 0f;
         }
@@ -397,12 +430,12 @@ public class HeadStateMovement : MonoBehaviour
         }
     }
 
-    private bool CanSeePlayer()
+    private bool CanSeePlayer(bool ignoreHide = false)
     {
         if (player == null)
             return false;
 
-        if (playerHideState != null && playerHideState.IsHidden)
+        if (!ignoreHide && PlayerEffectivelyHidden)
             return false;
 
         Vector2 origin = transform.position;
@@ -419,9 +452,9 @@ public class HeadStateMovement : MonoBehaviour
         return hit.collider == null;
     }
 
-    private bool BackVision()
+    private bool BackVision(bool ignoreHide = false)
     {
-        if (playerHideState != null && playerHideState.IsHidden)
+        if (!ignoreHide && PlayerEffectivelyHidden)
             return false;
 
         Vector2 backOrigin = backPoint.position;
@@ -453,7 +486,7 @@ public class HeadStateMovement : MonoBehaviour
 
     private void UpdateChase()
     {
-        bool playerIsHidden = playerHideState != null && playerHideState.IsHidden;
+        bool playerIsHidden = PlayerEffectivelyHidden;
         bool visible = !playerIsHidden && (CanSeePlayer() || BackVision());
 
         if (!hasLastKnownPos)

@@ -8,6 +8,7 @@ public class InteractionHighlight : MonoBehaviour
     [SerializeField] private InteractionManager interactable;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private PlayerInteract player;
+    [SerializeField] private PlayerHideState playerHideState;
 
     [Header("Fade")]
     [SerializeField] private float fadeInSpeed = 8f;
@@ -17,9 +18,12 @@ public class InteractionHighlight : MonoBehaviour
     [SerializeField] private float previewRadius = 0f;
     [SerializeField, Range(0f, 1f)] private float maxPreviewHighlight = 0.4f;
 
-    [SerializeField] private PlayerHideState playerHideState;
+    [Header("Auto Find")]
+    [SerializeField] private float findRetryInterval = 0.5f;
+
     private MaterialPropertyBlock block;
     private float current;
+    private float nextFindTime;
 
     private void Awake()
     {
@@ -28,44 +32,70 @@ public class InteractionHighlight : MonoBehaviour
         if (interactable == null) interactable = GetComponent<InteractionManager>();
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
 
-        Apply(0f);
+        if (spriteRenderer != null)
+            Apply(0f);
 
-        playerHideState = FindObjectOfType<PlayerHideState>();
+        TryFindReferences();
     }
 
     private void Update()
     {
         if (interactable == null || spriteRenderer == null) return;
 
-        if (player == null)
+        if (player == null || playerHideState == null)
         {
-            player = FindAnyObjectByType<PlayerInteract>();
+            if (Time.time >= nextFindTime)
+            {
+                nextFindTime = Time.time + findRetryInterval;
+                TryFindReferences();
+            }
+
             if (player == null) return;
         }
 
         HandleHidePlayer();
     }
 
-    void HandleHidePlayer()
+    private void TryFindReferences()
     {
-        if(playerHideState == null) return;
+        if (player == null)
+            player = FindAnyObjectByType<PlayerInteract>();
 
-        if(!playerHideState.IsHidden)
+        if (playerHideState == null)
         {
-            float target = ComputeTarget();
-            if (Mathf.Approximately(current, target)) return;
+            if (player != null)
+            {
+                playerHideState = player.GetComponentInParent<PlayerHideState>();
+                if (playerHideState == null)
+                    playerHideState = player.GetComponentInChildren<PlayerHideState>();
+            }
 
-            float speed = target > current ? fadeInSpeed : fadeOutSpeed;
-            current = Mathf.MoveTowards(current, target, speed * Time.deltaTime);
-
-
-            Apply(current);
+            if (playerHideState == null)
+                playerHideState = FindAnyObjectByType<PlayerHideState>();
         }
-        else
+    }
+
+    private void HandleHidePlayer()
+    {
+        bool hidden = playerHideState != null && playerHideState.IsHidden;
+
+        if (hidden)
         {
-            current = 0;
-            Apply(current);  
+            if (current != 0f)
+            {
+                current = 0f;
+                Apply(current);
+            }
+            return;
         }
+
+        float target = ComputeTarget();
+        if (Mathf.Approximately(current, target)) return;
+
+        float speed = target > current ? fadeInSpeed : fadeOutSpeed;
+        current = Mathf.MoveTowards(current, target, speed * Time.deltaTime);
+
+        Apply(current);
     }
 
     private float ComputeTarget()

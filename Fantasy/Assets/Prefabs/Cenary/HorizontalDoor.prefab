@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 4396381869253655904}
   - component: {fileID: -8701030053701536802}
   m_Layer: 0
-  m_Name: Door
+  m_Name: HorizontalDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

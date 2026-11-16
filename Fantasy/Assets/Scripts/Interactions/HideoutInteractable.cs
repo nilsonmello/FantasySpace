@@ -30,8 +30,34 @@ public class HideoutInteractable : InteractionManager
     private float hideTimer;
     private float nextEnterTime;
 
+    private static HideoutEffects cachedEffects;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        cachedEffects = null;
+    }
+
     public bool IsOccupied => isOccupied;
     public float HideProgress => maxHideTime > 0f ? Mathf.Clamp01(hideTimer / maxHideTime) : 0f;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        ResolveEffects();
+    }
+
+    private void ResolveEffects()
+    {
+        if (effects != null) return;
+
+        if (cachedEffects == null)
+        {
+            cachedEffects = FindFirstObjectByType<HideoutEffects>(FindObjectsInactive.Include);
+        }
+
+        effects = cachedEffects;
+    }
 
     private void Update()
     {
@@ -87,6 +113,8 @@ public class HideoutInteractable : InteractionManager
         hideState?.SetHidden(true);
 
         SetCameraFocus(true);
+
+        ResolveEffects();
 
         if (effects != null && maxHideTime > 0f)
             effects.Begin();

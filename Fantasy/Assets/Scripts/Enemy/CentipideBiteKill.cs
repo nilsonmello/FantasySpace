@@ -142,7 +142,11 @@ public class CentipedeBiteKill : MonoBehaviour
             if (playerHideState == null)
                 playerHideState = cols[i].GetComponentInParent<PlayerHideState>();
 
-            if (playerHideState != null && playerHideState.IsHidden)
+            bool hiddenAndSafe = playerHideState != null
+                && playerHideState.IsHidden
+                && !(headMovement != null && headMovement.HideBusted);
+
+            if (hiddenAndSafe)
                 return false;
 
             return true;
