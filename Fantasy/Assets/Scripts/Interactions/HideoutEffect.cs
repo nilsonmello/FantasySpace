@@ -220,8 +220,6 @@ public class HideoutEffects : MonoBehaviour
 
     public void Begin()
     {
-        Debug.Log("[HideoutEffects] Begin", this);
-
         if (Mathf.Abs(GetAspect() - builtAspect) > 0.01f)
             BuildLayers();
 
@@ -245,7 +243,6 @@ public class HideoutEffects : MonoBehaviour
         if (gameOverRoutine != null) return;
 
         progress = Mathf.Clamp01(value);
-        Debug.Log($"[HideoutEffects] progress {progress:F2}", this);
         black.Render(vignetteCurve.Evaluate(progress));
     }
 
