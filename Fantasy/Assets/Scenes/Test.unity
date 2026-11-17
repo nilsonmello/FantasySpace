@@ -713,7 +713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d6f0d9d9f075cb45a1efb433d2ca651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WireEnd
-  puzzle: {fileID: 0}
+  puzzle: {fileID: 367485463}
   lineOrigin: {fileID: 1590480538}
   lineRenderer: {fileID: 1590480536}
   endSprite: {fileID: -980718193, guid: d28aa415678836b4ba86267d9cce6597, type: 3}
@@ -724,6 +724,7 @@ MonoBehaviour:
   sag: 40
   segments: 40
   targetSlot: {fileID: 0}
+  particleSystem: {fileID: 4206228296199582314, guid: 69735af2691daac4697a4dc1b20797f0, type: 3}
 --- !u!114 &399510966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -812,7 +813,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d6f0d9d9f075cb45a1efb433d2ca651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WireEnd
-  puzzle: {fileID: 0}
+  puzzle: {fileID: 367485463}
   lineOrigin: {fileID: 1244234422}
   lineRenderer: {fileID: 1244234420}
   endSprite: {fileID: -137850915, guid: d28aa415678836b4ba86267d9cce6597, type: 3}
@@ -823,6 +824,7 @@ MonoBehaviour:
   sag: 40
   segments: 40
   targetSlot: {fileID: 0}
+  particleSystem: {fileID: 4206228296199582314, guid: 69735af2691daac4697a4dc1b20797f0, type: 3}
 --- !u!114 &427218775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1076,7 +1078,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5.625
+  orthographic size: 2.859375
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2299,7 +2301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d6f0d9d9f075cb45a1efb433d2ca651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WireEnd
-  puzzle: {fileID: 0}
+  puzzle: {fileID: 367485463}
   lineOrigin: {fileID: 559320853}
   lineRenderer: {fileID: 559320851}
   endSprite: {fileID: 2050735147, guid: d28aa415678836b4ba86267d9cce6597, type: 3}
@@ -2310,6 +2312,7 @@ MonoBehaviour:
   sag: 40
   segments: 40
   targetSlot: {fileID: 0}
+  particleSystem: {fileID: 4206228296199582314, guid: 69735af2691daac4697a4dc1b20797f0, type: 3}
 --- !u!114 &1129323700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2587,7 +2590,7 @@ GameObject:
   - component: {fileID: 1249692027}
   - component: {fileID: 1249692026}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: ConnectionLeftImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3307,8 +3310,9 @@ GameObject:
   - component: {fileID: 1601750522}
   - component: {fileID: 1601750524}
   - component: {fileID: 1601750523}
+  - component: {fileID: 1601750525}
   m_Layer: 5
-  m_Name: Image
+  m_Name: ConnectionRightImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3371,6 +3375,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1601750521}
   m_CullTransparentMesh: 1
+--- !u!114 &1601750525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601750521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1259bc880ef0b742a3819570b5e74cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WireSortingOverride
+  orderOffset: 2
+  needsRaycaster: 0
 --- !u!1 &1669620736
 GameObject:
   m_ObjectHideFlags: 0
@@ -4098,7 +4116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d6f0d9d9f075cb45a1efb433d2ca651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WireEnd
-  puzzle: {fileID: 0}
+  puzzle: {fileID: 367485463}
   lineOrigin: {fileID: 1770735690}
   lineRenderer: {fileID: 1770735693}
   endSprite: {fileID: -2179325819479374262, guid: d28aa415678836b4ba86267d9cce6597, type: 3}
@@ -4109,6 +4127,7 @@ MonoBehaviour:
   sag: 40
   segments: 40
   targetSlot: {fileID: 0}
+  particleSystem: {fileID: 4206228296199582314, guid: 69735af2691daac4697a4dc1b20797f0, type: 3}
 --- !u!114 &1927839285
 MonoBehaviour:
   m_ObjectHideFlags: 0

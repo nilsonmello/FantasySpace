@@ -24,6 +24,8 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     private Vector3[] points;
     [SerializeField] private WireSlot targetSlot;
 
+    [SerializeField] private GameObject particleSystem;
+
     public bool IsConnected { get; private set; }
 
     private void Awake()
@@ -34,12 +36,6 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
         if (puzzle == null)
             puzzle = GetComponentInParent<WirePuzzle>();
-
-        if (puzzle == null)
-            Debug.LogError($"{name}: nenhum WirePuzzle");
-
-        if (rootCanvas.renderMode != RenderMode.ScreenSpaceCamera || rootCanvas.worldCamera == null)
-            Debug.LogWarning($"{name}: o canvas precisa ser Overlay", this);
 
         SetupSorting();
         SetupLine();
@@ -139,6 +135,8 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
             IsConnected = true;
             rect.position = targetSlot.SnapPosition;
             UpdateLine();
+
+            Instantiate(particleSystem, rect);
         }
         else
         {

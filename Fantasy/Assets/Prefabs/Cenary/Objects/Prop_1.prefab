@@ -110,11 +110,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VisionActivatedObject
   detectionCollider: {fileID: 0}
   behavioursToToggle: []
-  visionRange: 0
-  proximityRange: 0
-  spriteRenderer: {fileID: 0}
+  visionRange: 4
+  proximityRange: 4
+  spriteRenderer: {fileID: 7722875147442988013}
   maxPartialHighlight: 0.5
   fadeSpeed: 2.5
+  keepBehavioursActiveWhilePinned: 0
   drawGizmo: 1
 --- !u!61 &8713113971955587320
 BoxCollider2D:
@@ -227,8 +228,9 @@ MonoBehaviour:
   interactable: {fileID: 3036318057638766524}
   spriteRenderer: {fileID: 7722875147442988013}
   player: {fileID: 0}
-  fadeInSpeed: 8
-  fadeOutSpeed: 4
-  previewRadius: 0
-  maxPreviewHighlight: 0.4
   playerHideState: {fileID: 0}
+  fadeInSpeed: 10
+  fadeOutSpeed: 8
+  previewRadius: 5
+  maxPreviewHighlight: 0.4
+  findRetryInterval: 0.5
