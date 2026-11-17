@@ -108,10 +108,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df1ad63208d3c045854ff86b3fe86e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VisionActivatedObject
-  detectionCollider: {fileID: 0}
+  detectionCollider: {fileID: 8713113971955587320}
   behavioursToToggle: []
-  visionRange: 4
-  proximityRange: 4
+  visionRange: 400
+  proximityRange: 400
   spriteRenderer: {fileID: 7722875147442988013}
   maxPartialHighlight: 0.5
   fadeSpeed: 2.5
