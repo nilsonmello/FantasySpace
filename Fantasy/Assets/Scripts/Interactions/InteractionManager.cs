@@ -6,6 +6,9 @@ public abstract class InteractionManager : MonoBehaviour
     [SerializeField] private float InteractionRange = 1.5f;
     public float interactionRange => InteractionRange;
 
+    [Header("Prompt")]
+    [SerializeField] private bool showPrompt = true;
+
     [Header("Usage Limits")]
     [SerializeField] protected int maxUses = -1;
     [SerializeField] protected float cooldownDuration = 0f;
@@ -14,9 +17,14 @@ public abstract class InteractionManager : MonoBehaviour
     private float nextAvailableTime;
     private bool depletedNotified;
 
+    public virtual bool PromptVisible => true;
+
     protected virtual void Awake()
     {
         usesRemaining = maxUses;
+
+        if (showPrompt && !TryGetComponent<InteractionPrompt>(out _))
+            gameObject.AddComponent<InteractionPrompt>();
     }
 
     public void interact(GameObject interactor)

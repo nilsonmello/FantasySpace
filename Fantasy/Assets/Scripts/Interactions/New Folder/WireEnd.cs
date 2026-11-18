@@ -106,6 +106,8 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (puzzle.IsCompleted) return;
+
         if (IsConnected)
         {
             IsConnected = false;
@@ -115,6 +117,8 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (puzzle.IsCompleted) return;
+
         if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
                 (RectTransform)rootCanvas.transform, eventData.position,
                 eventData.pressEventCamera, out Vector3 world))
@@ -126,6 +130,8 @@ public class WireEnd : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (puzzle.IsCompleted) return;
+
         bool overTarget = targetSlot != null &&
             RectTransformUtility.RectangleContainsScreenPoint(
                 targetSlot.Rect, eventData.position, eventData.pressEventCamera);

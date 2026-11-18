@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -12,7 +13,11 @@ public class WirePuzzle : MonoBehaviour
     [Header("close")]
     [SerializeField] private Key closeKey = Key.E;
 
+    [Header("complete")]
+    [SerializeField] private float completeDelay = 2f;
+
     [Header("events")]
+    [SerializeField] private UnityEvent onAllConnected;
     [SerializeField] private UnityEvent onCompleted;
 
     public event Action Opened;
@@ -20,10 +25,13 @@ public class WirePuzzle : MonoBehaviour
 
     private Action onSolved;
     private bool completed;
+    private Coroutine completeRoutine;
     private int openedFrame = -1;
     private int closedFrame = -1;
 
     public bool IsOpen => panel != null && panel.activeSelf;
+
+    public bool IsCompleted => completed;
 
     public int ConnectedCount
     {
@@ -50,6 +58,8 @@ public class WirePuzzle : MonoBehaviour
         if (!IsOpen || Keyboard.current == null) return;
 
         if (Time.frameCount == openedFrame) return;
+
+        if (completed) return;
 
         if (Keyboard.current.escapeKey.wasPressedThisFrame ||
             Keyboard.current[closeKey].wasPressedThisFrame)
@@ -81,6 +91,13 @@ public class WirePuzzle : MonoBehaviour
     {
         bool wasOpen = IsOpen;
 
+        if (completeRoutine != null)
+        {
+            StopCoroutine(completeRoutine);
+            completeRoutine = null;
+        }
+
+        completed = false;
         onSolved = null;
         panel.SetActive(false);
 
@@ -118,8 +135,19 @@ public class WirePuzzle : MonoBehaviour
         if (completed || ConnectedCount < wires.Length) return;
 
         completed = true;
+        onAllConnected.Invoke();
+
+        completeRoutine = StartCoroutine(CompleteAfterDelay());
+    }
+
+    private IEnumerator CompleteAfterDelay()
+    {
+        if (completeDelay > 0f)
+            yield return new WaitForSecondsRealtime(completeDelay);
 
         Action callback = onSolved;
+        completeRoutine = null;
+
         Close();
 
         onCompleted.Invoke();

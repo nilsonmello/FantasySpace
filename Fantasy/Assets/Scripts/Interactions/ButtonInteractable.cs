@@ -17,6 +17,9 @@ public class ButtonInteractable : InteractionManager
 
     public SpriteRenderer renderer;
 
+    private VisionActivatedObject vision;
+    private bool pinnedByUs;
+
     private static WirePuzzle cachedPuzzle;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -33,6 +36,12 @@ public class ButtonInteractable : InteractionManager
         base.Awake();
 
         renderer = GetComponent<SpriteRenderer>();
+        vision = GetComponentInParent<VisionActivatedObject>();
+    }
+
+    private void OnDestroy()
+    {
+        ReleaseVision();
     }
 
     private void ResolvePuzzle()
@@ -46,9 +55,6 @@ public class ButtonInteractable : InteractionManager
         }
 
         puzzle = cachedPuzzle;
-
-        if (puzzle == null)
-            Debug.LogWarning($"[{name}] Nenhum WirePuzzle na cena", this);
     }
 
     public override bool Caninteract()
@@ -65,11 +71,39 @@ public class ButtonInteractable : InteractionManager
 
         ResolvePuzzle();
 
-        if (puzzle != null)
-            puzzle.Open(Press);
-        else
+        if (puzzle == null)
+        {
             Press();
+            return;
+        }
+
+        HoldVision();
+        puzzle.Open(Press);
+
+        if (!puzzle.IsOpen)
+            ReleaseVision();
     }
+
+    private void HoldVision()
+    {
+        if (pinnedByUs || puzzle == null) return;
+
+        pinnedByUs = true;
+        puzzle.Closed += OnPuzzleClosed;
+
+        if (vision != null) vision.Pin();
+    }
+
+    private void ReleaseVision()
+    {
+        if (!pinnedByUs) return;
+        pinnedByUs = false;
+
+        if (puzzle != null) puzzle.Closed -= OnPuzzleClosed;
+        if (vision != null) vision.Unpin();
+    }
+
+    private void OnPuzzleClosed() => ReleaseVision();
 
     private void Press()
     {

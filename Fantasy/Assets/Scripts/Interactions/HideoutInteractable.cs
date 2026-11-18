@@ -41,6 +41,8 @@ public class HideoutInteractable : InteractionManager
     public bool IsOccupied => isOccupied;
     public float HideProgress => maxHideTime > 0f ? Mathf.Clamp01(hideTimer / maxHideTime) : 0f;
 
+    public override bool PromptVisible => !isOccupied;
+
     protected override void Awake()
     {
         base.Awake();

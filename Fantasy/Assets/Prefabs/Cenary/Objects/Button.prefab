@@ -109,6 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ButtonInteractable
   InteractionRange: 2
+  showPrompt: 1
   maxUses: 4
   cooldownDuration: 0
   onPressed:
@@ -182,7 +183,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 5321122892779439753}
   maxPartialHighlight: 0.5
   fadeSpeed: 2.5
-  keepBehavioursActiveWhilePinned: 0
+  keepBehavioursActiveWhilePinned: 1
   drawGizmo: 1
 --- !u!114 &5902242134276870718
 MonoBehaviour:

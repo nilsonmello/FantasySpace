@@ -39,6 +39,10 @@ public class ColorMapGenerator : MonoBehaviour
     public Tilemap WallTilemap => wallTilemap;
     public Tilemap CeilingTilemap => ceilingTilemap;
 
+    private readonly HashSet<Vector3Int> emptyCells = new HashSet<Vector3Int>();
+    public HashSet<Vector3Int> EmptyCells => emptyCells;
+    public BoundsInt EmptyBounds { get; private set; }
+
     private readonly Dictionary<Sprite, Color32> spriteColorCache = new Dictionary<Sprite, Color32>();
     private bool hasGenerated;
 
@@ -139,6 +143,7 @@ public class ColorMapGenerator : MonoBehaviour
         ceilingTilemap.SetTilesBlock(bounds, ceilingTiles);
 
         FillEmptyCells(pixels, bounds);
+        CollectEmptyCells(pixels, bounds);
 
         hasGenerated = true;
         MapGenerated?.Invoke();
@@ -192,6 +197,36 @@ public class ColorMapGenerator : MonoBehaviour
             floor2Tilemap.SetTiles(posArray, tileArray);
     }
 
+    /// <summary>
+    /// Registra todas as células "vazias" (mesma regra do FillEmptyCells, mas sem
+    /// sorteio de fillChance e sem consumir o rng). Funciona mesmo sem emptyFill (padding = 0).
+    /// </summary>
+    private void CollectEmptyCells(Color32[] pixels, BoundsInt bounds)
+    {
+        emptyCells.Clear();
+
+        int pad = emptyFill != null ? emptyFill.padding : 0;
+        int width = bounds.size.x;
+
+        EmptyBounds = new BoundsInt(
+            bounds.xMin - pad, bounds.yMin - pad, 0,
+            bounds.size.x + pad * 2, bounds.size.y + pad * 2, 1);
+
+        for (int y = bounds.yMin - pad; y < bounds.yMax + pad; y++)
+        {
+            for (int x = bounds.xMin - pad; x < bounds.xMax + pad; x++)
+            {
+                bool insideSource = x >= bounds.xMin && x < bounds.xMax &&
+                                    y >= bounds.yMin && y < bounds.yMax;
+
+                if (insideSource && pixels[(x - bounds.xMin) + (y - bounds.yMin) * width].a != 0)
+                    continue;
+
+                emptyCells.Add(new Vector3Int(x, y, 0));
+            }
+        }
+    }
+
     private Tilemap GetLayer(EmptyCellFill.Layer layer)
     {
         switch (layer)
@@ -218,6 +253,8 @@ public class ColorMapGenerator : MonoBehaviour
 
     private void ClearDestinations()
     {
+        emptyCells.Clear();
+
         if (floorTilemap != null) floorTilemap.ClearAllTiles();
         if (floor2Tilemap != null) floor2Tilemap.ClearAllTiles();
         if (wallTilemap != null) wallTilemap.ClearAllTiles();
