@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 348496417710047786}
   - component: {fileID: 9082276091727899371}
   - component: {fileID: -1855348162930310010}
+  - component: {fileID: 805824904059373420}
+  - component: {fileID: 4937950934736432869}
   m_Layer: 0
   m_Name: GetOutPoint
   m_TagString: Untagged
@@ -83,7 +85,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 3
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: -1654585747286442168, guid: fa2e28db25b13414d86e753cfa54763e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -127,17 +129,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.0015481114, y: -0.12384905}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1.09375, y: 1.40625}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.1083678, y: 1.1857736}
   m_EdgeRadius: 0
 --- !u!114 &-1855348162930310010
 MonoBehaviour:
@@ -154,3 +156,82 @@ MonoBehaviour:
   playerTag: Player
   interactAction: {fileID: 0}
   promptObject: {fileID: 0}
+--- !u!114 &805824904059373420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2348084136020846315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.ShadowCaster2D
+  m_ShadowGroup: 0
+  m_Priority: 3
+  m_ComponentVersion: 5
+  m_HasRenderer: 1
+  m_UseRendererSilhouette: 1
+  m_CastsShadows: 1
+  m_SelfShadows: 0
+  m_AlphaCutoff: 0.1
+  m_ApplyToSortingLayers: 1dc533e2f97f665500000000
+  m_ShapePath:
+  - {x: -0.24344477, y: 0.44867134, z: 0}
+  - {x: -0.24305381, y: 0.6053123, z: 0}
+  - {x: -0.36380664, y: 0.63627464, z: 0}
+  - {x: -0.36419767, y: 0.71241367, z: 0}
+  - {x: -0.16564813, y: 0.7043916, z: 0}
+  - {x: -0.1625519, y: 0.18112928, z: 0}
+  - {x: 0.22447644, y: 0.1749368, z: 0}
+  - {x: 0.22447646, y: 0.60531235, z: 0}
+  - {x: 0.13468587, y: 0.63937086, z: 0}
+  - {x: 0.13468586, y: 0.71058404, z: 0}
+  - {x: 0.30536935, y: 0.71241367, z: 0}
+  - {x: 0.29298437, y: 0.09879774, z: 0}
+  - {x: -0.23686132, y: 0.10062737, z: 0}
+  m_ShapePathHash: -1981715409
+  m_InstanceId: 0
+  m_ShadowShape2DComponent: {fileID: 0}
+  m_ShadowShape2DProvider:
+    rid: -2
+  m_ShadowCastingSource: 1
+  m_ShadowMesh:
+    m_Mesh: {fileID: 0}
+    m_LocalBounds:
+      m_Center: {x: -0.029414177, y: 0.4056057, z: 0}
+      m_Extent: {x: 0.3347835, y: 0.30680797, z: 0}
+    m_EdgeProcessing: 1
+    m_TrimEdge: 0.05
+    m_FlipX: 0
+    m_FlipY: 0
+    m_InitialTrim: 0.05
+  m_CastingOption: 1
+  m_PreviousTrimEdge: 0.05
+  m_PreviousEdgeProcessing: 1
+  m_PreviousShadowCastingSource: 1
+  m_PreviousShadowShape2DSource: {fileID: 348496417710047786}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+--- !u!114 &4937950934736432869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2348084136020846315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb0af9712bafa23469de4c1b2b0ea9ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialPromptController
+  spriteRenderer: {fileID: 348496417710047786}
+  canvasGroup: {fileID: 0}
+  fadeDuration: 0.5
+  fadeOutOnExit: 1
+  triggerOnlyOnce: 0
+  playerTag: Player

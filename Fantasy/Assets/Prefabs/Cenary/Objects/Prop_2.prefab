@@ -288,7 +288,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  maxHideTime: 10
+  maxHideTime: 35
   onTimeExpired:
     m_PersistentCalls:
       m_Calls: []
@@ -334,8 +334,8 @@ MonoBehaviour:
   m_ShadowMesh:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
-      m_Center: {x: -0.0045700073, y: 0.00048828125, z: 0}
-      m_Extent: {x: 0.53658295, y: 0.97180176, z: 0}
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5625, y: 0.96875, z: 0}
     m_EdgeProcessing: 1
     m_TrimEdge: 0
     m_FlipX: 0
@@ -345,7 +345,7 @@ MonoBehaviour:
   m_PreviousTrimEdge: 0
   m_PreviousEdgeProcessing: 1
   m_PreviousShadowCastingSource: 2
-  m_PreviousShadowShape2DSource: {fileID: 5720281911877915904}
+  m_PreviousShadowShape2DSource: {fileID: 5766004532086351835}
   references:
     version: 2
     RefIds:

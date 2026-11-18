@@ -3223,15 +3223,17 @@ MonoBehaviour:
   damageBlackFadeIn: 0
   eyesArea: {fileID: 1814666839}
   eyeSprites:
-  - {fileID: 7106418916275457142, guid: abe876ed24593474fa22cfd454a69684, type: 3}
-  - {fileID: 1621367542, guid: abe876ed24593474fa22cfd454a69684, type: 3}
-  eyesStartAt: 0.25
-  spawnInterval: {x: 0.15, y: 1.2}
+  - {fileID: 4645168064272626446, guid: 6c18ce6576b0d2f42a3f1bdf401eafa9, type: 3}
+  - {fileID: -2980729814460452014, guid: 6c18ce6576b0d2f42a3f1bdf401eafa9, type: 3}
+  - {fileID: -1253736053189721440, guid: 6c18ce6576b0d2f42a3f1bdf401eafa9, type: 3}
+  - {fileID: -4623086065218586891, guid: 6c18ce6576b0d2f42a3f1bdf401eafa9, type: 3}
+  eyesStartAt: 0.266
+  spawnInterval: {x: 0.15, y: 0.8}
   flashDuration: {x: 0.15, y: 0.5}
-  eyeSize: {x: 80, y: 160}
+  eyeSize: {x: 160, y: 210}
   eyeMaxAlpha: 0.9
-  maxRotation: 15
-  maxEyes: 30
+  maxRotation: 25
+  maxEyes: 60
 --- !u!114 &1332739173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4050,7 +4052,7 @@ MonoBehaviour:
   mapSource: {fileID: 1678764426}
   playerPrefab: {fileID: 8228299723434981340, guid: 7a2f3af8f303ea14084067e492c48fda, type: 3}
   centipidePrefab: {fileID: 7790761122210160312, guid: d44a6782d7a8abd478e2a50777fc082b, type: 3}
-  getOutPrefab: {fileID: 2348084136020846315, guid: 3330cd9349bf72b43a2912a63ebb3794, type: 3}
+  getOutPrefab: {fileID: 5093365645699051646, guid: 96c7866cf1f891947aecaab69f52f233, type: 3}
   playerSpawnTag: PlayerSpawn
   centipideSpawnTag: CentipideSpawn
   getOutTag: GetOutPoint
