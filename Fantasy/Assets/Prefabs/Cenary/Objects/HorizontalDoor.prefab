@@ -54,11 +54,11 @@ MonoBehaviour:
   m_AlphaCutoff: 1
   m_ApplyToSortingLayers: 1dc533e2f97f665500000000
   m_ShapePath:
-  - {x: -0.3378296, y: 0.20851135, z: 0}
-  - {x: -0.33694458, y: 0.73831177, z: 0}
-  - {x: 0.2700348, y: 0.73831177, z: 0}
-  - {x: 0.2668457, y: 0.20806885, z: 0}
-  m_ShapePathHash: 386970389
+  - {x: -0.36443418, y: -0.030930415, z: 0}
+  - {x: -0.35974854, y: 0.7193085, z: 0}
+  - {x: 0.35364938, y: 0.71550786, z: 0}
+  - {x: 0.3466596, y: -0.03517358, z: 0}
+  m_ShapePathHash: -677426453
   m_InstanceId: 0
   m_ShadowShape2DComponent: {fileID: 0}
   m_ShadowShape2DProvider:
@@ -67,8 +67,8 @@ MonoBehaviour:
   m_ShadowMesh:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
-      m_Center: {x: -0.0338974, y: 0.4731903, z: 0}
-      m_Extent: {x: 0.3039322, y: 0.26512146, z: 0}
+      m_Center: {x: -0.0053924024, y: 0.34206748, z: 0}
+      m_Extent: {x: 0.35904178, y: 0.37724105, z: 0}
     m_EdgeProcessing: 1
     m_TrimEdge: 0
     m_FlipX: 0
@@ -138,11 +138,11 @@ MonoBehaviour:
   m_AlphaCutoff: 1
   m_ApplyToSortingLayers: 1dc533e2f97f665500000000
   m_ShapePath:
-  - {x: -0.3378296, y: 0.20851135, z: 0}
-  - {x: -0.33694458, y: 0.73831177, z: 0}
-  - {x: 0.2700348, y: 0.73831177, z: 0}
-  - {x: 0.2668457, y: 0.20806885, z: 0}
-  m_ShapePathHash: 386970389
+  - {x: -0.3644343, y: -0.0309304, z: 0}
+  - {x: -0.3673498, y: 0.7193085, z: 0}
+  - {x: 0.38025403, y: 0.71550775, z: 0}
+  - {x: 0.37706494, y: -0.02757226, z: 0}
+  m_ShapePathHash: -1257109503
   m_InstanceId: 0
   m_ShadowShape2DComponent: {fileID: 0}
   m_ShadowShape2DProvider:
@@ -151,8 +151,8 @@ MonoBehaviour:
   m_ShadowMesh:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
-      m_Center: {x: -0.0338974, y: 0.4731903, z: 0}
-      m_Extent: {x: 0.3039322, y: 0.26512146, z: 0}
+      m_Center: {x: 0.0064521134, y: 0.34418905, z: 0}
+      m_Extent: {x: 0.37380192, y: 0.37511945, z: 0}
     m_EdgeProcessing: 1
     m_TrimEdge: 0
     m_FlipX: 0
@@ -222,11 +222,11 @@ MonoBehaviour:
   m_AlphaCutoff: 1
   m_ApplyToSortingLayers: 1dc533e2f97f665500000000
   m_ShapePath:
-  - {x: -0.3378296, y: 0.20851135, z: 0}
-  - {x: -0.33694458, y: 0.73831177, z: 0}
-  - {x: 0.2700348, y: 0.73831177, z: 0}
-  - {x: 0.2668457, y: 0.20806885, z: 0}
-  m_ShapePathHash: 386970389
+  - {x: -0.37583625, y: -0.02332908, z: 0}
+  - {x: -0.37875187, y: 0.71550786, z: 0}
+  - {x: 0.36505133, y: 0.7193085, z: 0}
+  - {x: 0.36946362, y: -0.03137292, z: 0}
+  m_ShapePathHash: 154055753
   m_InstanceId: 0
   m_ShadowShape2DComponent: {fileID: 0}
   m_ShadowShape2DProvider:
@@ -235,8 +235,8 @@ MonoBehaviour:
   m_ShadowMesh:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
-      m_Center: {x: -0.0338974, y: 0.4731903, z: 0}
-      m_Extent: {x: 0.3039322, y: 0.26512146, z: 0}
+      m_Center: {x: -0.0046441257, y: 0.3439678, z: 0}
+      m_Extent: {x: 0.37410775, y: 0.3753407, z: 0}
     m_EdgeProcessing: 1
     m_TrimEdge: 0
     m_FlipX: 0
@@ -338,7 +338,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 1530174950936668054, guid: 8386cc28d518c124396d03573e5fff51, type: 3}
+  m_Sprite: {fileID: -6727696406897643511, guid: 130b48303a54caf44908590f56702280, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -377,7 +377,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   shadowCasters: []
-  openedDoor: {fileID: 2102127008043022523, guid: 8386cc28d518c124396d03573e5fff51, type: 3}
+  openedDoor: {fileID: 4025325703179047004, guid: 130b48303a54caf44908590f56702280, type: 3}
 --- !u!61 &-8701030053701536802
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -412,15 +412,15 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.026918411, y: -0.001373291}
+  m_Offset: {x: 0.0015864372, y: -0.001373291}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.9375, y: 1.5}
+    oldSize: {x: 2.84375, y: 1.5625}
     newSize: {x: 0.15, y: 0.24}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.9156532, y: 1.5292664}
+  m_Size: {x: 2.8054342, y: 1.5292664}
   m_EdgeRadius: 0

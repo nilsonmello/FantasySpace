@@ -230,7 +230,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.01345253, y: 0.0112400055}
+  m_Offset: {x: -0.0045728385, y: 0.00048476458}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -240,7 +240,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.1524506, y: 1.9551163}
+  m_Size: {x: 1.073189, y: 1.9436144}
   m_EdgeRadius: 0
 --- !u!114 &4678873772568374425
 MonoBehaviour:
@@ -255,6 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HideoutInteractable
   InteractionRange: 2
+  showPrompt: 1
   maxUses: -1
   cooldownDuration: 0
   onPlayerEnter:
@@ -326,15 +327,15 @@ MonoBehaviour:
   - {x: 0.5, y: -0.90625, z: 0}
   m_ShapePathHash: 0
   m_InstanceId: 0
-  m_ShadowShape2DComponent: {fileID: 5720281911877915904}
+  m_ShadowShape2DComponent: {fileID: 5766004532086351835}
   m_ShadowShape2DProvider:
-    rid: 6163309463934861384
+    rid: 590283134047354952
   m_ShadowCastingSource: 2
   m_ShadowMesh:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
-      m_Center: {x: 0.013458252, y: 0.011238098, z: 0}
-      m_Extent: {x: 0.57621765, y: 0.9775467, z: 0}
+      m_Center: {x: -0.0045700073, y: 0.00048828125, z: 0}
+      m_Extent: {x: 0.53658295, y: 0.97180176, z: 0}
     m_EdgeProcessing: 1
     m_TrimEdge: 0
     m_FlipX: 0
@@ -348,8 +349,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 6163309463934861384
-      type: {class: ShadowShape2DProvider_Collider2D, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
+    - rid: 590283134047354952
+      type: {class: ShadowShape2DProvider_SpriteRenderer, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
       data: 
 --- !u!114 &444589820441211562
 MonoBehaviour:
