@@ -313,7 +313,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 9
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 6404629907790969963, guid: a02248c68a3199e4e99ba85ccb50b536, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2657,7 +2657,7 @@ MonoBehaviour:
   circle: {fileID: 182599765}
   circleSegments: 64
   lineWidth: 0.05
-  circleColor: {r: 1, g: 0.3, b: 0.2, a: 0.8}
+  circleColor: {r: 1, g: 1, b: 1, a: 0.8}
   circleSortingOrder: 50
   markerColor: {r: 1, g: 1, b: 1, a: 1}
   fadeSpeed: 6

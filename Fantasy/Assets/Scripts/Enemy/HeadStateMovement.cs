@@ -72,7 +72,7 @@ public class HeadStateMovement : MonoBehaviour
     [Header("Sound / Investigation")]
     [SerializeField] private SoundPerception soundPerception;
     [SerializeField] private float minWanderTimeBetweenInvestigations = 4f;
-    [Tooltip("Se ligado, ao perder o player de vista ela termina de checar o último ponto visto antes de checar sons")]
+    [Tooltip("Se ligado, ao perder o player de vista ela termina de checar o último ponto visto antes de ir atrás de qualquer som.")]
     [SerializeField] private bool visionPriorityOverSound = true;
     private bool hasPendingInvestigation;
     private Vector2 pendingInvestigationCenter;
@@ -117,11 +117,20 @@ public class HeadStateMovement : MonoBehaviour
 
     public bool HideBusted => hideBusted;
 
+    // ---------- Área de busca pelo player (lida por SearchAreaIndicator) ----------
+
+    private bool playerSeen;
+
+    // True enquanto a cabeça ou o rabo está enxergando o player (lido por PlayerVisibilityIndicator)
+    public bool SeesPlayer => playerSeen;
+
     public bool HasPlayerSearchArea => lostSightActive;
 
     public Vector2 SearchCenter => lostSightPos;
 
     public float SearchRadius => patrolSearchRadius;
+
+    // ------------------------------------------------------------------------------
 
     private bool PlayerEffectivelyHidden =>
         playerHideState != null && playerHideState.IsHidden && !hideBusted;
@@ -237,8 +246,13 @@ public class HeadStateMovement : MonoBehaviour
         if (currentVelocity.sqrMagnitude > 0.0001f)
             FacingDirection = currentVelocity.normalized;
 
+        // O marcador de "última posição vista" só vale durante Chase/Patrol
         if (currentState == State.Wander || currentState == State.Hide)
             lostSightActive = false;
+
+        // UpdateDetection não roda em Hide, então não há visão nesse estado
+        if (currentState == State.Hide)
+            playerSeen = false;
 
         if (useBounds)
         {
@@ -289,6 +303,8 @@ public class HeadStateMovement : MonoBehaviour
 
     public void SetState(State newState)
     {
+        // Saiu da perseguição = perdeu o "lock" no player. O flagrante deixa de valer,
+        // então se ela voltar depois (por som, por exemplo) e ele ainda estiver escondido, ela não o vê.
         if (currentState == State.Chase && newState != State.Chase)
             hideBusted = false;
 
@@ -430,7 +446,9 @@ public class HeadStateMovement : MonoBehaviour
 
     private void UpdateDetection()
     {
-        if (CanSeePlayer() || BackVision())
+        playerSeen = player != null && (CanSeePlayer() || BackVision());
+
+        if (playerSeen)
         {
             lastKnownPlayerPos = player.position;
             hasLastKnownPos = true;
@@ -550,6 +568,7 @@ public class HeadStateMovement : MonoBehaviour
 
             if (!visible)
             {
+                // Se for virar Patrol, mantém lastKnownPlayerPos: é o centro da busca
                 if (playerIsHidden)
                     hasLastKnownPos = false;
 
