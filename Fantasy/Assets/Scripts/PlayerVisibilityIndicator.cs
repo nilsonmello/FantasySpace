@@ -1,16 +1,9 @@
 using UnityEngine;
 
-/// <summary>
-/// Ícone acima da cabeça do player: um sprite quando alguma centopeia está vendo ele,
-/// outro quando ninguém está. Coloque no prefab do player (como filho ou no próprio objeto).
-/// As centopeias são procuradas em runtime, então podem nascer depois do player.
-/// </summary>
 public class PlayerVisibilityIndicator : MonoBehaviour
 {
     [Header("References")]
-    [Tooltip("SpriteRenderer do ícone. Se vazio, é criado automaticamente.")]
     [SerializeField] private SpriteRenderer icon;
-    [Tooltip("Objeto que o ícone acompanha. Se vazio, usa este transform.")]
     [SerializeField] private Transform followTarget;
 
     [Header("Sprites")]
@@ -23,13 +16,15 @@ public class PlayerVisibilityIndicator : MonoBehaviour
     [SerializeField] private string sortingLayerName = "Default";
 
     [Header("Behavior")]
-    [Tooltip("Esconde o ícone enquanto não existe nenhuma centopeia na cena.")]
     [SerializeField] private bool hideWhenNoCreature = true;
     [SerializeField] private float findInterval = 0.5f;
 
-    [Header("Pop (ao mudar de estado)")]
+    [Header("Pop")]
     [SerializeField] private float popScale = 1.3f;
     [SerializeField] private float popRecoverSpeed = 8f;
+
+    private Transform overrideTarget;
+    private Vector2 overrideOffset;
 
     private HeadStateMovement[] creatures = new HeadStateMovement[0];
     private float nextFindTime;
@@ -96,11 +91,30 @@ public class PlayerVisibilityIndicator : MonoBehaviour
 
         currentScale = Mathf.MoveTowards(currentScale, 1f, popRecoverSpeed * Time.deltaTime);
 
-        // Posição no mundo: não herda rotação/flip do player
+        Transform target = followTarget;
+        Vector2 currentOffset = offset;
+
+        if (overrideTarget != null)
+        {
+            target = overrideTarget;
+            currentOffset = overrideOffset;
+        }
+
         Transform t = icon.transform;
-        t.position = (Vector2)followTarget.position + offset;
+        t.position = (Vector2)target.position + currentOffset;
         t.rotation = Quaternion.identity;
         t.localScale = baseScale * currentScale;
+    }
+
+    public void SetFollowOverride(Transform target, Vector2 targetOffset)
+    {
+        overrideTarget = target;
+        overrideOffset = targetOffset;
+    }
+
+    public void ClearFollowOverride()
+    {
+        overrideTarget = null;
     }
 
     private void RefreshCreatures()

@@ -22,9 +22,14 @@ public class HideoutInteractable : InteractionManager
     [Header("Camera")]
     [SerializeField] private Transform cameraPoint;
 
+    [Header("Visibility Indicator")]
+    [SerializeField] private Transform indicatorAnchor;
+    [SerializeField] private Vector2 indicatorOffset = new Vector2(0f, 1f);
+
     private bool isOccupied;
     private bool dead;
     private GameObject currentOccupant;
+    private PlayerVisibilityIndicator occupantIndicator;
     private CameraFollow cameraFollow;
 
     private float hideTimer;
@@ -114,6 +119,13 @@ public class HideoutInteractable : InteractionManager
         movement?.SetMovementLocked(true);
         hideState?.SetHidden(true);
 
+        occupantIndicator = interactor.GetComponentInChildren<PlayerVisibilityIndicator>();
+        if (occupantIndicator != null)
+        {
+            Transform anchor = indicatorAnchor != null ? indicatorAnchor : transform;
+            occupantIndicator.SetFollowOverride(anchor, indicatorOffset);
+        }
+
         SetCameraFocus(true);
 
         ResolveEffects();
@@ -127,6 +139,10 @@ public class HideoutInteractable : InteractionManager
     private void Exit(bool forced)
     {
         isOccupied = false;
+
+        if (occupantIndicator != null)
+            occupantIndicator.ClearFollowOverride();
+        occupantIndicator = null;
 
         if (currentOccupant != null)
         {

@@ -72,7 +72,7 @@ public class HeadStateMovement : MonoBehaviour
     [Header("Sound / Investigation")]
     [SerializeField] private SoundPerception soundPerception;
     [SerializeField] private float minWanderTimeBetweenInvestigations = 4f;
-    [Tooltip("Se ligado, ao perder o player de vista ela termina de checar o último ponto visto antes de ir atrás de qualquer som.")]
+    [Tooltip("Se ligar,quando perder o player de vista ela acaba de olhar o ultimo ponto visto antes de ir atras de sons")]
     [SerializeField] private bool visionPriorityOverSound = true;
     private bool hasPendingInvestigation;
     private Vector2 pendingInvestigationCenter;
