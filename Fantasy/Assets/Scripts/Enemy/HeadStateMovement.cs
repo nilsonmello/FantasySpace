@@ -44,6 +44,8 @@ public class HeadStateMovement : MonoBehaviour
     [SerializeField] private float chaseStopDistance = 0.3f;
     [SerializeField] private float chaseGiveUpTime = 5f;
     private float lastSeenPlayerTime;
+    private bool lostSightActive;
+    private Vector2 lostSightPos;
 
     [Header("Hide")]
     [SerializeField] private float hideCompressionRadius = 0.5f;
@@ -70,6 +72,8 @@ public class HeadStateMovement : MonoBehaviour
     [Header("Sound / Investigation")]
     [SerializeField] private SoundPerception soundPerception;
     [SerializeField] private float minWanderTimeBetweenInvestigations = 4f;
+    [Tooltip("Se ligado, ao perder o player de vista ela termina de checar o último ponto visto antes de checar sons")]
+    [SerializeField] private bool visionPriorityOverSound = true;
     private bool hasPendingInvestigation;
     private Vector2 pendingInvestigationCenter;
     private float pendingInvestigationRadius;
@@ -112,6 +116,12 @@ public class HeadStateMovement : MonoBehaviour
     private bool hideBusted;
 
     public bool HideBusted => hideBusted;
+
+    public bool HasPlayerSearchArea => lostSightActive;
+
+    public Vector2 SearchCenter => lostSightPos;
+
+    public float SearchRadius => patrolSearchRadius;
 
     private bool PlayerEffectivelyHidden =>
         playerHideState != null && playerHideState.IsHidden && !hideBusted;
@@ -188,7 +198,7 @@ public class HeadStateMovement : MonoBehaviour
                     break;
 
                 case PatrolOrigin.PlayerLastSeen:
-                    if (soundPerception != null && soundPerception.HasPendingSound
+                    if (!visionPriorityOverSound && soundPerception != null && soundPerception.HasPendingSound
                         && soundPerception.TryConsumeBestSound(out Vector2 lsSoundPos, out float lsSoundRadius, out int lsSoundSourceId))
                     {
                         RedirectInvestigation(lsSoundPos, lsSoundRadius, lsSoundSourceId, PatrolOrigin.Sound);
@@ -226,6 +236,9 @@ public class HeadStateMovement : MonoBehaviour
 
         if (currentVelocity.sqrMagnitude > 0.0001f)
             FacingDirection = currentVelocity.normalized;
+
+        if (currentState == State.Wander || currentState == State.Hide)
+            lostSightActive = false;
 
         if (useBounds)
         {
@@ -276,8 +289,6 @@ public class HeadStateMovement : MonoBehaviour
 
     public void SetState(State newState)
     {
-        // Saiu da perseguição = perdeu o "lock" no player. O flagrante deixa de valer,
-        // então se ela voltar depois (por som, por exemplo) e ele ainda estiver escondido, ela não o vê.
         if (currentState == State.Chase && newState != State.Chase)
             hideBusted = false;
 
@@ -495,9 +506,13 @@ public class HeadStateMovement : MonoBehaviour
             return;
         }
 
-        if (!visible)
+        if (visible)
         {
-            if (!playerIsHidden && soundPerception != null &&
+            lostSightActive = false;
+        }
+        else
+        {
+            if (!visionPriorityOverSound && !playerIsHidden && soundPerception != null &&
                 soundPerception.TryConsumeBestSound(out Vector2 soundPos, out float soundRadius, out int soundSourceId))
             {
                 currentVelocity = Vector2.zero;
@@ -513,6 +528,9 @@ public class HeadStateMovement : MonoBehaviour
                 SetState(State.Wander);
                 return;
             }
+
+            lostSightActive = true;
+            lostSightPos = lastKnownPlayerPos;
         }
 
         Vector2 toTarget = lastKnownPlayerPos - (Vector2)transform.position;
@@ -532,7 +550,9 @@ public class HeadStateMovement : MonoBehaviour
 
             if (!visible)
             {
-                hasLastKnownPos = false;
+                if (playerIsHidden)
+                    hasLastKnownPos = false;
+
                 SetState(playerIsHidden ? State.Wander : State.Patrol);
             }
         }
