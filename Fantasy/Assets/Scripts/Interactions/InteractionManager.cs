@@ -19,6 +19,8 @@ public abstract class InteractionManager : MonoBehaviour
 
     public virtual bool PromptVisible => true;
 
+    public virtual string PromptDescription => string.Empty;
+
     protected virtual void Awake()
     {
         usesRemaining = maxUses;

@@ -12,8 +12,13 @@ public class InteractionPrompt : MonoBehaviour
     [SerializeField] private Color color = Color.white;
     [SerializeField] private TMP_FontAsset font;
 
+    [Header("Description")]
+    [SerializeField] private float descriptionFontSize = 2.5f;
+    [SerializeField] private Color descriptionColor = Color.white;
+    [SerializeField] private float descriptionOffsetY = 0.35f;
+
     [Header("Position")]
-    [SerializeField] private Vector3 offset = new Vector3(0f, 0.8f, 0f);
+    [SerializeField] private Vector3 offset = new Vector3(0f, 1.4f, 0f);
     [SerializeField] private float bobAmount = 0.05f;
     [SerializeField] private float bobSpeed = 4f;
 
@@ -42,12 +47,14 @@ public class InteractionPrompt : MonoBehaviour
 
     private InteractionManager interactable;
     private TextMeshPro label;
+    private TextMeshPro descriptionLabel;
+    private string currentDescription;
     private float alpha;
 
     private void Awake()
     {
         interactable = GetComponent<InteractionManager>();
-        CreateLabel();
+        CreateLabels();
     }
 
     private void OnEnable()
@@ -59,30 +66,39 @@ public class InteractionPrompt : MonoBehaviour
     {
         all.Remove(this);
         alpha = 0f;
-        if (label != null) label.gameObject.SetActive(false);
+        SetLabelsActive(false);
     }
 
     private void OnDestroy()
     {
         if (label != null) Destroy(label.gameObject);
+        if (descriptionLabel != null) Destroy(descriptionLabel.gameObject);
     }
 
-    private void CreateLabel()
+    private void CreateLabels()
     {
-        GameObject go = new GameObject($"{name}_Prompt");
-        label = go.AddComponent<TextMeshPro>();
+        label = CreateLabel($"{name}_Prompt", string.Format(format, keyLabel), fontSize, color);
+        descriptionLabel = CreateLabel($"{name}_PromptDescription", string.Empty, descriptionFontSize, descriptionColor);
+        currentDescription = null;
+    }
 
-        if (font != null) label.font = font;
+    private TextMeshPro CreateLabel(string objectName, string text, float size, Color textColor)
+    {
+        GameObject go = new GameObject(objectName);
+        TextMeshPro tmp = go.AddComponent<TextMeshPro>();
 
-        label.text = string.Format(format, keyLabel);
-        label.fontSize = fontSize;
-        label.color = color;
-        label.alignment = TextAlignmentOptions.Center;
-        label.sortingLayerID = SortingLayer.NameToID(sortingLayerName);
-        label.sortingOrder = sortingOrder;
-        label.alpha = 0f;
+        if (font != null) tmp.font = font;
+
+        tmp.text = text;
+        tmp.fontSize = size;
+        tmp.color = textColor;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.sortingLayerID = SortingLayer.NameToID(sortingLayerName);
+        tmp.sortingOrder = sortingOrder;
+        tmp.alpha = 0f;
 
         go.SetActive(false);
+        return tmp;
     }
 
     private void LateUpdate()
@@ -92,16 +108,52 @@ public class InteractionPrompt : MonoBehaviour
         alpha = Mathf.MoveTowards(alpha, GetTargetAlpha(), fadeSpeed * Time.unscaledDeltaTime);
 
         bool visible = alpha > 0.01f;
+
         if (label.gameObject.activeSelf != visible)
             label.gameObject.SetActive(visible);
+
+        UpdateDescription(visible);
 
         if (!visible) return;
 
         label.alpha = alpha;
 
         float bob = Mathf.Sin(Time.unscaledTime * bobSpeed) * bobAmount;
-        label.transform.position = transform.position + offset + new Vector3(0f, bob, 0f);
+        Vector3 basePos = transform.position + offset + new Vector3(0f, bob, 0f);
+
+        label.transform.position = basePos;
         label.transform.rotation = Quaternion.identity;
+
+        if (descriptionLabel != null && descriptionLabel.gameObject.activeSelf)
+        {
+            descriptionLabel.alpha = alpha;
+            descriptionLabel.transform.position = basePos + new Vector3(0f, -descriptionOffsetY, 0f);
+            descriptionLabel.transform.rotation = Quaternion.identity;
+        }
+    }
+
+    private void UpdateDescription(bool visible)
+    {
+        if (descriptionLabel == null) return;
+
+        string desc = interactable.PromptDescription;
+
+        if (desc != currentDescription)
+        {
+            currentDescription = desc;
+            descriptionLabel.text = desc;
+        }
+
+        bool show = visible && !string.IsNullOrEmpty(desc);
+
+        if (descriptionLabel.gameObject.activeSelf != show)
+            descriptionLabel.gameObject.SetActive(show);
+    }
+
+    private void SetLabelsActive(bool value)
+    {
+        if (label != null) label.gameObject.SetActive(value);
+        if (descriptionLabel != null) descriptionLabel.gameObject.SetActive(value);
     }
 
     private float GetTargetAlpha()

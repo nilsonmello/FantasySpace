@@ -10,6 +10,7 @@ public class ButtonInteractable : InteractionManager
     [SerializeField] private WirePuzzle puzzle;
 
     public bool IsPressed { get; private set; }
+    public override string PromptDescription => "ligar";
 
     public event System.Action<ButtonInteractable> OnPressedChanged;
 

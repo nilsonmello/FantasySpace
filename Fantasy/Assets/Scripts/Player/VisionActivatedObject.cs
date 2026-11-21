@@ -130,7 +130,8 @@ public class VisionActivatedObject : MonoBehaviour, IVisionTarget
     {
         return b == this
             || b is InteractionHighlight
-            || b is HideoutInteractable;
+            || b is HideoutInteractable
+            || b.GetComponentInParent<VisionIgnore>(true) != null;
     }
 
     private void AutoFill()

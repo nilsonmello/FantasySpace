@@ -47,6 +47,7 @@ public class HideoutInteractable : InteractionManager
     public float HideProgress => maxHideTime > 0f ? Mathf.Clamp01(hideTimer / maxHideTime) : 0f;
 
     public override bool PromptVisible => !isOccupied;
+    public override string PromptDescription => "esconder-se";
 
     protected override void Awake()
     {

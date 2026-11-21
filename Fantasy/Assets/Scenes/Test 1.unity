@@ -635,6 +635,10 @@ MonoBehaviour:
   - {fileID: 292174137}
   - {fileID: 1353916571}
   closeKey: 19
+  completeDelay: 2
+  onAllConnected:
+    m_PersistentCalls:
+      m_Calls: []
   onCompleted:
     m_PersistentCalls:
       m_Calls:
@@ -662,6 +666,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6355450825650ed43915866e416dee09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleLock
+  freezePlayerLight: 1
   disableWhileOpen: []
 --- !u!1 &399510963
 GameObject:
@@ -724,6 +729,7 @@ MonoBehaviour:
   sag: 40
   segments: 40
   targetSlot: {fileID: 0}
+  particleSystem: {fileID: 0}
 --- !u!114 &399510966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -823,6 +829,7 @@ MonoBehaviour:
   sag: 40
   segments: 40
   targetSlot: {fileID: 0}
+  particleSystem: {fileID: 0}
 --- !u!114 &427218775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1559,7 +1566,7 @@ MonoBehaviour:
   m_Intensity: 0.1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 1dc533e2f97f665500000000
+  m_ApplyToSortingLayers: 1dc533e2f97f66550000000063a0a036
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -2038,6 +2045,7 @@ MonoBehaviour:
   sag: 40
   segments: 40
   targetSlot: {fileID: 0}
+  particleSystem: {fileID: 0}
 --- !u!114 &1129323700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3762,6 +3770,7 @@ MonoBehaviour:
   sag: 40
   segments: 40
   targetSlot: {fileID: 0}
+  particleSystem: {fileID: 0}
 --- !u!114 &1927839285
 MonoBehaviour:
   m_ObjectHideFlags: 0
