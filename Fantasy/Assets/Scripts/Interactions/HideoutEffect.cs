@@ -185,7 +185,7 @@ public class HideoutEffects : MonoBehaviour
                 for (int x = 0; x < width; x++)
                 {
                     float nx = (x + 0.5f) / width - 0.5f;
-                    float d = Mathf.Sqrt(nx * nx + ny * ny) / 0.7071f; // 0 no centro, 1 no canto
+                    float d = Mathf.Sqrt(nx * nx + ny * ny) / 0.7071f;
                     float a = Mathf.InverseLerp(inner, inner + softness, d);
                     pixels[y * width + x] = new Color32(color.r, color.g, color.b, Quantize(a, x, y, levels, dither));
                 }

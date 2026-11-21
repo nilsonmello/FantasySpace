@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4746321986004275398}
   - component: {fileID: 3528922942277315228}
   - component: {fileID: 4414837987075836737}
+  - component: {fileID: 6167153829627376818}
   m_Layer: 3
   m_Name: ConeLight
   m_TagString: Untagged
@@ -48,7 +49,7 @@ MonoBehaviour:
   m_ComponentVersion: 2
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.6
+  m_FalloffIntensity: 0.5
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 0.6
   m_LightVolumeIntensity: 1
@@ -71,8 +72,8 @@ MonoBehaviour:
   m_LocalBounds:
     m_Center: {x: 0, y: -0.00000011920929, z: 0}
     m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
-  m_PointLightInnerAngle: 69
-  m_PointLightOuterAngle: 78
+  m_PointLightInnerAngle: 48
+  m_PointLightOuterAngle: 76
   m_PointLightInnerRadius: 0
   m_PointLightOuterRadius: 8
   m_ShapeLightParametricSides: 5
@@ -98,6 +99,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightFollowMouse
   angleOffset: -90
+--- !u!114 &6167153829627376818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 543064740950315514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f0b2535a1d478a4f888564af3aad79a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightFlicker2D
+  light2D: {fileID: 3528922942277315228}
+  minInterval: 0.1
+  maxInterval: 7
+  minOffTime: 0.03
+  maxOffTime: 0.15
 --- !u!1 &1824399699484754486
 GameObject:
   m_ObjectHideFlags: 0
