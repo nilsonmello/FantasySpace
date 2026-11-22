@@ -440,6 +440,10 @@ PrefabInstance:
       propertyPath: m_ReferenceResolution.y
       value: 1080
       objectReference: {fileID: 0}
+    - target: {fileID: 1765541198786600658, guid: ae7f4b1b9d534fc41aae6ceffc06ef99, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2063389511922245364, guid: ae7f4b1b9d534fc41aae6ceffc06ef99, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -616,11 +620,34 @@ PrefabInstance:
       propertyPath: m_ReferenceResolution.y
       value: 1080
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1765541198786600658, guid: ae7f4b1b9d534fc41aae6ceffc06ef99, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 782710680187948816, guid: ae7f4b1b9d534fc41aae6ceffc06ef99, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1352623855}
   m_SourcePrefab: {fileID: 100100000, guid: ae7f4b1b9d534fc41aae6ceffc06ef99, type: 3}
+--- !u!1 &1352623852 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 782710680187948816, guid: ae7f4b1b9d534fc41aae6ceffc06ef99, type: 3}
+  m_PrefabInstance: {fileID: 1337169224}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1352623855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352623852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19f8d50727011e4194a5614a1c77fbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MenuBackgroundVideo
+  stallTimeout: 0.75
+  prepareTimeout: 4
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
