@@ -50,10 +50,16 @@ public class UIManager : Singleton<UIManager>
     public CutsceneData introCutscene;
     public Action onCutsceneFinished;
 
+    [Header("Music")]
+    [SerializeField] private string menuMusic = "OST_Menu";
+    [SerializeField] private string gameMusic = "OST_Background";
+
     [Header("Smart Input Tracking")]
     public bool isUsingMouse = false;
     public GameObject lastSelectedButton;
     private GameObject lastSelectedMainMenu;
+
+    private bool introRunning;
 
     protected override void Awake()
     {
@@ -157,7 +163,8 @@ public class UIManager : Singleton<UIManager>
 
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
-            SoundManager.Instance.PlayMusic("M.I.K.A.");
+            introRunning = false;
+            SoundManager.Instance.PlayMusic(menuMusic);
             ToggleCanvas(mainCanvas, true);
             ShowMainPanelImmediate();
             return;
@@ -170,6 +177,9 @@ public class UIManager : Singleton<UIManager>
         }
 
         ToggleCanvas(mainCanvas, false);
+
+        if (!introRunning)
+            SoundManager.Instance.PlayMusic(gameMusic);
     }
 
     private void SetFocusToButton(GameObject targetButton)
@@ -247,9 +257,26 @@ public class UIManager : Singleton<UIManager>
 
     public void StartGame()
     {
+        if (introCutscene == null)
+        {
+            TransitionManager.Instance.PlaySceneTransition(() =>
+            {
+                lastSelectedMainMenu = null;
+                introRunning = false;
+                ToggleCanvas(mainCanvas, false);
+
+                SoundManager.Instance.StopAllSounds();
+
+                SceneLoader.instance.LoadGame();
+            });
+            return;
+        }
+
         TransitionManager.Instance.PlayPanelTransitionAsync(
             onReady =>
             {
+                introRunning = true;
+
                 lastSelectedMainMenu = null;
                 ToggleCanvas(mainCanvas, false);
                 SceneLoader.instance.LoadGame();
@@ -263,11 +290,9 @@ public class UIManager : Singleton<UIManager>
 
     private void OnCutsceneFinished()
     {
-        if (SceneManager.GetActiveScene().name == "Fase 1")
-        {
-            SoundManager.Instance.PlayLoopingSFX("BG_01");
-        }
-        
+        introRunning = false;
+        SoundManager.Instance.PlayMusic(gameMusic);
+
         onCutsceneFinished?.Invoke();
     }
 
@@ -316,6 +341,7 @@ public class UIManager : Singleton<UIManager>
                 CutsceneVideoManager.Instance.StopVideo();
             }
 
+            introRunning = false;
             ResetPause();
             SceneLoader.instance.LoadMainMenu();
         });
@@ -418,12 +444,5 @@ public class UIManager : Singleton<UIManager>
         ToggleCanvas(endScreenCanvas, true);
 
         SetFocusToButton(firstButtonEndScreen);
-
-        // EventSystem.current.SetSelectedGameObject(null);
-
-        // if (!isUsingMouse)
-        // {
-        //     EventSystem.current.SetSelectedGameObject(firstButtonEndScreen);
-        // }
     }
 }

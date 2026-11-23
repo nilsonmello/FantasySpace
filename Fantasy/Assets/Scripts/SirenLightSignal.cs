@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class SirenLightSignal : TrapSignal
 {
-    [Header("Luzes")]
+    [Header("Light")]
     [SerializeField] private GameObject[] lightsA;
     [SerializeField] private GameObject[] lightsB;
 
-    [Header("Piscar")]
+    [Header("Blink")]
     [SerializeField] private float blinkInterval = 0.25f;
     [SerializeField] private bool alternate = true;
 

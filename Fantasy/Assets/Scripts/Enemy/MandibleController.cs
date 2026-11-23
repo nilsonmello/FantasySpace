@@ -29,7 +29,6 @@ public class MandibleController : MonoBehaviour
     [SerializeField, HideInInspector] private Transform rightMandible;
 
     [Header("sorting order")]
-    [Tooltip("Se vazio, procura nos pais e depois na cena.")]
     [SerializeField] private BodyChainController bodyChain;
     [SerializeField] private bool useBodyChainOrder = true;
 
@@ -87,7 +86,6 @@ public class MandibleController : MonoBehaviour
         MigrateLegacyMandibles();
     }
 
-    // Start (e não Awake) pra garantir que o BodyChainController já gerou os segmentos
     private void Start()
     {
         ApplySortingOrder();

@@ -5,19 +5,15 @@ using TMPro;
 
 public class MenuButtonHighLight : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
-    [Header("Textos")]
     [SerializeField] private TMP_Text[] textos;
 
-    [Header("Formas")]
     [SerializeField] private Image[] formas;
 
     [SerializeField] private Image quadradoBranco;
 
-    [Header("Materiais para textos")]
     [SerializeField] private Material materialTextoNormal;
     [SerializeField] private Material materialTextoStencil;
 
-    [Header("Materiais para formas")]
     [SerializeField] private Material materialFormaNormal;
     [SerializeField] private Material materialFormaStencil;
 
@@ -35,8 +31,6 @@ public class MenuButtonHighLight : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         ResetHighlight();
     }
-
-    // --- MOUSE ---
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -59,8 +53,6 @@ public class MenuButtonHighLight : MonoBehaviour, IPointerEnterHandler, IPointer
         
         ResetHighlight();
     }
-
-    // --- GAMEPAD / TECLADO ---
 
     public void OnSelect(BaseEventData eventData)
     {

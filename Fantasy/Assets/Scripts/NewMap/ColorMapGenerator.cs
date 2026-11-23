@@ -197,10 +197,6 @@ public class ColorMapGenerator : MonoBehaviour
             floor2Tilemap.SetTiles(posArray, tileArray);
     }
 
-    /// <summary>
-    /// Registra todas as células "vazias" (mesma regra do FillEmptyCells, mas sem
-    /// sorteio de fillChance e sem consumir o rng). Funciona mesmo sem emptyFill (padding = 0).
-    /// </summary>
     private void CollectEmptyCells(Color32[] pixels, BoundsInt bounds)
     {
         emptyCells.Clear();
