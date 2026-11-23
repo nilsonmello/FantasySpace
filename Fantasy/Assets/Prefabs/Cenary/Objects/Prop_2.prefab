@@ -1,5 +1,109 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &134484950331652234
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6973024916261466085}
+  - component: {fileID: 9144207500936086461}
+  - component: {fileID: 366398667584854456}
+  - component: {fileID: 3318704277594499040}
+  - component: {fileID: 725577633456068833}
+  m_Layer: 9
+  m_Name: Cooldown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6973024916261466085
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134484950331652234}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3006172205455002336}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9144207500936086461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134484950331652234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5de313a141d8aad4bbfb95d4668b1523, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldBar
+  target: {fileID: 3006172205455002336}
+  offset: {x: 0, y: -0.9}
+  size: {x: 1.2, y: 0.14}
+  border: 0.03
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.7}
+  fillColor: {r: 1, g: 0, b: 0, a: 1}
+  sortingLayerName: Default
+  sortingOrder: 100
+  hideWhenFull: 0
+  hideWhenEmpty: 1
+--- !u!114 &366398667584854456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134484950331652234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df492cc5f9f723247935c9b515551579, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HideoutCooldownBarView
+  hideout: {fileID: 4678873772568374425}
+--- !u!114 &3318704277594499040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134484950331652234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5de313a141d8aad4bbfb95d4668b1523, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldBar
+  target: {fileID: 3006172205455002336}
+  offset: {x: 0, y: -1.2}
+  size: {x: 1.2, y: 0.14}
+  border: 0.03
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.7}
+  fillColor: {r: 1, g: 0, b: 0, a: 1}
+  sortingLayerName: Default
+  sortingOrder: 100
+  hideWhenFull: 1
+  hideWhenEmpty: 0
+--- !u!114 &725577633456068833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134484950331652234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bbc249b9ce4c0447b073a33e16eeac3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionIgnore
 --- !u!1 &1368571302087421777
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,6 +219,7 @@ Transform:
   m_Children:
   - {fileID: 4623759623300334361}
   - {fileID: 466374263711980676}
+  - {fileID: 6973024916261466085}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5766004532086351835
@@ -298,6 +403,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   reentryDelay: 2
+  exitCooldown: 3
   effects: {fileID: 0}
   cameraPoint: {fileID: 4623759623300334361}
   indicatorAnchor: {fileID: 466374263711980676}

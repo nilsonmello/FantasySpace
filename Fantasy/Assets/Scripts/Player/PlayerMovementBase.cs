@@ -14,6 +14,12 @@ public abstract class PlayerMovementBase : MonoBehaviour
     public float RunSpeed;
     public float CrouchSpeed;
 
+    [Header("Stamina")]
+    [SerializeField] private float maxStamina = 5f;
+    [SerializeField] private float staminaRegenRate = 1f;
+    [SerializeField] private float staminaRegenDelay = 1f;
+    [SerializeField, Range(0f, 1f)] private float runResumeThreshold = 1f;
+
     protected InputSystem_Actions actions;
     protected InputAction crouchAction;
     protected InputAction runAction;
@@ -21,11 +27,17 @@ public abstract class PlayerMovementBase : MonoBehaviour
     protected float currentSpeed;
     protected Rigidbody2D rb;
 
+    private float regenTimer;
+
     public MovementState CurrentMovementState { get; private set; } = MovementState.Walk;
 
     public Vector2 CurrentVelocity => rb != null ? rb.linearVelocity : Vector2.zero;
 
     public bool MovementLocked { get; private set; }
+
+    public float Stamina { get; private set; }
+    public float StaminaNormalized => maxStamina > 0f ? Stamina / maxStamina : 0f;
+    public bool IsExhausted { get; private set; }
 
     protected virtual void Start()
     {
@@ -41,13 +53,16 @@ public abstract class PlayerMovementBase : MonoBehaviour
 
         moveAction = actions.Player.Move;
         moveAction.Enable();
+
+        Stamina = maxStamina;
     }
 
     protected virtual void Update()
     {
-        if (MovementLocked) return;
+        if (!MovementLocked)
+            GetMoveInput();
 
-        GetMoveInput();
+        UpdateStamina();
     }
 
     protected virtual void FixedUpdate()
@@ -59,7 +74,7 @@ public abstract class PlayerMovementBase : MonoBehaviour
 
     protected void GetMoveInput()
     {
-        if (runAction.IsPressed())
+        if (runAction.IsPressed() && !IsExhausted)
         {
             currentSpeed = RunSpeed;
             CurrentMovementState = MovementState.Run;
@@ -74,6 +89,30 @@ public abstract class PlayerMovementBase : MonoBehaviour
             currentSpeed = MovSpeed;
             CurrentMovementState = MovementState.Walk;
         }
+    }
+
+    private void UpdateStamina()
+    {
+        bool isRunning = !MovementLocked
+                      && CurrentMovementState == MovementState.Run
+                      && moveAction.ReadValue<Vector2>().sqrMagnitude > 0.01f;
+
+        if (isRunning)
+        {
+            Stamina = Mathf.Max(0f, Stamina - Time.deltaTime);
+            regenTimer = staminaRegenDelay;
+
+            if (Stamina <= 0f) IsExhausted = true;
+            return;
+        }
+
+        if (regenTimer > 0f)
+            regenTimer -= Time.deltaTime;
+        else
+            Stamina = Mathf.Min(maxStamina, Stamina + staminaRegenRate * Time.deltaTime);
+
+        if (IsExhausted && Stamina >= maxStamina * runResumeThreshold)
+            IsExhausted = false;
     }
 
     protected void Move()

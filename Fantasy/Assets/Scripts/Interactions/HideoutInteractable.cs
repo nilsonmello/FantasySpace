@@ -16,6 +16,9 @@ public class HideoutInteractable : InteractionManager
     [SerializeField] private UnityEvent onGameOver;
     [SerializeField] private float reentryDelay = 2f;
 
+    [Header("Exit Cooldown")]
+    [SerializeField] private float exitCooldown = 3f;
+
     [Header("Effects")]
     [SerializeField] private HideoutEffects effects;
 
@@ -34,6 +37,7 @@ public class HideoutInteractable : InteractionManager
 
     private float hideTimer;
     private float nextEnterTime;
+    private float cooldownDuration;
 
     private static HideoutEffects cachedEffects;
 
@@ -44,6 +48,8 @@ public class HideoutInteractable : InteractionManager
     }
 
     public bool IsOccupied => isOccupied;
+    public float CooldownRemaining => isOccupied ? 0f : Mathf.Max(0f, nextEnterTime - Time.time);
+    public float CooldownNormalized => cooldownDuration > 0f ? Mathf.Clamp01(CooldownRemaining / cooldownDuration) : 0f;
     public float HideProgress => maxHideTime > 0f ? Mathf.Clamp01(hideTimer / maxHideTime) : 0f;
 
     public override bool PromptVisible => !isOccupied;
@@ -159,8 +165,8 @@ public class HideoutInteractable : InteractionManager
         if (effects != null)
             effects.End();
 
-        if (forced)
-            nextEnterTime = Time.time + reentryDelay;
+        cooldownDuration = forced ? reentryDelay : exitCooldown;
+        nextEnterTime = Time.time + cooldownDuration;
 
         hideTimer = 0f;
 

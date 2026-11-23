@@ -110,7 +110,7 @@ Transform:
   m_GameObject: {fileID: 3351349578191748730}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.07178, y: 0.06955, z: 0}
+  m_LocalPosition: {x: -0.19, y: 0.048, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -486,21 +486,21 @@ MonoBehaviour:
   m_AlphaCutoff: 0.1
   m_ApplyToSortingLayers: 1dc533e2f97f665500000000
   m_ShapePath:
-  - {x: -0.40820578, y: -0.4492134, z: 0}
-  - {x: -0.40820584, y: 0.19691423, z: 0}
-  - {x: 0.41211736, y: 0.19495839, z: 0}
-  - {x: 0.40625, y: -0.453125, z: 0}
-  m_ShapePathHash: -327554323
+  - {x: -0.40271595, y: -0.4492134, z: 0}
+  - {x: -0.40271595, y: 0.2005741, z: 0}
+  - {x: 0.40296763, y: 0.19495839, z: 0}
+  - {x: 0.4025901, y: -0.4494651, z: 0}
+  m_ShapePathHash: 45941991
   m_InstanceId: 0
-  m_ShadowShape2DComponent: {fileID: 0}
+  m_ShadowShape2DComponent: {fileID: 8713113971955587320}
   m_ShadowShape2DProvider:
-    rid: -2
-  m_ShadowCastingSource: 1
+    rid: 590283255286857800
+  m_ShadowCastingSource: 2
   m_ShadowMesh:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
-      m_Center: {x: 0.0019557774, y: -0.1281054, z: 0}
-      m_Extent: {x: 0.4101616, y: 0.3250196, z: 0}
+      m_Center: {x: 0.00012585521, y: -0.1244455, z: 0}
+      m_Extent: {x: 0.4028418, y: 0.3250196, z: 0}
     m_EdgeProcessing: 1
     m_TrimEdge: 0.04
     m_FlipX: 0
@@ -514,8 +514,9 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+    - rid: 590283255286857800
+      type: {class: ShadowShape2DProvider_Collider2D, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
+      data: 
 --- !u!82 &2941676981053432905
 AudioSource:
   m_ObjectHideFlags: 0
