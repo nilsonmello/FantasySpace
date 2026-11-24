@@ -89,6 +89,11 @@ public class HideoutEffects : MonoBehaviour
     [SerializeField] private float maxRotation = 15f;
     [SerializeField] private int maxEyes = 8;
 
+    [Header("Door & Camera")]
+    [SerializeField] private HideoutDoorOverlay doorOverlay;
+    [SerializeField] private HideoutCameraFX cameraFx;
+    [SerializeField] private HideoutUIShift uiShift;
+
     private VignetteLayer black;
     private GlitchLayer glitch;
     private Texture2D damageTexture;
@@ -355,6 +360,44 @@ public class HideoutEffects : MonoBehaviour
         active = false;
     }
 
+    private void ResolveExtras()
+    {
+        if (cameraFx == null)
+        {
+            cameraFx = GetComponent<HideoutCameraFX>();
+            if (cameraFx == null) cameraFx = gameObject.AddComponent<HideoutCameraFX>();
+        }
+
+        if (doorOverlay != null) return;
+
+        var go = new GameObject("DoorOverlay", typeof(RectTransform), typeof(RawImage), typeof(HideoutDoorOverlay));
+        go.transform.SetParent(vignette.transform.parent, false);
+
+        var rt = (RectTransform)go.transform;
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+
+        go.transform.SetSiblingIndex(vignette.transform.GetSiblingIndex());
+
+        doorOverlay = go.GetComponent<HideoutDoorOverlay>();
+    }
+
+    private void EndExtras()
+    {
+        if (doorOverlay != null) doorOverlay.Hide();
+        if (cameraFx != null) cameraFx.End();
+        if (uiShift != null) uiShift.Hide();
+    }
+
+    private void StopExtras()
+    {
+        if (doorOverlay != null) doorOverlay.HideImmediate();
+        if (cameraFx != null) cameraFx.StopImmediate();
+        if (uiShift != null) uiShift.HideImmediate();
+    }
+
     private float GetAspect()
     {
         Rect r = vignette.rectTransform.rect;
@@ -441,6 +484,11 @@ public class HideoutEffects : MonoBehaviour
 
     public void Begin()
     {
+        Begin(null);
+    }
+
+    public void Begin(Transform origin)
+    {
         if (Mathf.Abs(GetAspect() - builtAspect) > 0.01f)
             BuildLayers();
 
@@ -458,6 +506,11 @@ public class HideoutEffects : MonoBehaviour
 
         if (spawner != null) StopCoroutine(spawner);
         spawner = StartCoroutine(SpawnLoop());
+
+        ResolveExtras();
+        if (doorOverlay != null) doorOverlay.Show();
+        if (cameraFx != null) cameraFx.Begin(origin);
+        if (uiShift != null) uiShift.Show();
     }
 
     public void SetProgress(float value)
@@ -466,9 +519,17 @@ public class HideoutEffects : MonoBehaviour
 
         progress = Mathf.Clamp01(value);
         black.Render(vignetteCurve.Evaluate(progress));
+
+        if (cameraFx != null) cameraFx.SetProgress(progress);
     }
 
     public void End()
+    {
+        EndExtras();
+        EndCore();
+    }
+
+    private void EndCore()
     {
         if (gameOverRoutine != null) return;
 
@@ -483,6 +544,12 @@ public class HideoutEffects : MonoBehaviour
 
     public void PlayGameOver(Action onGameOver)
     {
+        StopExtras();
+        PlayGameOverCore(onGameOver);
+    }
+
+    private void PlayGameOverCore(Action onGameOver)
+    {
         if (fade != null) StopCoroutine(fade);
         if (gameOverRoutine != null) StopCoroutine(gameOverRoutine);
 
@@ -490,6 +557,12 @@ public class HideoutEffects : MonoBehaviour
     }
 
     public void PlayDamage(Action onDone)
+    {
+        StopExtras();
+        PlayDamageCore(onDone);
+    }
+
+    private void PlayDamageCore(Action onDone)
     {
         if (damageTexture == null)
         {

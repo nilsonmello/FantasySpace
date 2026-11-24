@@ -143,7 +143,7 @@ public class HideoutInteractable : InteractionManager
         ResolveEffects();
 
         if (effects != null && maxHideTime > 0f)
-            effects.Begin();
+            effects.Begin(transform);
 
         PlaySound(enterSoundName);
 
