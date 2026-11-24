@@ -227,6 +227,7 @@ GameObject:
   - component: {fileID: 3860476493794727352}
   - component: {fileID: 1179525446773239217}
   - component: {fileID: 2047243856578990962}
+  - component: {fileID: 7940335923384988298}
   m_Layer: 3
   m_Name: PlayerPrefab
   m_TagString: Player
@@ -377,6 +378,10 @@ MonoBehaviour:
   MovSpeed: 20
   RunSpeed: 35
   CrouchSpeed: 12
+  maxStamina: 5
+  staminaRegenRate: 1
+  staminaRegenDelay: 1
+  runResumeThreshold: 1
 --- !u!114 &-4040433910167881033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -543,3 +548,25 @@ CapsuleCollider2D:
   m_Offset: {x: -0.014387876, y: -0.33092108}
   m_Size: {x: 0.45326084, y: 0.77565783}
   m_Direction: 0
+--- !u!114 &7940335923384988298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8228299723434981340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33a57ad51cc8787478592c80289ac839, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAudio
+  stepSoundName: PlayerStep
+  exhaustedSoundName: PlayerExhausted
+  walkInterval: 0.4
+  walkVolume: 0.5
+  runInterval: 0.3
+  runVolume: 0.8
+  crouchInterval: 0.7
+  crouchVolume: 0.2
+  exhaustedVolume: 1
+  minMoveSpeed: 0.05

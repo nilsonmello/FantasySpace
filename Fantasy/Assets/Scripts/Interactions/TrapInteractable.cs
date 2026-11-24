@@ -14,6 +14,9 @@ public class TrapInteractable : InteractionManager
     [SerializeField] private bool blockInteractionWhileActive = true;
     [SerializeField] private UnityEvent onDeactivated;
 
+    [Header("Audio")]
+    [SerializeField] private string sirenSoundName = "TrapSiren";
+
     [Header("Signals")]
     [SerializeField] private TrapSignal[] signals;
 
@@ -22,6 +25,15 @@ public class TrapInteractable : InteractionManager
     [SerializeField] private bool startDisabled = true;
 
     private Coroutine timer;
+    private bool sirenPlaying;
+
+    private static int activeSirens;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        activeSirens = 0;
+    }
 
     public bool IsActive { get; private set; }
 
@@ -63,6 +75,7 @@ public class TrapInteractable : InteractionManager
         IsActive = true;
 
         SetActiveObjects(true);
+        StartSiren();
 
         for (int i = 0; i < signals.Length; i++)
         {
@@ -99,6 +112,8 @@ public class TrapInteractable : InteractionManager
     {
         IsActive = false;
 
+        StopSiren();
+
         if (timer != null)
         {
             StopCoroutine(timer);
@@ -112,6 +127,26 @@ public class TrapInteractable : InteractionManager
         }
 
         SetActiveObjects(false);
+    }
+
+    private void StartSiren()
+    {
+        if (sirenPlaying || string.IsNullOrEmpty(sirenSoundName) || SoundManager.Instance == null) return;
+
+        sirenPlaying = true;
+        activeSirens++;
+        SoundManager.Instance.PlayLoopingSFX(sirenSoundName);
+    }
+
+    private void StopSiren()
+    {
+        if (!sirenPlaying) return;
+
+        sirenPlaying = false;
+        activeSirens = Mathf.Max(0, activeSirens - 1);
+
+        if (activeSirens == 0 && SoundManager.Instance != null)
+            SoundManager.Instance.StopLoopingSFX();
     }
 
     private void SetActiveObjects(bool value)

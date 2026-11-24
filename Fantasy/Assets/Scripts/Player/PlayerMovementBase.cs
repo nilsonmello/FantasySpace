@@ -39,6 +39,8 @@ public abstract class PlayerMovementBase : MonoBehaviour
     public float StaminaNormalized => maxStamina > 0f ? Stamina / maxStamina : 0f;
     public bool IsExhausted { get; private set; }
 
+    public event System.Action OnExhausted;
+
     protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -102,7 +104,11 @@ public abstract class PlayerMovementBase : MonoBehaviour
             Stamina = Mathf.Max(0f, Stamina - Time.deltaTime);
             regenTimer = staminaRegenDelay;
 
-            if (Stamina <= 0f) IsExhausted = true;
+            if (Stamina <= 0f && !IsExhausted)
+            {
+                IsExhausted = true;
+                OnExhausted?.Invoke();
+            }
             return;
         }
 

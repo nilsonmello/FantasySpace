@@ -687,7 +687,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
       propertyPath: SFXClips.Array.size
-      value: 7
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
       propertyPath: MusicClips.Array.size
@@ -721,6 +721,26 @@ PrefabInstance:
       propertyPath: SFXClips.Array.data[6].audio
       value: 
       objectReference: {fileID: 8300000, guid: 8a2b059dcb2cf8043a4c895a29401943, type: 3}
+    - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
+      propertyPath: SFXClips.Array.data[7].audio
+      value: 
+      objectReference: {fileID: 8300000, guid: 1e9af0a80874e68489aa9e8bd9d391ef, type: 3}
+    - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
+      propertyPath: SFXClips.Array.data[8].audio
+      value: 
+      objectReference: {fileID: 8300000, guid: 1eb3bbff205d24241ba5ef5d31653c45, type: 3}
+    - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
+      propertyPath: SFXClips.Array.data[9].audio
+      value: 
+      objectReference: {fileID: 8300000, guid: fe034a9f84f97564aa1e7a27884ebac7, type: 3}
+    - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
+      propertyPath: SFXClips.Array.data[10].audio
+      value: 
+      objectReference: {fileID: 8300000, guid: fe034a9f84f97564aa1e7a27884ebac7, type: 3}
+    - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
+      propertyPath: SFXClips.Array.data[11].audio
+      value: 
+      objectReference: {fileID: 8300000, guid: f802effd0e86bc54aa7ea06b00425c90, type: 3}
     - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
       propertyPath: MusicClips.Array.data[0].audio
       value: 
@@ -760,6 +780,26 @@ PrefabInstance:
     - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
       propertyPath: SFXClips.Array.data[6].SoundName
       value: UI_Click
+      objectReference: {fileID: 0}
+    - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
+      propertyPath: SFXClips.Array.data[7].SoundName
+      value: PlayerStep
+      objectReference: {fileID: 0}
+    - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
+      propertyPath: SFXClips.Array.data[8].SoundName
+      value: PlayerExhausted
+      objectReference: {fileID: 0}
+    - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
+      propertyPath: SFXClips.Array.data[9].SoundName
+      value: HideoutEnter
+      objectReference: {fileID: 0}
+    - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
+      propertyPath: SFXClips.Array.data[10].SoundName
+      value: HideoutExit
+      objectReference: {fileID: 0}
+    - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
+      propertyPath: SFXClips.Array.data[11].SoundName
+      value: TrapSiren
       objectReference: {fileID: 0}
     - target: {fileID: 1875498823540580587, guid: 400f8eaba62b6494eb0e763115cdb4d7, type: 3}
       propertyPath: MusicClips.Array.data[0].SoundName

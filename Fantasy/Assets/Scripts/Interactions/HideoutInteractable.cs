@@ -19,6 +19,11 @@ public class HideoutInteractable : InteractionManager
     [Header("Exit Cooldown")]
     [SerializeField] private float exitCooldown = 3f;
 
+    [Header("Audio")]
+    [SerializeField] private string enterSoundName = "HideoutEnter";
+    [SerializeField] private string exitSoundName = "HideoutExit";
+    [SerializeField, Range(0f, 1f)] private float soundVolume = 1f;
+
     [Header("Effects")]
     [SerializeField] private HideoutEffects effects;
 
@@ -140,6 +145,8 @@ public class HideoutInteractable : InteractionManager
         if (effects != null && maxHideTime > 0f)
             effects.Begin();
 
+        PlaySound(enterSoundName);
+
         onPlayerEnter?.Invoke();
     }
 
@@ -170,8 +177,17 @@ public class HideoutInteractable : InteractionManager
 
         hideTimer = 0f;
 
+        PlaySound(exitSoundName);
+
         onPlayerExit?.Invoke();
         currentOccupant = null;
+    }
+
+    private void PlaySound(string soundName)
+    {
+        if (string.IsNullOrEmpty(soundName) || SoundManager.Instance == null) return;
+
+        SoundManager.Instance.PlaySFX(soundName, soundVolume, true);
     }
 
     private void TriggerGameOver()
