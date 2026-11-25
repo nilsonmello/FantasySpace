@@ -25,6 +25,9 @@ public class HideoutEffects : MonoBehaviour
     [Range(0f, 1f)] [SerializeField] private float redMaxIntensity = 0.9f;
     [SerializeField] private float blackHoldTime = 0.6f;
     [SerializeField] private float gameOverClearDelay = 0.3f;
+    [SerializeField] private bool stopMusicOnGameOver = true;
+    [SerializeField, Min(0f)] private float musicFadeOutTime = 0.3f;
+    [SerializeField] private bool stopMusicOnDamage = true;
 
     [Header("Game Over Eye")]
     [SerializeField] private float gameOverEyeWidth = 320f;
@@ -89,6 +92,13 @@ public class HideoutEffects : MonoBehaviour
     [SerializeField] private float maxRotation = 15f;
     [SerializeField] private int maxEyes = 8;
 
+    [Header("Audio")]
+    [SerializeField] private string glitchSoundName = "HideoutGlitch";
+    [SerializeField] private string heartbeatSoundName = "HideoutHeartbeat";
+    [SerializeField] private string backgroundSoundName = "HideoutDeathAmbience";
+    [SerializeField, Range(0f, 1f)] private float glitchSoundVolume = 1f;
+    [SerializeField, Range(0f, 1f)] private float heartbeatSoundVolume = 1f;
+
     [Header("Door & Camera")]
     [SerializeField] private HideoutDoorOverlay doorOverlay;
     [SerializeField] private HideoutCameraFX cameraFx;
@@ -105,6 +115,7 @@ public class HideoutEffects : MonoBehaviour
 
     private float progress;
     private bool active;
+    private bool backgroundPlaying;
 
     private Coroutine spawner;
     private Coroutine fade;
@@ -358,6 +369,7 @@ public class HideoutEffects : MonoBehaviour
     private void OnDisable()
     {
         active = false;
+        StopBackgroundSound();
     }
 
     private void ResolveExtras()
@@ -495,6 +507,7 @@ public class HideoutEffects : MonoBehaviour
         if (fade != null) StopCoroutine(fade);
         if (gameOverRoutine != null) StopCoroutine(gameOverRoutine);
         gameOverRoutine = null;
+        StopBackgroundSound();
         ReleaseGameOverEye();
         ResetGlitch();
 
@@ -602,6 +615,8 @@ public class HideoutEffects : MonoBehaviour
 
     private IEnumerator GameOverSequence(Action onGameOver)
     {
+        StartBackgroundSound();
+
         active = false;
         if (spawner != null) StopCoroutine(spawner);
         spawner = null;
@@ -638,6 +653,9 @@ public class HideoutEffects : MonoBehaviour
                 yield return HideGameOverEye();
         }
 
+        if (stopMusicOnGameOver && SoundManager.Instance != null)
+            SoundManager.Instance.StopMusicWithFade(musicFadeOutTime);
+
         yield return GlitchBurst();
 
         yield return HideGameOverEye();
@@ -662,6 +680,8 @@ public class HideoutEffects : MonoBehaviour
 
     private IEnumerator DamageSequence(Action onDone)
     {
+        StartBackgroundSound();
+
         SetDamage(0f, 1f);
         BuildDamageShape();
 
@@ -677,6 +697,9 @@ public class HideoutEffects : MonoBehaviour
             }
         }
         black.Render(1f);
+
+        if (stopMusicOnDamage && SoundManager.Instance != null)
+            SoundManager.Instance.StopMusicWithFade(musicFadeOutTime);
 
         if (glitchOnDamage)
             yield return GlitchBurst();
@@ -702,6 +725,8 @@ public class HideoutEffects : MonoBehaviour
 
         glitchImage.gameObject.SetActive(true);
         RectTransform rt = glitchImage.rectTransform;
+
+        PlaySound(glitchSoundName, glitchSoundVolume);
 
         float e = 0f;
         float nextStep = 0f;
@@ -754,6 +779,7 @@ public class HideoutEffects : MonoBehaviour
         float e = 0f;
         float lastAlpha = 0f;
         float lastReach = 1f;
+        int lastBeatCycle = -1;
 
         while (e < total)
         {
@@ -768,6 +794,13 @@ public class HideoutEffects : MonoBehaviour
             {
                 float k = e / pulseTime;
                 float beat = Beat((e / period) % 1f);
+
+                int cycle = Mathf.FloorToInt(e / period);
+                if (cycle > lastBeatCycle)
+                {
+                    lastBeatCycle = cycle;
+                    PlaySound(heartbeatSoundName, heartbeatSoundVolume);
+                }
 
                 float level = Mathf.Lerp(1f, heartbeatWeaken, k);
                 float intro = Mathf.Clamp01(e / 0.06f);
@@ -784,6 +817,8 @@ public class HideoutEffects : MonoBehaviour
             }
             else
             {
+                StopBackgroundSound();
+
                 float k = Mathf.Clamp01((e - pulseTime) / fadeTime);
                 float s = k * k * (3f - 2f * k);
 
@@ -804,6 +839,31 @@ public class HideoutEffects : MonoBehaviour
         }
 
         SetDamage(0f, 1f);
+    }
+
+    private void PlaySound(string soundName, float volume)
+    {
+        if (string.IsNullOrEmpty(soundName) || SoundManager.Instance == null) return;
+
+        SoundManager.Instance.PlaySFX(soundName, volume);
+    }
+
+    private void StartBackgroundSound()
+    {
+        if (string.IsNullOrEmpty(backgroundSoundName) || SoundManager.Instance == null) return;
+
+        SoundManager.Instance.PlayLoopingSFX(backgroundSoundName);
+        backgroundPlaying = true;
+    }
+
+    private void StopBackgroundSound()
+    {
+        if (!backgroundPlaying) return;
+
+        backgroundPlaying = false;
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.StopLoopingSFX();
     }
 
     private static float Beat(float p)

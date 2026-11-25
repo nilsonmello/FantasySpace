@@ -40,6 +40,9 @@ public class SoundManager : Singleton<SoundManager>
     private bool musicDucked;
     private float musicVolumeBeforePause = 1f;
 
+    private Coroutine musicFadeRoutine;
+    private float musicVolumeBeforeFade = 1f;
+
     protected override void Awake()
     {
         base.Awake();
@@ -63,6 +66,8 @@ public class SoundManager : Singleton<SoundManager>
 
     public void PlayMusic(string name)
     {
+        CancelMusicFade();
+
         SoundClip s = FindClip(MusicClips, name);
         if (s == null)
         {
@@ -78,7 +83,50 @@ public class SoundManager : Singleton<SoundManager>
 
     public void StopMusic()
     {
+        CancelMusicFade();
         musicSource.Stop();
+    }
+
+    public void StopMusicWithFade(float fadeTime)
+    {
+        if (musicSource == null || !musicSource.isPlaying) return;
+
+        if (musicFadeRoutine != null) StopCoroutine(musicFadeRoutine);
+
+        if (fadeTime <= 0f)
+        {
+            StopMusic();
+            return;
+        }
+
+        musicFadeRoutine = StartCoroutine(StopMusicRoutine(fadeTime));
+    }
+
+    private IEnumerator StopMusicRoutine(float fadeTime)
+    {
+        float start = musicSource.volume;
+        musicVolumeBeforeFade = start;
+        float t = 0f;
+
+        while (t < fadeTime)
+        {
+            t += Time.unscaledDeltaTime;
+            musicSource.volume = Mathf.Lerp(start, 0f, t / fadeTime);
+            yield return null;
+        }
+
+        musicSource.Stop();
+        musicSource.volume = start;
+        musicFadeRoutine = null;
+    }
+
+    private void CancelMusicFade()
+    {
+        if (musicFadeRoutine == null) return;
+
+        StopCoroutine(musicFadeRoutine);
+        musicFadeRoutine = null;
+        musicSource.volume = musicVolumeBeforeFade;
     }
 
     public IEnumerator FadeMusic(float targetVolume, float fadeDuration)

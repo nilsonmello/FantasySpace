@@ -7546,6 +7546,56 @@ Transform:
   - {fileID: 182599766}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &903983523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 903983525}
+  - component: {fileID: 903983524}
+  m_Layer: 0
+  m_Name: HideoutEffectsTester (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &903983524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903983523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c1541ab37f09114980e279b92010642, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HideoutEffectsTester
+  effects: {fileID: 1332739172}
+  gameOverKey: G
+  damageKey: H
+  hideToggleKey: J
+  hideDuration: 6
+  showHint: 1
+--- !u!4 &903983525
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903983523}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -44.28896, y: -69.74721, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &998299360
 GameObject:
   m_ObjectHideFlags: 0
@@ -8425,6 +8475,8 @@ MonoBehaviour:
   redMaxIntensity: 0.9
   blackHoldTime: 0.6
   gameOverClearDelay: 0.3
+  stopMusicOnGameOver: 1
+  musicFadeOutTime: 0
   gameOverEyeWidth: 320
   gameOverEyeDuration: 0.9
   gameOverEyeFadeIn: 0.08
@@ -8511,6 +8563,11 @@ MonoBehaviour:
   eyeMaxAlpha: 0.9
   maxRotation: 25
   maxEyes: 60
+  glitchSoundName: HideoutGlitch
+  heartbeatSoundName: HideoutHeartbeat
+  backgroundSoundName: HideoutDeathAmbience
+  glitchSoundVolume: 0.484
+  heartbeatSoundVolume: 1
   doorOverlay: {fileID: 1401401648}
   cameraFx: {fileID: 1332739177}
   uiShift: {fileID: 70489254}
@@ -10502,50 +10559,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2071656500
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2071656502}
-  - component: {fileID: 2071656501}
-  m_Layer: 0
-  m_Name: HideoutEffectsTester
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2071656501
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2071656500}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c1541ab37f09114980e279b92010642, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HideoutEffectsTester
---- !u!4 &2071656502
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2071656500}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -38.17328, y: -40.06213, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2077285674
 GameObject:
   m_ObjectHideFlags: 0
@@ -10653,5 +10666,5 @@ SceneRoots:
   - {fileID: 1735585244}
   - {fileID: 407674144}
   - {fileID: 899150090}
-  - {fileID: 2071656502}
   - {fileID: 54136104}
+  - {fileID: 903983525}

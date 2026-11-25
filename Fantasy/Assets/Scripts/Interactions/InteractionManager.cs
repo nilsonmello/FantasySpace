@@ -31,7 +31,11 @@ public abstract class InteractionManager : MonoBehaviour
 
     public void interact(GameObject interactor)
     {
-        if (!Caninteract()) return;
+        if (!Caninteract())
+        {
+            OnInteractBlocked(interactor);
+            return;
+        }
 
         OnInteract(interactor);
 
@@ -53,6 +57,8 @@ public abstract class InteractionManager : MonoBehaviour
     protected abstract void OnInteract(GameObject interactor);
 
     protected virtual void OnDepleted() { }
+
+    protected virtual void OnInteractBlocked(GameObject interactor) { }
 
     public virtual bool Caninteract()
     {

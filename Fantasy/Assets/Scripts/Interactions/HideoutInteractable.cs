@@ -22,6 +22,8 @@ public class HideoutInteractable : InteractionManager
     [Header("Audio")]
     [SerializeField] private string enterSoundName = "HideoutEnter";
     [SerializeField] private string exitSoundName = "HideoutExit";
+    [SerializeField] private string blockedSoundName = "HideoutBlocked";
+    [SerializeField, Min(0f)] private float blockedSoundInterval = 0.4f;
     [SerializeField, Range(0f, 1f)] private float soundVolume = 1f;
 
     [Header("Effects")]
@@ -43,6 +45,7 @@ public class HideoutInteractable : InteractionManager
     private float hideTimer;
     private float nextEnterTime;
     private float cooldownDuration;
+    private float nextBlockedSoundTime;
 
     private static HideoutEffects cachedEffects;
 
@@ -105,6 +108,14 @@ public class HideoutInteractable : InteractionManager
         if (!isOccupied && Time.time < nextEnterTime) return false;
 
         return base.Caninteract();
+    }
+
+    protected override void OnInteractBlocked(GameObject interactor)
+    {
+        if (Time.time < nextBlockedSoundTime) return;
+
+        nextBlockedSoundTime = Time.time + blockedSoundInterval;
+        PlaySound(blockedSoundName);
     }
 
     protected override void OnInteract(GameObject interactor)
